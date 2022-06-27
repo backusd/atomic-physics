@@ -3,9 +3,26 @@
 
 
 AppWindow::AppWindow(int width, int height, const char* name) noexcept :
-	AppWindowTemplate(width, height, name)
+	AppWindowTemplate(width, height, name),
+	m_height(height),
+	m_width(width),
+	m_clearColor{ 55.0f / 255.0f, 55.0f / 255.0f, 55.0f / 255.0f, 1.0f }
 {
-	m_renderer = std::make_unique<Renderer>();
+	// DONT actually do any initialization here. Just allow the AppWindowTemplate to create itself
+	// To build the contents within the AppWindow, call Initialize(). HOWEVER, the contents will
+	// need access to DeviceResources, so you MUST initialize DeviceResources in between constructing
+	// AppWindow and calling AppWindow->Initialize()
+	//
+	// HOWEVER, in order to create DeviceResources, we pass in the viewport for the 
+}
+
+void AppWindow::Initialize() noexcept
+{
+
+
+	// Once window space is allotted, create the viewport then the renderer
+	CD3D11_VIEWPORT vp = CD3D11_VIEWPORT(0.0f, 0.0f, static_cast<float>(m_width), static_cast<float>(m_height));
+	m_simulationRenderer = std::make_unique<Renderer>(vp);
 
 	// Create keyboard/mouse classes for processing inuput
 	//... Unless they become singletons in which case there is no need for explicit initialization
@@ -15,7 +32,7 @@ void AppWindow::Update() noexcept
 {
 	// At this point for the current frame, the Simulation has already been updated
 	// All we need to do on the window side is query the Simulation to render it
-	m_renderer->Update();
+	m_simulationRenderer->Update();
 
 	// Update data for ImGui ... ???
 	//
@@ -24,8 +41,18 @@ void AppWindow::Update() noexcept
 
 bool AppWindow::Render() const noexcept
 { 
+	// Clear the window
+	ID3D11DeviceContext4* context = DeviceResources::D3DDeviceContext();
+	context->ClearDepthStencilView(DeviceResources::DepthStencilView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+	context->ClearRenderTargetView(DeviceResources::BackBufferRenderTargetView(), m_clearColor);
+
+	ID3D11RenderTargetView* const targets[1] = { DeviceResources::BackBufferRenderTargetView() };
+	context->OMSetRenderTargets(1, targets, DeviceResources::DepthStencilView());
+
+
 	// Draw 3D scene
-	m_renderer->Render();
+	m_simulationRenderer->Render();
+
 
 	// Draw ImGui controls
 

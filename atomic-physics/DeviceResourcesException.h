@@ -6,28 +6,30 @@
 #include <sstream>
 #include <vector>
 
+#if defined(_DEBUG)
+#define INFOMAN DxgiInfoManager& infoManager = DeviceResources::GetInfoManager();
+#define HR HRESULT hr;
+#endif
+
 #define GFX_EXCEPT_NOINFO(hr) DeviceResourcesException( __LINE__,__FILE__,(hr) )
 #define GFX_THROW_NOINFO(hrcall) if( FAILED( hr = (hrcall) ) ) throw DeviceResourcesException( __LINE__,__FILE__,hr )
 
 #if defined(_DEBUG)
 #define GFX_EXCEPT(hr) DeviceResourcesException( __LINE__,__FILE__,(hr),infoManager.GetMessages() )
-#define GFX_THROW_INFO(hrcall) { HRESULT hr; infoManager.Set(); if( FAILED( hr = (hrcall) ) ) throw GFX_EXCEPT(hr); }
-#define GFX_DEVICE_REMOVED_EXCEPT(hr) DeviceRemovedException( __LINE__,__FILE__,(hr),infoManager.GetMessages() )
-#define GFX_THROW_INFO_ONLY(call) infoManager.Set(); (call); {auto v = infoManager.GetMessages(); if(!v.empty()) {throw InfoException( __LINE__,__FILE__,v);}}
+#define GFX_THROW_INFO(hrcall) { HR INFOMAN infoManager.Set(); if( FAILED( hr = (hrcall) ) ) throw GFX_EXCEPT(hr); }
+#define GFX_DEVICE_REMOVED_EXCEPT(hr) { INFOMAN DeviceRemovedException( __LINE__,__FILE__,(hr),infoManager.GetMessages() ) }
+#define GFX_THROW_INFO_ONLY(call) { INFOMAN infoManager.Set(); (call); {auto v = infoManager.GetMessages(); if(!v.empty()) {throw InfoException( __LINE__,__FILE__,v);}}}
+#define noexcept_release_only
 #else
 #define GFX_EXCEPT(hr) DeviceResourcesException( __LINE__,__FILE__,(hr) )
 #define GFX_THROW_INFO(hrcall) GFX_THROW_NOINFO(hrcall)
 #define GFX_DEVICE_REMOVED_EXCEPT(hr) DeviceRemovedException( __LINE__,__FILE__,(hr) )
 #define GFX_THROW_INFO_ONLY(call) (call)
+#define noexcept_release_only noexcept
 #endif
 
-// macro for importing infomanager into local scope
-// this.GetInfoManager(Graphics& gfx) must exist
-#if defined(_DEBUG)
-#define INFOMAN(deviceResources) HRESULT hr; DxgiInfoManager& infoManager = deviceResources->GetInfoManager();
-#else
-#define INFOMAN(deviceResources) HRESULT hr;
-#endif
+
+
 
 // ================================================================================
 

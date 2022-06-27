@@ -11,14 +11,16 @@ public:
 
 
 	static void Initialize(HWND hWnd) { return Get().InitializeImpl(hWnd); }
-	static void SetViewport(CD3D11_VIEWPORT viewport) noexcept { Get().SetViewportImpl(viewport); }
+	static void SetViewport(D3D11_VIEWPORT viewport) noexcept { Get().SetViewportImpl(viewport); }
 	static void Present() { Get().PresentImpl(); }
 
+	static D3D11_VIEWPORT GetViewport() noexcept { return Get().m_viewport; }
 	static ID3D11Device5* D3DDevice() noexcept { return Get().m_d3dDevice.Get(); }
 	static ID3D11DeviceContext4* D3DDeviceContext() noexcept { return Get().m_d3dDeviceContext.Get(); }
 	static ID3D11DepthStencilView* DepthStencilView() noexcept { return Get().m_d3dDepthStencilView.Get(); }
 	static ID3D11RenderTargetView1* BackBufferRenderTargetView() noexcept { return Get().m_d3dRenderTargetView.Get(); }
 
+	static DxgiInfoManager& GetInfoManager() noexcept { return Get().infoManager; }
 
 private:
 	DeviceResources() noexcept;
@@ -34,7 +36,7 @@ private:
 	void CreateDeviceIndependentResources();
 	void CreateWindowSizeDependentResources();
 	void HandleDeviceLost();
-	void SetViewportImpl(CD3D11_VIEWPORT viewport) noexcept;
+	void SetViewportImpl(D3D11_VIEWPORT viewport) noexcept;
 	void PresentImpl();
 
 

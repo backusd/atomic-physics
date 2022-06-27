@@ -10,6 +10,12 @@ App::App()
 
 	// Initialize the Simulation Manager
 	SimulationManager::Initialize();
+
+	// The content within AppWindow does NOT get created in the AppWindow constructor. This is to
+	// allow the AppWindowTemplate the ability to create itself and give us a window, however,
+	// the window contents need access to DeviceResources, so you MUST initialize DeviceResources 
+	// in between constructing AppWindow and calling AppWindow->Initialize()
+	m_window->Initialize();
 }
 
 int App::Run() const

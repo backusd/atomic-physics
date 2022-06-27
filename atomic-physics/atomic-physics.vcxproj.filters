@@ -5,14 +5,6 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
     <Filter Include="Source Files\Window">
       <UniqueIdentifier>{7175030a-b62d-4474-a41d-8eaae1c03581}</UniqueIdentifier>
     </Filter>
@@ -27,6 +19,12 @@
     </Filter>
     <Filter Include="Source Files\UI">
       <UniqueIdentifier>{302fc0ee-bb6f-4158-9e7a-482936ed4722}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\UI\3DScene">
+      <UniqueIdentifier>{8fc88dca-7285-4ce8-a960-5fa0fffbc8d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\UI\3DScene\Bindables">
+      <UniqueIdentifier>{837d5cc0-902d-4b74-9ffe-167937cbb0f3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -67,7 +65,16 @@
       <Filter>Source Files\Exceptions</Filter>
     </ClCompile>
     <ClCompile Include="Renderer.cpp">
-      <Filter>Source Files\UI</Filter>
+      <Filter>Source Files\UI\3DScene</Filter>
+    </ClCompile>
+    <ClCompile Include="MoveLookController.cpp">
+      <Filter>Source Files\UI\3DScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Drawable.cpp">
+      <Filter>Source Files\UI\3DScene</Filter>
+    </ClCompile>
+    <ClCompile Include="ConstantBufferArray.cpp">
+      <Filter>Source Files\UI\3DScene\Bindables</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -111,7 +118,25 @@
       <Filter>Source Files\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="Renderer.h">
-      <Filter>Source Files\UI</Filter>
+      <Filter>Source Files\UI\3DScene</Filter>
+    </ClInclude>
+    <ClInclude Include="MoveLookController.h">
+      <Filter>Source Files\UI\3DScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Drawable.h">
+      <Filter>Source Files\UI\3DScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Bindable.h">
+      <Filter>Source Files\UI\3DScene\Bindables</Filter>
+    </ClInclude>
+    <ClInclude Include="ConstantBuffer.h">
+      <Filter>Source Files\UI\3DScene\Bindables</Filter>
+    </ClInclude>
+    <ClInclude Include="ConstantBufferArray.h">
+      <Filter>Source Files\UI\3DScene\Bindables</Filter>
+    </ClInclude>
+    <ClInclude Include="HLSLStructures.h">
+      <Filter>Source Files\UI\3DScene</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

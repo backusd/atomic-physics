@@ -12,6 +12,7 @@ public:
 	AppWindow(int width, int height, const char* name) noexcept;
 	AppWindow(AppWindow&) = delete;
 	void operator=(const AppWindow&) = delete;
+	void Initialize() noexcept;
 
 
 	LRESULT HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) const noexcept override;
@@ -21,6 +22,8 @@ public:
 	void Present() const;
 
 	std::optional<int> ProcessMessages() const noexcept;
+
+	D3D11_VIEWPORT GetSimulationViewport() const noexcept { return m_simulationRenderer->GetViewport(); }
 
 private:
 	// Virtual functions to handle all input 
@@ -53,6 +56,9 @@ private:
 
 	LRESULT OnKillFocus(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) const noexcept;
 
+	int m_height;
+	int m_width;
 
-	std::unique_ptr<Renderer> m_renderer;
+	const float m_clearColor[4];
+	std::unique_ptr<Renderer> m_simulationRenderer;
 };

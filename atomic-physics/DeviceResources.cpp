@@ -310,12 +310,6 @@ void DeviceResources::CreateWindowSizeDependentResources()
 		)
 	);
 
-
-	// Set the 3D rendering viewport to target the entire window
-	m_viewport = CD3D11_VIEWPORT(0.0f, 0.0f, width, height);
-
-	m_d3dDeviceContext->RSSetViewports(1, &m_viewport);
-
 	/*
 	// Set the rasterizer state
 	D3D11_RASTERIZER_DESC rd;
@@ -382,7 +376,7 @@ void DeviceResources::HandleDeviceLost()
 	CreateWindowSizeDependentResources();
 }
 
-void DeviceResources::SetViewportImpl(CD3D11_VIEWPORT viewport) noexcept
+void DeviceResources::SetViewportImpl(D3D11_VIEWPORT viewport) noexcept
 {
 	m_viewport = viewport;
 	m_d3dDeviceContext->RSSetViewports(1, &m_viewport);
