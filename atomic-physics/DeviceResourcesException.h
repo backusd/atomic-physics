@@ -6,13 +6,14 @@
 #include <sstream>
 #include <vector>
 
+#define HR HRESULT hr;
+
 #if defined(_DEBUG)
 #define INFOMAN DxgiInfoManager& infoManager = DeviceResources::GetInfoManager();
-#define HR HRESULT hr;
 #endif
 
 #define GFX_EXCEPT_NOINFO(hr) DeviceResourcesException( __LINE__,__FILE__,(hr) )
-#define GFX_THROW_NOINFO(hrcall) if( FAILED( hr = (hrcall) ) ) throw DeviceResourcesException( __LINE__,__FILE__,hr )
+#define GFX_THROW_NOINFO(hrcall) { HR if( FAILED( hr = (hrcall) ) ) throw DeviceResourcesException( __LINE__,__FILE__,hr ); }
 
 #if defined(_DEBUG)
 #define GFX_EXCEPT(hr) DeviceResourcesException( __LINE__,__FILE__,(hr),infoManager.GetMessages() )

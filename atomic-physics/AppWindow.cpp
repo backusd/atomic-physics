@@ -139,7 +139,11 @@ std::optional<int> AppWindow::ProcessMessages() const noexcept
 		// TranslateMessage will post auxilliary WM_CHAR messages from key msgs
 		TranslateMessage(&msg);
 
-		LRESULT result = DispatchMessage(&msg);
+		// Can optionally obtain the LRESULT value that is returned, but from the Microsoft docs:
+		// "The return value specifies the value returned by the window procedure. Although its 
+		// meaning depends on the message being dispatched, the return value generally is ignored."
+		// LRESULT result = DispatchMessage(&msg);
+		DispatchMessage(&msg);
 	}
 
 	// return empty optional when not quitting app
@@ -151,7 +155,7 @@ LRESULT AppWindow::OnCreate(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) c
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
-LRESULT AppWindow::OnClose(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) const noexcept
+LRESULT AppWindow::OnClose(HWND /* hWnd */, UINT /* msg */, WPARAM /* wParam */, LPARAM /* lParam */) const noexcept
 {
 	// we don't want the DefProc to handle this message because
 	// we want our destructor to destroy the window, so return 0 instead of break

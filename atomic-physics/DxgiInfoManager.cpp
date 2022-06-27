@@ -5,9 +5,6 @@
 #include <dxgidebug.h>
 #pragma comment(lib, "dxguid.lib")
 
-#define GFX_THROW_NOINFO(hrcall) if( FAILED( hr = (hrcall) ) ) throw DeviceResourcesException( __LINE__,__FILE__,hr )
-
-
 DxgiInfoManager::DxgiInfoManager()
 {
 	// define function signature of DXGIGetDebugInterface
@@ -29,8 +26,9 @@ DxgiInfoManager::DxgiInfoManager()
 		throw WINDOW_LAST_EXCEPT();
 	}
 
-	HRESULT hr;
-	GFX_THROW_NOINFO(DxgiGetDebugInterface(__uuidof(IDXGIInfoQueue), reinterpret_cast<void**>(&pDxgiInfoQueue)));
+	GFX_THROW_NOINFO(
+		DxgiGetDebugInterface(__uuidof(IDXGIInfoQueue), reinterpret_cast<void**>(&pDxgiInfoQueue))
+	);
 }
 
 DxgiInfoManager::~DxgiInfoManager()
@@ -54,7 +52,6 @@ std::vector<std::string> DxgiInfoManager::GetMessages() const
 	const auto end = pDxgiInfoQueue->GetNumStoredMessages(DXGI_DEBUG_ALL);
 	for (auto i = next; i < end; i++)
 	{
-		HRESULT hr;
 		SIZE_T messageLength;
 		// get the size of message i in bytes
 		GFX_THROW_NOINFO(pDxgiInfoQueue->GetMessage(DXGI_DEBUG_ALL, i, nullptr, &messageLength));

@@ -26,6 +26,9 @@
     <Filter Include="Source Files\UI\3DScene\Bindables">
       <UniqueIdentifier>{837d5cc0-902d-4b74-9ffe-167937cbb0f3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Shaders">
+      <UniqueIdentifier>{223616b6-fe63-4fa6-96a8-f0d362cbac80}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="WinMain.cpp">
@@ -74,6 +77,12 @@
       <Filter>Source Files\UI\3DScene</Filter>
     </ClCompile>
     <ClCompile Include="ConstantBufferArray.cpp">
+      <Filter>Source Files\UI\3DScene\Bindables</Filter>
+    </ClCompile>
+    <ClCompile Include="DepthStencilState.cpp">
+      <Filter>Source Files\UI\3DScene\Bindables</Filter>
+    </ClCompile>
+    <ClCompile Include="InputLayout.cpp">
       <Filter>Source Files\UI\3DScene\Bindables</Filter>
     </ClCompile>
   </ItemGroup>
@@ -138,5 +147,19 @@
     <ClInclude Include="HLSLStructures.h">
       <Filter>Source Files\UI\3DScene</Filter>
     </ClInclude>
+    <ClInclude Include="DepthStencilState.h">
+      <Filter>Source Files\UI\3DScene\Bindables</Filter>
+    </ClInclude>
+    <ClInclude Include="InputLayout.h">
+      <Filter>Source Files\UI\3DScene\Bindables</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="SolidVS.hlsl">
+      <Filter>Source Files\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="SolidPS.hlsl">
+      <Filter>Source Files\Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

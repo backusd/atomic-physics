@@ -20,7 +20,12 @@ public:
 	static ID3D11DepthStencilView* DepthStencilView() noexcept { return Get().m_d3dDepthStencilView.Get(); }
 	static ID3D11RenderTargetView1* BackBufferRenderTargetView() noexcept { return Get().m_d3dRenderTargetView.Get(); }
 
-	static DxgiInfoManager& GetInfoManager() noexcept { return Get().infoManager; }
+#if defined(_DEBUG)
+public:
+	static DxgiInfoManager& GetInfoManager() noexcept { return Get().m_infoManager; }
+private:
+	DxgiInfoManager m_infoManager;
+#endif
 
 private:
 	DeviceResources() noexcept;
@@ -39,11 +44,6 @@ private:
 	void SetViewportImpl(D3D11_VIEWPORT viewport) noexcept;
 	void PresentImpl();
 
-
-
-#if defined(_DEBUG)
-	DxgiInfoManager infoManager;
-#endif
 
 	// Keep handle to window
 	HWND m_hWnd;
