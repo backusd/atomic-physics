@@ -85,6 +85,27 @@
     <ClCompile Include="InputLayout.cpp">
       <Filter>Source Files\UI\3DScene\Bindables</Filter>
     </ClCompile>
+    <ClCompile Include="PixelShader.cpp">
+      <Filter>Source Files\UI\3DScene\Bindables</Filter>
+    </ClCompile>
+    <ClCompile Include="RasterizerState.cpp">
+      <Filter>Source Files\UI\3DScene\Bindables</Filter>
+    </ClCompile>
+    <ClCompile Include="SamplerState.cpp">
+      <Filter>Source Files\UI\3DScene\Bindables</Filter>
+    </ClCompile>
+    <ClCompile Include="SamplerStateArray.cpp">
+      <Filter>Source Files\UI\3DScene\Bindables</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Source Files\UI\3DScene\Bindables</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureArray.cpp">
+      <Filter>Source Files\UI\3DScene\Bindables</Filter>
+    </ClCompile>
+    <ClCompile Include="VertexShader.cpp">
+      <Filter>Source Files\UI\3DScene\Bindables</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -151,6 +172,27 @@
       <Filter>Source Files\UI\3DScene\Bindables</Filter>
     </ClInclude>
     <ClInclude Include="InputLayout.h">
+      <Filter>Source Files\UI\3DScene\Bindables</Filter>
+    </ClInclude>
+    <ClInclude Include="PixelShader.h">
+      <Filter>Source Files\UI\3DScene\Bindables</Filter>
+    </ClInclude>
+    <ClInclude Include="RasterizerState.h">
+      <Filter>Source Files\UI\3DScene\Bindables</Filter>
+    </ClInclude>
+    <ClInclude Include="SamplerState.h">
+      <Filter>Source Files\UI\3DScene\Bindables</Filter>
+    </ClInclude>
+    <ClInclude Include="SamplerStateArray.h">
+      <Filter>Source Files\UI\3DScene\Bindables</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Source Files\UI\3DScene\Bindables</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureArray.h">
+      <Filter>Source Files\UI\3DScene\Bindables</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexShader.h">
       <Filter>Source Files\UI\3DScene\Bindables</Filter>
     </ClInclude>
   </ItemGroup>

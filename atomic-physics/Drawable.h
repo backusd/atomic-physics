@@ -5,6 +5,9 @@
 #include "DepthStencilState.h"
 #include "HLSLStructures.h"
 #include "InputLayout.h"
+#include "PixelShader.h"
+#include "RasterizerState.h"
+#include "VertexShader.h"
 
 
 #include <vector>
@@ -16,9 +19,6 @@ public:
 	Drawable() noexcept;
 	Drawable(const Drawable&) = delete;
 	void operator=(const Drawable&) = delete;
-	~Drawable()
-	{
-	}
 
 
 private:

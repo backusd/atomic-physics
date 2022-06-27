@@ -159,9 +159,16 @@
     <ClCompile Include="InputLayout.cpp" />
     <ClCompile Include="MoveLookController.cpp" />
     <ClCompile Include="pch.cpp" />
+    <ClCompile Include="PixelShader.cpp" />
+    <ClCompile Include="RasterizerState.cpp" />
     <ClCompile Include="Renderer.cpp" />
+    <ClCompile Include="SamplerState.cpp" />
+    <ClCompile Include="SamplerStateArray.cpp" />
     <ClCompile Include="SimulationManager.cpp" />
     <ClCompile Include="Simulation.cpp" />
+    <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="TextureArray.cpp" />
+    <ClCompile Include="VertexShader.cpp" />
     <ClCompile Include="WindowException.cpp" />
     <ClCompile Include="WindowsMessageMap.cpp" />
     <ClCompile Include="WinMain.cpp" />
@@ -184,9 +191,16 @@
     <ClInclude Include="InputLayout.h" />
     <ClInclude Include="MoveLookController.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="PixelShader.h" />
+    <ClInclude Include="RasterizerState.h" />
     <ClInclude Include="Renderer.h" />
+    <ClInclude Include="SamplerState.h" />
+    <ClInclude Include="SamplerStateArray.h" />
     <ClInclude Include="SimulationManager.h" />
     <ClInclude Include="Simulation.h" />
+    <ClInclude Include="Texture.h" />
+    <ClInclude Include="TextureArray.h" />
+    <ClInclude Include="VertexShader.h" />
     <ClInclude Include="WindowException.h" />
     <ClInclude Include="WindowsMessageMap.h" />
   </ItemGroup>
