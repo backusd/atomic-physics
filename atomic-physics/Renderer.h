@@ -3,6 +3,7 @@
 #include "DeviceResources.h"
 #include "Drawable.h"
 #include "MoveLookController.h"
+#include "Sphere.h"
 
 #include <memory>
 #include <vector>
@@ -22,7 +23,7 @@ private:
 
 
 	D3D11_VIEWPORT m_viewport;
-	std::unique_ptr<MoveLookController> m_moveLookController;
+	std::shared_ptr<MoveLookController> m_moveLookController;
 	std::vector<std::unique_ptr<Drawable>> m_drawables;
 
 

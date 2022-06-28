@@ -29,6 +29,12 @@
     <Filter Include="Source Files\Shaders">
       <UniqueIdentifier>{223616b6-fe63-4fa6-96a8-f0d362cbac80}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\UI\3DScene\Bindables\Meshes">
+      <UniqueIdentifier>{71df0a7e-c9eb-4c7d-8ac8-d0a0c2d05acc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\UI\3DScene\Drawables">
+      <UniqueIdentifier>{c172e355-7f8d-4fa4-94a3-403b82b71f13}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="WinMain.cpp">
@@ -73,9 +79,6 @@
     <ClCompile Include="MoveLookController.cpp">
       <Filter>Source Files\UI\3DScene</Filter>
     </ClCompile>
-    <ClCompile Include="Drawable.cpp">
-      <Filter>Source Files\UI\3DScene</Filter>
-    </ClCompile>
     <ClCompile Include="ConstantBufferArray.cpp">
       <Filter>Source Files\UI\3DScene\Bindables</Filter>
     </ClCompile>
@@ -105,6 +108,18 @@
     </ClCompile>
     <ClCompile Include="VertexShader.cpp">
       <Filter>Source Files\UI\3DScene\Bindables</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Source Files\UI\3DScene\Bindables\Meshes</Filter>
+    </ClCompile>
+    <ClCompile Include="SphereMesh.cpp">
+      <Filter>Source Files\UI\3DScene\Bindables\Meshes</Filter>
+    </ClCompile>
+    <ClCompile Include="Drawable.cpp">
+      <Filter>Source Files\UI\3DScene\Drawables</Filter>
+    </ClCompile>
+    <ClCompile Include="Sphere.cpp">
+      <Filter>Source Files\UI\3DScene\Drawables</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -153,9 +168,6 @@
     <ClInclude Include="MoveLookController.h">
       <Filter>Source Files\UI\3DScene</Filter>
     </ClInclude>
-    <ClInclude Include="Drawable.h">
-      <Filter>Source Files\UI\3DScene</Filter>
-    </ClInclude>
     <ClInclude Include="Bindable.h">
       <Filter>Source Files\UI\3DScene\Bindables</Filter>
     </ClInclude>
@@ -195,12 +207,30 @@
     <ClInclude Include="VertexShader.h">
       <Filter>Source Files\UI\3DScene\Bindables</Filter>
     </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Source Files\UI\3DScene\Bindables\Meshes</Filter>
+    </ClInclude>
+    <ClInclude Include="SphereMesh.h">
+      <Filter>Source Files\UI\3DScene\Bindables\Meshes</Filter>
+    </ClInclude>
+    <ClInclude Include="Drawable.h">
+      <Filter>Source Files\UI\3DScene\Drawables</Filter>
+    </ClInclude>
+    <ClInclude Include="Sphere.h">
+      <Filter>Source Files\UI\3DScene\Drawables</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="SolidVS.hlsl">
       <Filter>Source Files\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="SolidPS.hlsl">
+      <Filter>Source Files\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="PhongVS.hlsl">
+      <Filter>Source Files\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="PhongPS.hlsl">
       <Filter>Source Files\Shaders</Filter>
     </FxCompile>
   </ItemGroup>

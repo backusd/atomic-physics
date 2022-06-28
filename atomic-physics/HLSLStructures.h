@@ -1,6 +1,17 @@
 #pragma once
 #include "pch.h"
 
+struct PositionNormalVertex
+{
+    DirectX::XMFLOAT4 position;
+    DirectX::XMFLOAT4 normal;
+};
+
+struct ColorConstantBuffer
+{
+    DirectX::XMFLOAT4 color;
+};
+
 struct ModelViewProjectionConstantBuffer
 {
     DirectX::XMFLOAT4X4 model;
