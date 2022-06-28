@@ -14,6 +14,8 @@ public:
 	DirectX::XMMATRIX ViewMatrix() const noexcept;
 	DirectX::XMMATRIX ProjectionMatrix() const noexcept;
 
+	DirectX::XMVECTOR Position() const noexcept { return m_eye; }
+
 private:
 	void CreateProjectionMatrix(D3D11_VIEWPORT vp) noexcept;
 
