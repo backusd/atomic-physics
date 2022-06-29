@@ -1,6 +1,8 @@
 #pragma once
 #include "pch.h"
+#include "BasicGeometry.h"
 #include "Bindable.h"
+#include "InputLayoutException.h"
 
 #include <vector>
 #include <string>
@@ -9,6 +11,7 @@ class InputLayout : public Bindable
 {
 public:
 	InputLayout(std::wstring vertexShaderFile);
+	InputLayout(std::wstring vertexShaderFile, BasicGeometry geometry);
 	InputLayout(const InputLayout&) = delete;
 	void operator=(const InputLayout&) = delete;
 
@@ -27,6 +30,8 @@ public:
 	Microsoft::WRL::ComPtr<ID3DBlob> GetVertexShaderFileBlob() noexcept { return m_blob; }
 
 private:
+	void CreateSphereInputLayout();
+
 	std::vector<std::string> m_semanticNames;
 	std::vector<D3D11_INPUT_ELEMENT_DESC> m_descriptions;
 

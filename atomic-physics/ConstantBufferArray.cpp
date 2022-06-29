@@ -1,6 +1,6 @@
 #include "ConstantBufferArray.h"
 
-ConstantBufferArray::ConstantBufferArray(ConstantBufferBindingLocation bindToStage) noexcept:
+ConstantBufferArray::ConstantBufferArray(ConstantBufferBindingLocation bindToStage) noexcept :
 	Bindable()
 {
 	switch (bindToStage)
@@ -12,6 +12,33 @@ ConstantBufferArray::ConstantBufferArray(ConstantBufferBindingLocation bindToSta
 	case ConstantBufferBindingLocation::GEOMETRY_SHADER: BindFunc = std::bind(&ConstantBufferArray::BindGS, this); break;
 	case ConstantBufferBindingLocation::PIXEL_SHADER:	 BindFunc = std::bind(&ConstantBufferArray::BindPS, this); break;
 	}
+}
+
+ConstantBufferArray::ConstantBufferArray(ConstantBufferBindingLocation bindToStage, BasicGeometry geometry) :
+	Bindable()
+{
+	switch (bindToStage)
+	{
+	case ConstantBufferBindingLocation::COMPUTE_SHADER:	 BindFunc = std::bind(&ConstantBufferArray::BindCS, this); break;
+	case ConstantBufferBindingLocation::VERTEX_SHADER:	 BindFunc = std::bind(&ConstantBufferArray::BindVS, this); break;
+	case ConstantBufferBindingLocation::HULL_SHADER:	 BindFunc = std::bind(&ConstantBufferArray::BindHS, this); break;
+	case ConstantBufferBindingLocation::DOMAIN_SHADER:	 BindFunc = std::bind(&ConstantBufferArray::BindDS, this); break;
+	case ConstantBufferBindingLocation::GEOMETRY_SHADER: BindFunc = std::bind(&ConstantBufferArray::BindGS, this); break;
+	case ConstantBufferBindingLocation::PIXEL_SHADER:	 BindFunc = std::bind(&ConstantBufferArray::BindPS, this); break;
+	}
+
+	switch (geometry)
+	{
+	case BasicGeometry::SPHERE: CreateSphereConstantBufferArray(); break;
+	}
+}
+
+void ConstantBufferArray::CreateSphereConstantBufferArray() noexcept
+{
+	std::shared_ptr<ConstantBuffer> mvpBuffer = std::make_shared<ConstantBuffer>();
+	mvpBuffer->CreateBuffer<ModelViewProjectionPreMultiplied>(D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE, 0, 0);
+
+	AddBuffer(mvpBuffer);
 }
 
 void ConstantBufferArray::AddBuffer(std::shared_ptr<ConstantBuffer> buffer) noexcept
@@ -67,8 +94,14 @@ void ConstantBufferArray::BindGS() const noexcept_release_only
 
 void ConstantBufferArray::BindPS() const noexcept_release_only
 {
+	// Default PS Buffers:
+	//		slot 0 - Lighting data
+	//		slot 1 - User/eye position data
+	//
+	// Therefore, you MUST start at slot 2
+	//
 	GFX_THROW_INFO_ONLY(
-		DeviceResources::D3DDeviceContext()->PSSetConstantBuffers(0u, static_cast<unsigned int>(m_rawBufferPointers.size()), m_rawBufferPointers.data())
+		DeviceResources::D3DDeviceContext()->PSSetConstantBuffers(2u, static_cast<unsigned int>(m_rawBufferPointers.size()), m_rawBufferPointers.data())
 	);
 }
 

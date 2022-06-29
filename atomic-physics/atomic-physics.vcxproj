@@ -156,7 +156,10 @@
     <ClCompile Include="DeviceResourcesException.cpp" />
     <ClCompile Include="Drawable.cpp" />
     <ClCompile Include="DxgiInfoManager.cpp" />
+    <ClCompile Include="EyePositionBufferArray.cpp" />
     <ClCompile Include="InputLayout.cpp" />
+    <ClCompile Include="InputLayoutException.cpp" />
+    <ClCompile Include="Lighting.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MoveLookController.cpp" />
     <ClCompile Include="pch.cpp" />
@@ -182,6 +185,7 @@
     <ClInclude Include="AppWindow.h" />
     <ClInclude Include="AppWindowTemplate.h" />
     <ClInclude Include="BaseException.h" />
+    <ClInclude Include="BasicGeometry.h" />
     <ClInclude Include="Bindable.h" />
     <ClInclude Include="ConstantBuffer.h" />
     <ClInclude Include="ConstantBufferArray.h" />
@@ -191,11 +195,15 @@
     <ClInclude Include="DirectXHelper.h" />
     <ClInclude Include="Drawable.h" />
     <ClInclude Include="DxgiInfoManager.h" />
+    <ClInclude Include="EyePositionBufferArray.h" />
     <ClInclude Include="HLSLStructures.h" />
     <ClInclude Include="InputLayout.h" />
+    <ClInclude Include="InputLayoutException.h" />
+    <ClInclude Include="Lighting.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MoveLookController.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="PhysicsConstants.h" />
     <ClInclude Include="PixelShader.h" />
     <ClInclude Include="RasterizerState.h" />
     <ClInclude Include="Renderer.h" />

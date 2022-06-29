@@ -9,43 +9,8 @@ Sphere::Sphere(std::shared_ptr<MoveLookController> mlc) noexcept :
 	Drawable(mlc),
 	m_radius(1.0f)
 {
-	// IA - Input Assembler --------------------------------------------------------------
-	//std::unique_ptr<InputLayout> inputLayout = std::make_unique<InputLayout>(L"SolidVS.cso");
-	std::unique_ptr<InputLayout> inputLayout = std::make_unique<InputLayout>(L"PhongVS.cso");
-	inputLayout->AddDescription("POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0,                            0, D3D11_INPUT_PER_VERTEX_DATA, 0);
-	inputLayout->AddDescription(  "NORMAL", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0);
-	inputLayout->CreateLayout();
-
-	// The mesh is not included in the list of bindables because we need to be able to easily access
-	// it to call mesh->IndexCount() below
-	m_mesh = std::make_unique<SphereMesh>();
-
-	// VS - Vertex Shader ------------------------------------------------------------------
-	m_bindables.push_back(std::make_unique<VertexShader>(inputLayout->GetVertexShaderFileBlob()));
-	m_bindables.push_back(std::move(inputLayout));
-
-	std::shared_ptr<ConstantBuffer> mvpBuffer = std::make_shared<ConstantBuffer>();
-	mvpBuffer->CreateBuffer<ModelViewProjectionPreMultiplied>(D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE, 0, 0);
 
 	/*
-	std::shared_ptr<ConstantBuffer> mvpBuffer = std::make_shared<ConstantBuffer>();
-	mvpBuffer->CreateBuffer<ModelViewProjection>(D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE, 0, 0);
-
-	ColorConstantBuffer color = { DirectX::XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f) };
-	std::shared_ptr<ConstantBuffer> colorBuffer = std::make_shared<ConstantBuffer>();
-	colorBuffer->CreateBuffer<ColorConstantBuffer>(D3D11_USAGE_DEFAULT, 0, 0, 0, static_cast<void*>(&color));
-	*/
-
-	std::unique_ptr<ConstantBufferArray> vsBufferArray = std::make_unique<ConstantBufferArray>(ConstantBufferBindingLocation::VERTEX_SHADER);
-	vsBufferArray->AddBuffer(mvpBuffer);
-	// vsBufferArray->AddBuffer(colorBuffer);
-	m_bindables.push_back(std::move(vsBufferArray));
-
-
-	// PS - Pixel Shader --------------------------------------------------------------------
-	//m_bindables.push_back(std::make_unique<PixelShader>(L"SolidPS.cso"));
-	m_bindables.push_back(std::make_unique<PixelShader>(L"PhongPS.cso"));
-
 	LightProperties lightProps = LightProperties();
 	lightProps.GlobalAmbient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 	DirectX::XMStoreFloat4(&lightProps.EyePosition, m_moveLookController->Position());
@@ -81,9 +46,6 @@ Sphere::Sphere(std::shared_ptr<MoveLookController> mlc) noexcept :
 		light.LinearAttenuation = 0.08f;
 		light.QuadraticAttenuation = 0.0f;
 
-		// Make the light slightly offset from the initial eye position
-		//XMFLOAT4 LightPosition = XMFLOAT4(std::sin(totalTime + offset * i) * radius, 9.0f, std::cos(totalTime + offset * i) * radius, 1.0f);
-
 		XMFLOAT4 LightPosition = XMFLOAT4(0.0f, 10.0f, 10.0f, 1.0f);
 		light.Position = LightPosition;
 		XMVECTOR LightDirection = DirectX::XMVectorSet(-LightPosition.x, -LightPosition.y, -LightPosition.z, 0.0f);
@@ -94,7 +56,7 @@ Sphere::Sphere(std::shared_ptr<MoveLookController> mlc) noexcept :
 
 	std::shared_ptr<ConstantBuffer> lightingBuffer = std::make_shared<ConstantBuffer>();
 	lightingBuffer->CreateBuffer<LightProperties>(D3D11_USAGE_DEFAULT, 0, 0, 0, static_cast<void*>(&lightProps));
-
+	*/
 	// ---
 
 	PhongMaterialProperties materialProps;
@@ -103,7 +65,7 @@ Sphere::Sphere(std::shared_ptr<MoveLookController> mlc) noexcept :
 	materialBuffer->CreateBuffer<PhongMaterialProperties>(D3D11_USAGE_DEFAULT, 0, 0, 0, static_cast<void*>(&materialProps));
 
 	std::unique_ptr<ConstantBufferArray> psBufferArray = std::make_unique<ConstantBufferArray>(ConstantBufferBindingLocation::PIXEL_SHADER);
-	psBufferArray->AddBuffer(lightingBuffer);
+	// psBufferArray->AddBuffer(lightingBuffer);
 	psBufferArray->AddBuffer(materialBuffer);
 	m_bindables.push_back(std::move(psBufferArray));
 
@@ -111,14 +73,7 @@ Sphere::Sphere(std::shared_ptr<MoveLookController> mlc) noexcept :
 
 
 
-	// RS - Rasterizer State ----------------------------------------------------------------
-	std::unique_ptr<RasterizerState> rs = std::make_unique<RasterizerState>();
-	m_bindables.push_back(std::move(rs));
 
-
-	// DS - Depth Stencil State -------------------------------------------------------------
-	std::unique_ptr<DepthStencilState> dss = std::make_unique<DepthStencilState>(1);
-	m_bindables.push_back(std::move(dss));
 }
 
 void Sphere::Update() const noexcept
@@ -128,19 +83,32 @@ void Sphere::Update() const noexcept
 
 void Sphere::Draw() const noexcept_release_only
 {
+	// Hold static variables that will always be used to render spheres
+	static std::unique_ptr<InputLayout>			inputLayout			= std::make_unique<InputLayout>(L"PhongVS.cso", BasicGeometry::SPHERE);
+	static std::unique_ptr<VertexShader>		vertexShader		= std::make_unique<VertexShader>(inputLayout->GetVertexShaderFileBlob());
+	static std::unique_ptr<PixelShader>			pixelShader			= std::make_unique<PixelShader>(L"PhongPS.cso");
+	static std::unique_ptr<SphereMesh>			mesh				= std::make_unique<SphereMesh>();
+	static std::unique_ptr<ConstantBufferArray> vsBuffers			= std::make_unique<ConstantBufferArray>(ConstantBufferBindingLocation::VERTEX_SHADER, BasicGeometry::SPHERE );
+	static std::unique_ptr<RasterizerState>		rasterizerState		= std::make_unique<RasterizerState>();
+	static std::unique_ptr<DepthStencilState>	depthStencilState	= std::make_unique<DepthStencilState>(1);
+
+	inputLayout->Bind();
+	vertexShader->Bind();
+	pixelShader->Bind();
+	mesh->Bind();
+	vsBuffers->Bind();
+	rasterizerState->Bind();
+	depthStencilState->Bind();
+
 	for (const std::unique_ptr<Bindable>& bindable : m_bindables)
 		bindable->Bind();
-
-	// The mesh is not included in the list of bindables because we need to be able to easily access
-	// it to call mesh->IndexCount() below
-	m_mesh->Bind();
 
 	// In order to update the model-view-projection constant buffer, it must first be bound to the pipeline in
 	// order to Map to it. Therefore, this kind of update must occur here as opposed to in the actual Update() function
 	UpdateModelViewProjectionBuffer();
 
 	GFX_THROW_INFO_ONLY(
-		DeviceResources::D3DDeviceContext()->DrawIndexed(m_mesh->IndexCount(), 0u, 0u)
+		DeviceResources::D3DDeviceContext()->DrawIndexed(mesh->IndexCount(), 0u, 0u)
 	);
 }
 

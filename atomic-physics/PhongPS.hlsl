@@ -26,12 +26,18 @@ struct MyLight
 
 cbuffer MyLightProperties : register(b0)
 {
-    float4 EyePosition; // 16 bytes
+    // float4 EyePosition; // 16 bytes
     //----------------------------------- (16 byte boundary)
     float4 GlobalAmbient; // 16 bytes
     //----------------------------------- (16 byte boundary)
     MyLight Lights[MAX_LIGHTS]; // 80 * 8 = 640 bytes
-};  // Total:                           // 672 bytes (42 * 16 byte boundary)
+    // Total:                   // 672 bytes (42 * 16 byte boundary)
+};
+
+cbuffer EyePositionBuffer : register(b1)
+{
+    float4 EyePosition; // 16 bytes
+};  
 
 
 // PS INPUT =================================================================================================
@@ -59,7 +65,7 @@ struct _MyMaterial
     //----------------------------------- (16 byte boundary)
 }; // Total:               // 80 bytes ( 5 * 16 )
 
-cbuffer MyMaterialProperties : register(b1)
+cbuffer MyMaterialProperties : register(b2)
 {
     _MyMaterial Material;
 };
@@ -73,6 +79,10 @@ struct LightingResult
 
 float4 DoDiffuse(MyLight light, float3 L, float3 N)
 {
+    // Try:
+    //
+    // L = normalize(L)
+    //
     float NdotL = max(0, dot(N, L));
     return light.Color * NdotL;
 }

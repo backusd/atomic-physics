@@ -2,7 +2,7 @@
 #include "pch.h"
 #include "Drawable.h"
 
-
+#include <memory>
 
 class Sphere : public Drawable
 {
@@ -22,4 +22,5 @@ private:
 	void UpdateModelViewProjectionBuffer() const;
 
 	float m_radius;
+
 };

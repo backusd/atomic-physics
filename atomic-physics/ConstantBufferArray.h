@@ -1,7 +1,9 @@
 #pragma once
 #include "pch.h"
+#include "BasicGeometry.h"
 #include "Bindable.h"
 #include "ConstantBuffer.h"
+#include "HLSLStructures.h"
 
 
 #include <vector>
@@ -21,6 +23,7 @@ class ConstantBufferArray : public Bindable
 {
 public:
 	ConstantBufferArray(ConstantBufferBindingLocation bindToStage) noexcept;
+	ConstantBufferArray(ConstantBufferBindingLocation bindToStage, BasicGeometry geometry);
 	ConstantBufferArray(const ConstantBufferArray&) = delete;
 	void operator=(const ConstantBufferArray&) = delete;
 
@@ -34,7 +37,9 @@ public:
 	ID3D11Buffer* GetRawBufferPointer(int index) const noexcept { return m_buffers[index]->GetRawBufferPointer(); }
 
 
-private:
+protected:
+	void CreateSphereConstantBufferArray() noexcept;
+
 	std::function<void()> BindFunc;
 
 	void BindCS() const noexcept_release_only;

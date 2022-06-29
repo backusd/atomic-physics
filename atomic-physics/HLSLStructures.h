@@ -12,6 +12,11 @@ struct ColorConstantBuffer
     DirectX::XMFLOAT4 color;
 };
 
+struct EyePositionBuffer
+{
+    DirectX::XMFLOAT4 eyePosition;
+};
+
 struct ModelViewProjectionPreMultiplied
 {
     DirectX::XMFLOAT4X4 model;
@@ -102,13 +107,20 @@ struct Light
 struct LightProperties
 {
     LightProperties()
-        : EyePosition(0.0f, 0.0f, 0.0f, 1.0f)
-        , GlobalAmbient(0.2f, 0.2f, 0.8f, 1.0f)
+        : //EyePosition(0.0f, 0.0f, 0.0f, 1.0f),
+        GlobalAmbient(0.2f, 0.2f, 0.8f, 1.0f)
     {}
 
-    DirectX::XMFLOAT4   EyePosition;
+    //DirectX::XMFLOAT4   EyePosition;
     //----------------------------------- (16 byte boundary)
+    //DirectX::XMFLOAT4   GlobalAmbient;
+    //----------------------------------- (16 byte boundary)
+    //Light               Lights[MAX_LIGHTS]; // 80 * 8 bytes
+    // Total:                                  672 bytes (42 * 16)
+
+
     DirectX::XMFLOAT4   GlobalAmbient;
     //----------------------------------- (16 byte boundary)
     Light               Lights[MAX_LIGHTS]; // 80 * 8 bytes
-};  // Total:                                  672 bytes (42 * 16)
+    // Total:                                  672 bytes (42 * 16)
+};  

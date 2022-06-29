@@ -124,6 +124,15 @@
     <ClCompile Include="StepTimerException.cpp">
       <Filter>Source Files\Exceptions</Filter>
     </ClCompile>
+    <ClCompile Include="InputLayoutException.cpp">
+      <Filter>Source Files\Exceptions</Filter>
+    </ClCompile>
+    <ClCompile Include="Lighting.cpp">
+      <Filter>Source Files\UI\3DScene\Bindables</Filter>
+    </ClCompile>
+    <ClCompile Include="EyePositionBufferArray.cpp">
+      <Filter>Source Files\UI\3DScene\Bindables</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -227,6 +236,21 @@
     </ClInclude>
     <ClInclude Include="StepTimerException.h">
       <Filter>Source Files\Exceptions</Filter>
+    </ClInclude>
+    <ClInclude Include="InputLayoutException.h">
+      <Filter>Source Files\Exceptions</Filter>
+    </ClInclude>
+    <ClInclude Include="BasicGeometry.h">
+      <Filter>Source Files\UI\3DScene\Drawables</Filter>
+    </ClInclude>
+    <ClInclude Include="Lighting.h">
+      <Filter>Source Files\UI\3DScene\Bindables</Filter>
+    </ClInclude>
+    <ClInclude Include="EyePositionBufferArray.h">
+      <Filter>Source Files\UI\3DScene\Bindables</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicsConstants.h">
+      <Filter>Source Files\Simulation</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
