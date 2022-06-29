@@ -6,7 +6,8 @@ using DirectX::XMFLOAT4;
 using DirectX::XMVECTOR;
 
 Sphere::Sphere(std::shared_ptr<MoveLookController> mlc) noexcept :
-	Drawable(mlc)
+	Drawable(mlc),
+	m_radius(1.0f)
 {
 	// IA - Input Assembler --------------------------------------------------------------
 	//std::unique_ptr<InputLayout> inputLayout = std::make_unique<InputLayout>(L"SolidVS.cso");
@@ -162,7 +163,7 @@ void Sphere::UpdateModelViewProjectionBuffer() const
 	ModelViewProjectionPreMultiplied* mappedBuffer = (ModelViewProjectionPreMultiplied*)ms.pData;
 
 	XMMATRIX viewProjection = m_moveLookController->ViewMatrix() * m_moveLookController->ProjectionMatrix();
-	XMMATRIX model = DirectX::XMMatrixIdentity();
+	XMMATRIX model = GetRotationMatrix() * GetScaleMatrix() * GetTranslationMatrix();
 
 	DirectX::XMStoreFloat4x4(&(mappedBuffer->model), model);
 	DirectX::XMStoreFloat4x4(&(mappedBuffer->modelViewProjection), model * viewProjection);

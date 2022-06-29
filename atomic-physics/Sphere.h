@@ -14,6 +14,12 @@ public:
 	void Update() const noexcept;
 	void Draw() const noexcept_release_only;
 
+	DirectX::XMMATRIX GetScaleMatrix() const noexcept override { return DirectX::XMMatrixScaling(m_radius, m_radius, m_radius); }
+
+	void Radius(float radius) noexcept { m_radius = radius; }
+
 private:
 	void UpdateModelViewProjectionBuffer() const;
+
+	float m_radius;
 };

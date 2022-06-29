@@ -121,6 +121,9 @@
     <ClCompile Include="Sphere.cpp">
       <Filter>Source Files\UI\3DScene\Drawables</Filter>
     </ClCompile>
+    <ClCompile Include="StepTimerException.cpp">
+      <Filter>Source Files\Exceptions</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -218,6 +221,12 @@
     </ClInclude>
     <ClInclude Include="Sphere.h">
       <Filter>Source Files\UI\3DScene\Drawables</Filter>
+    </ClInclude>
+    <ClInclude Include="StepTimer.h">
+      <Filter>Source Files\Simulation</Filter>
+    </ClInclude>
+    <ClInclude Include="StepTimerException.h">
+      <Filter>Source Files\Exceptions</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

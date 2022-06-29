@@ -169,6 +169,7 @@
     <ClCompile Include="Simulation.cpp" />
     <ClCompile Include="Sphere.cpp" />
     <ClCompile Include="SphereMesh.cpp" />
+    <ClCompile Include="StepTimerException.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TextureArray.cpp" />
     <ClCompile Include="VertexShader.cpp" />
@@ -204,6 +205,8 @@
     <ClInclude Include="Simulation.h" />
     <ClInclude Include="Sphere.h" />
     <ClInclude Include="SphereMesh.h" />
+    <ClInclude Include="StepTimer.h" />
+    <ClInclude Include="StepTimerException.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureArray.h" />
     <ClInclude Include="VertexShader.h" />

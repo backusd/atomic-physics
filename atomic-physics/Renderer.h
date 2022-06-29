@@ -4,6 +4,7 @@
 #include "Drawable.h"
 #include "MoveLookController.h"
 #include "Sphere.h"
+#include "SimulationManager.h"
 
 #include <memory>
 #include <vector>
