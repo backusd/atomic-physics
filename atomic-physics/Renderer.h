@@ -16,9 +16,11 @@ class Renderer
 {
 public:
 	Renderer(D3D11_VIEWPORT vp) noexcept;
+	Renderer(const Renderer&) = delete;
+	void operator=(const Renderer&) = delete;
 
-	void Update() noexcept;
-	void Render() noexcept;
+	void Update();
+	void Render();
 
 	D3D11_VIEWPORT GetViewport() const noexcept { return m_viewport; }
 

@@ -10,14 +10,14 @@ Renderer::Renderer(D3D11_VIEWPORT vp) noexcept :
 	// lighting
 	m_lighting = std::make_unique<Lighting>();
 	m_lighting->GlobalAmbient(XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f));
-	m_lighting->EditLight(1, { -5.0f, 0.0f, 10.0f, 1.0f }, {  5.0f, 0.0f, -10.0f, 1.0f });
-	// m_lighting->EditLight(2, {  5.0f, 0.0f, 10.0f, 1.0f }, { -5.0f, 0.0f, -10.0f, 1.0f });
+	m_lighting->EditLight(0, { -5.0f, 0.0f, 10.0f, 1.0f }, {  5.0f, 0.0f, -10.0f, 1.0f });
+	// m_lighting->EditLight(1, {  5.0f, 0.0f, 10.0f, 1.0f }, { -5.0f, 0.0f, -10.0f, 1.0f });
 
 	// eye position - will always bind second slot in Pixel Shader
 	m_eyePositionBufferArray = std::make_unique<EyePositionBufferArray>(m_moveLookController);
 }
 
-void Renderer::Update() noexcept
+void Renderer::Update()
 {
 	const std::vector<Particle>& particles = SimulationManager::GetParticles();
 	std::unique_ptr<Sphere> sphere;
@@ -51,7 +51,7 @@ void Renderer::Update() noexcept
 		drawable->Update();
 }
 
-void Renderer::Render() noexcept
+void Renderer::Render()
 {
 	// Set the viewport (should be specific to this renderer)
 	DeviceResources::SetViewport(m_viewport);

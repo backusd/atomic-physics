@@ -25,9 +25,9 @@ void Simulation::Update() noexcept
 
 			for (Particle& p : m_particles)
 			{
-				p.p_x += (p.v_x * timeDelta);
-				p.p_y += (p.v_y * timeDelta);
-				p.p_z += (p.v_z * timeDelta);
+				p.p_x += static_cast<float>(p.v_x * timeDelta);
+				p.p_y += static_cast<float>(p.v_y * timeDelta);
+				p.p_z += static_cast<float>(p.v_z * timeDelta);
 
 				if (p.p_x > m_boxMaxX || p.p_x < m_boxMinX)
 					p.v_x *= -1;

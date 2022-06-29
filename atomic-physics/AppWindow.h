@@ -17,8 +17,8 @@ public:
 
 	LRESULT HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) const noexcept override;
 
-	void Update() noexcept;
-	bool Render() const noexcept;
+	void Update();
+	bool Render() const;
 	void Present() const;
 
 	std::optional<int> ProcessMessages() const noexcept;

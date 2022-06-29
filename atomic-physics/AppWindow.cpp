@@ -28,7 +28,7 @@ void AppWindow::Initialize() noexcept
 	//... Unless they become singletons in which case there is no need for explicit initialization
 }
 
-void AppWindow::Update() noexcept
+void AppWindow::Update()
 {
 	// At this point for the current frame, the Simulation has already been updated
 	// All we need to do on the window side is query the Simulation to render it
@@ -39,7 +39,7 @@ void AppWindow::Update() noexcept
 	// ... ??
 }
 
-bool AppWindow::Render() const noexcept
+bool AppWindow::Render() const
 { 
 	// Clear the window
 	ID3D11DeviceContext4* context = DeviceResources::D3DDeviceContext();

@@ -9,63 +9,12 @@ Sphere::Sphere(std::shared_ptr<MoveLookController> mlc) noexcept :
 	Drawable(mlc),
 	m_radius(1.0f)
 {
-
-	/*
-	LightProperties lightProps = LightProperties();
-	lightProps.GlobalAmbient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	DirectX::XMStoreFloat4(&lightProps.EyePosition, m_moveLookController->Position());
-
-	static const XMVECTORF32 LightColors[MAX_LIGHTS] = {
-		DirectX::Colors::White,
-		DirectX::Colors::Orange,
-		DirectX::Colors::Yellow,
-		DirectX::Colors::Green,
-		DirectX::Colors::Blue,
-		DirectX::Colors::Indigo,
-		DirectX::Colors::Violet,
-		DirectX::Colors::White
-	};
-
-	static const LightType LightTypes[MAX_LIGHTS] = {
-		PointLight, SpotLight, SpotLight, PointLight, SpotLight, SpotLight, SpotLight, PointLight
-	};
-
-	static const bool LightEnabled[MAX_LIGHTS] = {
-		true, false, false, false, false, false, false, false
-	};
-
-	const int numLights = MAX_LIGHTS;
-	for (int i = 0; i < numLights; ++i)
-	{
-		Light light;
-		light.Enabled = static_cast<int>(LightEnabled[i]);
-		light.LightType = LightTypes[i];
-		light.Color = XMFLOAT4(LightColors[i]);
-		light.SpotAngle = DirectX::XMConvertToRadians(45.0f);
-		light.ConstantAttenuation = 1.0f;
-		light.LinearAttenuation = 0.08f;
-		light.QuadraticAttenuation = 0.0f;
-
-		XMFLOAT4 LightPosition = XMFLOAT4(0.0f, 10.0f, 10.0f, 1.0f);
-		light.Position = LightPosition;
-		XMVECTOR LightDirection = DirectX::XMVectorSet(-LightPosition.x, -LightPosition.y, -LightPosition.z, 0.0f);
-		XMStoreFloat4(&light.Direction, DirectX::XMVector3Normalize(LightDirection));
-
-		lightProps.Lights[i] = light;
-	}
-
-	std::shared_ptr<ConstantBuffer> lightingBuffer = std::make_shared<ConstantBuffer>();
-	lightingBuffer->CreateBuffer<LightProperties>(D3D11_USAGE_DEFAULT, 0, 0, 0, static_cast<void*>(&lightProps));
-	*/
-	// ---
-
 	PhongMaterialProperties materialProps;
 
 	std::shared_ptr<ConstantBuffer> materialBuffer = std::make_shared<ConstantBuffer>();
 	materialBuffer->CreateBuffer<PhongMaterialProperties>(D3D11_USAGE_DEFAULT, 0, 0, 0, static_cast<void*>(&materialProps));
 
 	std::unique_ptr<ConstantBufferArray> psBufferArray = std::make_unique<ConstantBufferArray>(ConstantBufferBindingLocation::PIXEL_SHADER);
-	// psBufferArray->AddBuffer(lightingBuffer);
 	psBufferArray->AddBuffer(materialBuffer);
 	m_bindables.push_back(std::move(psBufferArray));
 
@@ -136,14 +85,6 @@ void Sphere::UpdateModelViewProjectionBuffer() const
 	DirectX::XMStoreFloat4x4(&(mappedBuffer->model), model);
 	DirectX::XMStoreFloat4x4(&(mappedBuffer->modelViewProjection), model * viewProjection);
 	DirectX::XMStoreFloat4x4(&(mappedBuffer->inverseTransposeModel), DirectX::XMMatrixTranspose(DirectX::XMMatrixInverse(nullptr, model)));
-
-
-	/*
-	ModelViewProjection* mappedBuffer = (ModelViewProjection*)ms.pData;
-	DirectX::XMStoreFloat4x4(&(mappedBuffer->model), DirectX::XMMatrixIdentity());
-	DirectX::XMStoreFloat4x4(&(mappedBuffer->view), m_moveLookController->ViewMatrix());
-	DirectX::XMStoreFloat4x4(&(mappedBuffer->projection), m_moveLookController->ProjectionMatrix());
-	*/
 
 	GFX_THROW_INFO_ONLY(
 		context->Unmap(vsBuffer.Get(), 0)
