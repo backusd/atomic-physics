@@ -25,4 +25,13 @@ private:
 	float m_radius;
 
 	std::unique_ptr<ConstantBufferArray> m_materialIndexBufferArray;
+
+
+	static std::unique_ptr<InputLayout>			m_inputLayout;
+	static std::unique_ptr<VertexShader>		m_vertexShader;
+	static std::unique_ptr<PixelShader>			m_pixelShader;
+	static std::unique_ptr<SphereMesh>			m_mesh;
+	static std::unique_ptr<ConstantBufferArray> m_vsBuffers;
+	static std::unique_ptr<RasterizerState>		m_rasterizerState;
+	static std::unique_ptr<DepthStencilState>	m_depthStencilState;
 };

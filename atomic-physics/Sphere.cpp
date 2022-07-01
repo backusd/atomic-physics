@@ -1,5 +1,13 @@
 #include "Sphere.h"
 
+std::unique_ptr<InputLayout>			Sphere::m_inputLayout = nullptr;
+std::unique_ptr<VertexShader>			Sphere::m_vertexShader = nullptr;
+std::unique_ptr<PixelShader>			Sphere::m_pixelShader = nullptr;
+std::unique_ptr<SphereMesh>				Sphere::m_mesh = nullptr;
+std::unique_ptr<ConstantBufferArray>	Sphere::m_vsBuffers = nullptr;
+std::unique_ptr<RasterizerState>		Sphere::m_rasterizerState = nullptr;
+std::unique_ptr<DepthStencilState>		Sphere::m_depthStencilState = nullptr;
+
 using DirectX::XMMATRIX;
 using DirectX::XMVECTORF32;
 using DirectX::XMFLOAT4;
@@ -10,21 +18,14 @@ Sphere::Sphere(std::shared_ptr<MoveLookController> mlc) noexcept :
 	m_radius(1.0f),
 	m_materialIndexBufferArray(nullptr)
 {
-	/*
-	PhongMaterialProperties materialProps;
-
-	std::shared_ptr<ConstantBuffer> materialBuffer = std::make_shared<ConstantBuffer>();
-	materialBuffer->CreateBuffer<PhongMaterialProperties>(D3D11_USAGE_DEFAULT, 0, 0, 0, static_cast<void*>(&materialProps));
-
-	std::unique_ptr<ConstantBufferArray> psBufferArray = std::make_unique<ConstantBufferArray>(ConstantBufferBindingLocation::PIXEL_SHADER);
-	psBufferArray->AddBuffer(materialBuffer);
-	m_bindables.push_back(std::move(psBufferArray));
-	*/
-
-
-
-
-
+	// Initialize static variables (can NOT do this in the global static definition because we do not yet have access to Device Resources)
+	if (!m_inputLayout)			m_inputLayout = std::make_unique<InputLayout>(L"PhongVS.cso", BasicGeometry::SPHERE);
+	if (!m_vertexShader)		m_vertexShader = std::make_unique<VertexShader>(m_inputLayout->GetVertexShaderFileBlob());
+	if (!m_pixelShader)			m_pixelShader = std::make_unique<PixelShader>(L"PhongPS.cso");
+	if (!m_mesh)				m_mesh = std::make_unique<SphereMesh>();
+	if (!m_vsBuffers)			m_vsBuffers = std::make_unique<ConstantBufferArray>(ConstantBufferBindingLocation::VERTEX_SHADER, BasicGeometry::SPHERE);
+	if (!m_rasterizerState)		m_rasterizerState = std::make_unique<RasterizerState>();
+	if (!m_depthStencilState)	m_depthStencilState = std::make_unique<DepthStencilState>(1);
 }
 
 void Sphere::SetAtomType(int elementNumber) noexcept
@@ -32,77 +33,7 @@ void Sphere::SetAtomType(int elementNumber) noexcept
 	// Radius
 	m_radius = Constants::AtomicRadii[elementNumber];
 
-	// Material
-	/*
-	PhongMaterialProperties materials[11];
-
-	materials[1].Material.Emissive = XMFLOAT4(0.15f, 0.15f, 0.15f, 1.0f);
-	materials[1].Material.Ambient = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-	materials[1].Material.Diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-	materials[1].Material.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	materials[1].Material.SpecularPower = 6.0f;
-
-	materials[2].Material.Emissive = XMFLOAT4(0.4f, 0.14f, 0.14f, 1.0f);
-	materials[2].Material.Ambient = XMFLOAT4(1.0f, 0.75f, 0.75f, 1.0f);
-	materials[2].Material.Diffuse = XMFLOAT4(1.0f, 0.6f, 0.6f, 1.0f);
-	materials[2].Material.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	materials[2].Material.SpecularPower = 6.0f;
-
-	materials[3].Material.Emissive = XMFLOAT4(0.15f, 0.0f, 0.15f, 1.0f);
-	materials[3].Material.Ambient = XMFLOAT4(1.0f, 0.0f, 1.0f, 1.0f);
-	materials[3].Material.Diffuse = XMFLOAT4(1.0f, 0.6f, 0.6f, 1.0f);
-	materials[3].Material.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	materials[3].Material.SpecularPower = 6.0f;
-
-	materials[4].Material.Emissive = XMFLOAT4(0.15f, 0.15f, 0.0f, 1.0f);
-	materials[4].Material.Ambient = XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f);
-	materials[4].Material.Diffuse = XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f);
-	materials[4].Material.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	materials[4].Material.SpecularPower = 6.0f;
-
-	materials[5].Material.Emissive = XMFLOAT4(0.45f, 0.22f, 0.22f, 1.0f);
-	materials[5].Material.Ambient = XMFLOAT4(1.0f, 0.45f, 0.45f, 1.0f);
-	materials[5].Material.Diffuse = XMFLOAT4(1.0f, 0.8f, 0.8f, 1.0f);
-	materials[5].Material.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	materials[5].Material.SpecularPower = 6.0f;
-
-	materials[6].Material.Emissive = XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f);
-	materials[6].Material.Ambient = XMFLOAT4(0.12f, 0.12f, 0.12f, 1.0f);
-	materials[6].Material.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
-	materials[6].Material.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	materials[6].Material.SpecularPower = 6.0f;
-
-	materials[7].Material.Emissive = XMFLOAT4(0.0f, 0.0f, 0.3f, 1.0f);
-	materials[7].Material.Ambient = XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
-	materials[7].Material.Diffuse = XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
-	materials[7].Material.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	materials[7].Material.SpecularPower = 6.0f;
-
-	materials[8].Material.Emissive = XMFLOAT4(0.3f, 0.0f, 0.0f, 1.0f);
-	materials[8].Material.Ambient = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
-	materials[8].Material.Diffuse = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
-	materials[8].Material.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	materials[8].Material.SpecularPower = 6.0f;
-
-	materials[9].Material.Emissive = XMFLOAT4(0.0f, 0.12f, 0.12f, 1.0f);
-	materials[9].Material.Ambient = XMFLOAT4(0.0f, 0.5f, 0.5f, 1.0f);
-	materials[9].Material.Diffuse = XMFLOAT4(0.0f, 0.2f, 1.0f, 1.0f);
-	materials[9].Material.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	materials[9].Material.SpecularPower = 6.0f;
-
-	materials[10].Material.Emissive = XMFLOAT4(0.1f, 0.3f, 0.3f, 1.0f);
-	materials[10].Material.Ambient = XMFLOAT4(0.3f, 1.0f, 0.0f, 1.0f);
-	materials[10].Material.Diffuse = XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f);
-	materials[10].Material.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	materials[10].Material.SpecularPower = 6.0f;
-
-	std::shared_ptr<ConstantBuffer> materialBuffer = std::make_shared<ConstantBuffer>();
-	materialBuffer->CreateBuffer<PhongMaterialProperties>(D3D11_USAGE_DEFAULT, 0, 0, 0, static_cast<void*>(&materials[elementNumber]));
-
-	psMaterialBufferArray = std::make_unique<ConstantBufferArray>(ConstantBufferBindingLocation::PIXEL_SHADER);
-	psMaterialBufferArray->AddBuffer(materialBuffer);
-	*/
-
+	// Material index into the material constant buffer array in the Pixel Shader
 	PhongMaterialIndexBuffer materialIndex = {};
 	materialIndex.materialIndex = elementNumber - 1; // Have to subtract 1 because materials array is zero indexed and we start with Hydrogen as element 1
 	
@@ -121,21 +52,21 @@ void Sphere::Update() const noexcept
 void Sphere::Draw() const noexcept_release_only
 {
 	// Hold static variables that will always be used to render spheres
-	static std::unique_ptr<InputLayout>			inputLayout			= std::make_unique<InputLayout>(L"PhongVS.cso", BasicGeometry::SPHERE);
-	static std::unique_ptr<VertexShader>		vertexShader		= std::make_unique<VertexShader>(inputLayout->GetVertexShaderFileBlob());
-	static std::unique_ptr<PixelShader>			pixelShader			= std::make_unique<PixelShader>(L"PhongPS.cso");
-	static std::unique_ptr<SphereMesh>			mesh				= std::make_unique<SphereMesh>();
-	static std::unique_ptr<ConstantBufferArray> vsBuffers			= std::make_unique<ConstantBufferArray>(ConstantBufferBindingLocation::VERTEX_SHADER, BasicGeometry::SPHERE );
-	static std::unique_ptr<RasterizerState>		rasterizerState		= std::make_unique<RasterizerState>();
-	static std::unique_ptr<DepthStencilState>	depthStencilState	= std::make_unique<DepthStencilState>(1);
+	// static std::unique_ptr<InputLayout>			inputLayout			= std::make_unique<InputLayout>(L"PhongVS.cso", BasicGeometry::SPHERE);
+	//static std::unique_ptr<VertexShader>		vertexShader		= std::make_unique<VertexShader>(m_inputLayout->GetVertexShaderFileBlob());
+	//static std::unique_ptr<PixelShader>			pixelShader			= std::make_unique<PixelShader>(L"PhongPS.cso");
+	//static std::unique_ptr<SphereMesh>			mesh				= std::make_unique<SphereMesh>();
+	//static std::unique_ptr<ConstantBufferArray> vsBuffers			= std::make_unique<ConstantBufferArray>(ConstantBufferBindingLocation::VERTEX_SHADER, BasicGeometry::SPHERE );
+	//static std::unique_ptr<RasterizerState>		rasterizerState		= std::make_unique<RasterizerState>();
+	//static std::unique_ptr<DepthStencilState>	depthStencilState	= std::make_unique<DepthStencilState>(1);
 
-	inputLayout->Bind();
-	vertexShader->Bind();
-	pixelShader->Bind();
-	mesh->Bind();
-	vsBuffers->Bind();
-	rasterizerState->Bind();
-	depthStencilState->Bind();
+	m_inputLayout->Bind();
+	m_vertexShader->Bind();
+	m_pixelShader->Bind();
+	m_mesh->Bind();
+	m_vsBuffers->Bind();
+	m_rasterizerState->Bind();
+	m_depthStencilState->Bind();
 
 	// Good idea to assert that the material index buffer array is not null, because it is only created in SetAtomType()
 	assert(m_materialIndexBufferArray != nullptr);
@@ -150,7 +81,7 @@ void Sphere::Draw() const noexcept_release_only
 	UpdateModelViewProjectionBuffer();
 
 	GFX_THROW_INFO_ONLY(
-		DeviceResources::D3DDeviceContext()->DrawIndexed(mesh->IndexCount(), 0u, 0u)
+		DeviceResources::D3DDeviceContext()->DrawIndexed(m_mesh->IndexCount(), 0u, 0u)
 	);
 }
 

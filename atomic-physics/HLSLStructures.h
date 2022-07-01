@@ -52,20 +52,11 @@ struct _PhongMaterial
     //----------------------------------- (16 byte boundary)
     float               SpecularPower;
     // Add some padding complete the 16 byte boundary.
-    //int                 UseTexture;
     BOOL                UseTexture;
     // Add some padding to complete the 16 byte boundary.
     float               Padding[2];
     //----------------------------------- (16 byte boundary)
 }; // Total:                                80 bytes (5 * 16)
-
-
-/*
-struct PhongMaterialProperties
-{
-    _PhongMaterial   Material;
-};
-*/
 
 constexpr int NUM_PHONG_MATERIALS = 10;
 
