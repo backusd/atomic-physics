@@ -12,7 +12,15 @@ App::App()
 	SimulationManager::Initialize();
 
 	SimulationManager::AddParticle(1, 1, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f);
-	SimulationManager::AddParticle(1, 1, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+	SimulationManager::AddParticle(2, 4, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+	SimulationManager::AddParticle(3, 6, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f);
+	SimulationManager::AddParticle(4, 8, 0.0f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f);
+	SimulationManager::AddParticle(5, 10, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f);
+	SimulationManager::AddParticle(6, 12, 0.0f, 0.0f, 0.0f, -1.0f, -1.0f, 0.0f);
+	SimulationManager::AddParticle(7, 14, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f);
+	SimulationManager::AddParticle(8, 16, 0.0f, 0.0f, 0.0f, 1.0f, -1.0f, 0.0f);
+	SimulationManager::AddParticle(9, 18, 0.0f, 0.0f, 0.0f, 1.0f, 2.0f, 0.0f);
+	SimulationManager::AddParticle(10, 20, 0.0f, 0.0f, 0.0f, -1.0f, 2.0f, 0.0f);
 
 	// The content within AppWindow does NOT get created in the AppWindow constructor. This is to
 	// allow the AppWindowTemplate the ability to create itself and give us a window, however,

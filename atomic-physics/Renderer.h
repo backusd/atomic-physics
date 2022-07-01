@@ -5,7 +5,6 @@
 #include "EyePositionBufferArray.h"
 #include "Lighting.h"
 #include "MoveLookController.h"
-#include "PhysicsConstants.h"
 #include "Sphere.h"
 #include "SimulationManager.h"
 

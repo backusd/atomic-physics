@@ -1,12 +1,12 @@
 #include "Simulation.h"
 
 Simulation::Simulation() :
-	m_boxMinX(-5.0f),
-	m_boxMaxX(5.0f),
-	m_boxMinY(-5.0f),
-	m_boxMaxY(5.0f),
-	m_boxMinZ(-5.0f),
-	m_boxMaxZ(5.0f),
+	m_boxMinX(-2.0f),
+	m_boxMaxX(2.0f),
+	m_boxMinY(-2.0f),
+	m_boxMaxY(2.0f),
+	m_boxMinZ(-2.0f),
+	m_boxMaxZ(2.0f),
 	m_elapsedTime(0)
 {
 	m_timer = std::make_unique<StepTimer>();

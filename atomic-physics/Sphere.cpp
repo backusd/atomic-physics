@@ -7,8 +7,10 @@ using DirectX::XMVECTOR;
 
 Sphere::Sphere(std::shared_ptr<MoveLookController> mlc) noexcept :
 	Drawable(mlc),
-	m_radius(1.0f)
+	m_radius(1.0f),
+	psMaterialBufferArray(nullptr)
 {
+	/*
 	PhongMaterialProperties materialProps;
 
 	std::shared_ptr<ConstantBuffer> materialBuffer = std::make_shared<ConstantBuffer>();
@@ -17,12 +19,87 @@ Sphere::Sphere(std::shared_ptr<MoveLookController> mlc) noexcept :
 	std::unique_ptr<ConstantBufferArray> psBufferArray = std::make_unique<ConstantBufferArray>(ConstantBufferBindingLocation::PIXEL_SHADER);
 	psBufferArray->AddBuffer(materialBuffer);
 	m_bindables.push_back(std::move(psBufferArray));
+	*/
 
 
 
 
 
+}
 
+void Sphere::SetAtomType(int elementNumber) noexcept
+{
+	// Radius
+	m_radius = Constants::AtomicRadii[elementNumber];
+
+	// Material
+	PhongMaterialProperties materials[11];
+
+	materials[1].Material.Emissive = XMFLOAT4(0.15f, 0.15f, 0.15f, 1.0f);
+	materials[1].Material.Ambient = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	materials[1].Material.Diffuse = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+	materials[1].Material.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	materials[1].Material.SpecularPower = 6.0f;
+
+	materials[2].Material.Emissive = XMFLOAT4(0.4f, 0.14f, 0.14f, 1.0f);
+	materials[2].Material.Ambient = XMFLOAT4(1.0f, 0.75f, 0.75f, 1.0f);
+	materials[2].Material.Diffuse = XMFLOAT4(1.0f, 0.6f, 0.6f, 1.0f);
+	materials[2].Material.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	materials[2].Material.SpecularPower = 6.0f;
+
+	materials[3].Material.Emissive = XMFLOAT4(0.15f, 0.0f, 0.15f, 1.0f);
+	materials[3].Material.Ambient = XMFLOAT4(1.0f, 0.0f, 1.0f, 1.0f);
+	materials[3].Material.Diffuse = XMFLOAT4(1.0f, 0.6f, 0.6f, 1.0f);
+	materials[3].Material.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	materials[3].Material.SpecularPower = 6.0f;
+
+	materials[4].Material.Emissive = XMFLOAT4(0.15f, 0.15f, 0.0f, 1.0f);
+	materials[4].Material.Ambient = XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f);
+	materials[4].Material.Diffuse = XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f);
+	materials[4].Material.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	materials[4].Material.SpecularPower = 6.0f;
+
+	materials[5].Material.Emissive = XMFLOAT4(0.45f, 0.22f, 0.22f, 1.0f);
+	materials[5].Material.Ambient = XMFLOAT4(1.0f, 0.45f, 0.45f, 1.0f);
+	materials[5].Material.Diffuse = XMFLOAT4(1.0f, 0.8f, 0.8f, 1.0f);
+	materials[5].Material.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	materials[5].Material.SpecularPower = 6.0f;
+
+	materials[6].Material.Emissive = XMFLOAT4(0.1f, 0.1f, 0.1f, 1.0f);
+	materials[6].Material.Ambient = XMFLOAT4(0.12f, 0.12f, 0.12f, 1.0f);
+	materials[6].Material.Diffuse = XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+	materials[6].Material.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	materials[6].Material.SpecularPower = 6.0f;
+
+	materials[7].Material.Emissive = XMFLOAT4(0.0f, 0.0f, 0.3f, 1.0f);
+	materials[7].Material.Ambient = XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
+	materials[7].Material.Diffuse = XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
+	materials[7].Material.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	materials[7].Material.SpecularPower = 6.0f;
+
+	materials[8].Material.Emissive = XMFLOAT4(0.3f, 0.0f, 0.0f, 1.0f);
+	materials[8].Material.Ambient = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+	materials[8].Material.Diffuse = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+	materials[8].Material.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	materials[8].Material.SpecularPower = 6.0f;
+
+	materials[9].Material.Emissive = XMFLOAT4(0.0f, 0.12f, 0.12f, 1.0f);
+	materials[9].Material.Ambient = XMFLOAT4(0.0f, 0.5f, 0.5f, 1.0f);
+	materials[9].Material.Diffuse = XMFLOAT4(0.0f, 0.2f, 1.0f, 1.0f);
+	materials[9].Material.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	materials[9].Material.SpecularPower = 6.0f;
+
+	materials[10].Material.Emissive = XMFLOAT4(0.1f, 0.3f, 0.3f, 1.0f);
+	materials[10].Material.Ambient = XMFLOAT4(0.3f, 1.0f, 0.0f, 1.0f);
+	materials[10].Material.Diffuse = XMFLOAT4(0.0f, 1.0f, 1.0f, 1.0f);
+	materials[10].Material.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	materials[10].Material.SpecularPower = 6.0f;
+
+	std::shared_ptr<ConstantBuffer> materialBuffer = std::make_shared<ConstantBuffer>();
+	materialBuffer->CreateBuffer<PhongMaterialProperties>(D3D11_USAGE_DEFAULT, 0, 0, 0, static_cast<void*>(&materials[elementNumber]));
+
+	psMaterialBufferArray = std::make_unique<ConstantBufferArray>(ConstantBufferBindingLocation::PIXEL_SHADER);
+	psMaterialBufferArray->AddBuffer(materialBuffer);
 }
 
 void Sphere::Update() const noexcept
@@ -48,6 +125,11 @@ void Sphere::Draw() const noexcept_release_only
 	vsBuffers->Bind();
 	rasterizerState->Bind();
 	depthStencilState->Bind();
+
+	// Good idea to assert that the material buffer array is not null, because it is only created in SetAtomType()
+	assert(psMaterialBufferArray != nullptr);
+	psMaterialBufferArray->Bind();
+
 
 	for (const std::unique_ptr<Bindable>& bindable : m_bindables)
 		bindable->Bind();

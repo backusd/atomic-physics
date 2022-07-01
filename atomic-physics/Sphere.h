@@ -1,6 +1,7 @@
 #pragma once
 #include "pch.h"
 #include "Drawable.h"
+#include "PhysicsConstants.h"
 
 #include <memory>
 
@@ -16,11 +17,12 @@ public:
 
 	DirectX::XMMATRIX GetScaleMatrix() const noexcept override { return DirectX::XMMatrixScaling(m_radius, m_radius, m_radius); }
 
-	void Radius(float radius) noexcept { m_radius = radius; }
+	void SetAtomType(int elementNumber) noexcept;
 
 private:
 	void UpdateModelViewProjectionBuffer() const;
 
 	float m_radius;
 
+	std::unique_ptr<ConstantBufferArray> psMaterialBufferArray;
 };

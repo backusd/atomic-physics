@@ -32,7 +32,7 @@ void Renderer::Update()
 			sphere = std::make_unique<Sphere>(m_moveLookController);
 			sphere->Position(particles[iii].p_x, particles[iii].p_y, particles[iii].p_z);
 			sphere->Velocity(particles[iii].v_x, particles[iii].v_y, particles[iii].v_z);
-			sphere->Radius(Constants::AtomicRadii[particles[iii].type]); // FIX THIS
+			sphere->SetAtomType(particles[iii].type);
 
 			m_drawables.push_back(std::move(sphere));
 		}

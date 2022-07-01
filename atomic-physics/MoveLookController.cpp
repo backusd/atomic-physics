@@ -5,7 +5,7 @@ using DirectX::XMFLOAT4X4;
 using DirectX::XMMATRIX;
 
 MoveLookController::MoveLookController(D3D11_VIEWPORT vp) noexcept :
-	m_eye{ 0.0f, 0.0f, 10.0f },
+	m_eye{ 0.0f, 0.0f, 5.0f },
 	m_at{ 0.0f, 0.0f, 0.0f },
 	m_up{ 0.0f, 1.0f, 0.0f }
 {
