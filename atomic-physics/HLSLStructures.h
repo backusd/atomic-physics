@@ -52,18 +52,36 @@ struct _PhongMaterial
     //----------------------------------- (16 byte boundary)
     float               SpecularPower;
     // Add some padding complete the 16 byte boundary.
-    int                 UseTexture;
+    //int                 UseTexture;
+    BOOL                UseTexture;
     // Add some padding to complete the 16 byte boundary.
     float               Padding[2];
     //----------------------------------- (16 byte boundary)
 }; // Total:                                80 bytes (5 * 16)
 
+
+/*
 struct PhongMaterialProperties
 {
     _PhongMaterial   Material;
 };
+*/
 
-constexpr auto MAX_LIGHTS = 8;
+constexpr int NUM_PHONG_MATERIALS = 10;
+
+struct PhongMaterialProperties
+{
+    _PhongMaterial   Materials[NUM_PHONG_MATERIALS];
+};
+
+struct PhongMaterialIndexBuffer
+{
+    int materialIndex;
+    int padding[3];
+};
+
+
+constexpr int MAX_LIGHTS = 8;
 
 enum LightType
 {

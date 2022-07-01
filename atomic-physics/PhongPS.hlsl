@@ -1,3 +1,4 @@
+#define NUM_PHONG_MATERIALS 10
 #define MAX_LIGHTS 8
 
 // Light types.
@@ -49,7 +50,7 @@ struct PixelShaderInput
 };
 
 // Material data =============================================================================================
-struct _MyMaterial
+struct PhongMaterial
 {
     float4 Emissive; // 16 bytes
     //----------------------------------- (16 byte boundary)
@@ -65,10 +66,21 @@ struct _MyMaterial
     //----------------------------------- (16 byte boundary)
 }; // Total:               // 80 bytes ( 5 * 16 )
 
-cbuffer MyMaterialProperties : register(b2)
+cbuffer MaterialProperties : register(b2)
 {
-    _MyMaterial Material;
+    PhongMaterial phongMaterials[NUM_PHONG_MATERIALS];
 };
+
+cbuffer MaterialIndexBuffer : register(b3)
+{
+    int materialIndex;
+    int padding_materialIndex[3];
+};
+
+
+// END data =============================================================================================
+// ======================================================================================================
+
 
 
 struct LightingResult
@@ -97,7 +109,8 @@ float4 DoSpecular(MyLight light, float3 V, float3 L, float3 N)
     float3 H = normalize(L + V);
     float NdotH = max(0, dot(N, H));
 
-    return light.Color * pow(RdotV, Material.SpecularPower);
+    //return light.Color * pow(RdotV, Material.SpecularPower);
+    return light.Color * pow(RdotV, phongMaterials[materialIndex].SpecularPower);
 }
 
 LightingResult DoDirectionalLight(MyLight light, float3 V, float4 P, float3 N)
@@ -205,10 +218,17 @@ float4 main(PixelShaderInput input) : SV_TARGET
 {
     LightingResult lit = ComputeLighting(input.positionWS, normalize(input.normalWS));
 
-    float4 emissive = Material.Emissive;
-    float4 ambient = Material.Ambient * GlobalAmbient;
-    float4 diffuse = Material.Diffuse * lit.Diffuse;
-    float4 specular = Material.Specular * lit.Specular;
+    //float4 emissive = Material.Emissive;
+    //float4 ambient = Material.Ambient * GlobalAmbient;
+    //float4 diffuse = Material.Diffuse * lit.Diffuse;
+    //float4 specular = Material.Specular * lit.Specular;
+    
+    float4 emissive = phongMaterials[materialIndex].Emissive;
+    float4 ambient  = phongMaterials[materialIndex].Ambient * GlobalAmbient;
+    float4 diffuse  = phongMaterials[materialIndex].Diffuse * lit.Diffuse;
+    float4 specular = phongMaterials[materialIndex].Specular * lit.Specular;
+    
+    
 
     //return emissive;
     return emissive + ambient + diffuse + specular;

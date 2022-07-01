@@ -4,6 +4,7 @@
 #include "Drawable.h"
 #include "EyePositionBufferArray.h"
 #include "Lighting.h"
+#include "MaterialBufferArray.h"
 #include "MoveLookController.h"
 #include "Sphere.h"
 #include "SimulationManager.h"
@@ -30,7 +31,9 @@ private:
 	D3D11_VIEWPORT m_viewport;
 	std::shared_ptr<MoveLookController> m_moveLookController;
 	std::vector<std::unique_ptr<Drawable>> m_drawables;
+	
 	std::unique_ptr<Lighting> m_lighting;
 	std::unique_ptr<EyePositionBufferArray> m_eyePositionBufferArray;
+	std::unique_ptr<MaterialBufferArray> m_materialBufferArray;
 
 };

@@ -8,7 +8,7 @@ using DirectX::XMVECTOR;
 Sphere::Sphere(std::shared_ptr<MoveLookController> mlc) noexcept :
 	Drawable(mlc),
 	m_radius(1.0f),
-	psMaterialBufferArray(nullptr)
+	m_materialIndexBufferArray(nullptr)
 {
 	/*
 	PhongMaterialProperties materialProps;
@@ -33,6 +33,7 @@ void Sphere::SetAtomType(int elementNumber) noexcept
 	m_radius = Constants::AtomicRadii[elementNumber];
 
 	// Material
+	/*
 	PhongMaterialProperties materials[11];
 
 	materials[1].Material.Emissive = XMFLOAT4(0.15f, 0.15f, 0.15f, 1.0f);
@@ -100,6 +101,16 @@ void Sphere::SetAtomType(int elementNumber) noexcept
 
 	psMaterialBufferArray = std::make_unique<ConstantBufferArray>(ConstantBufferBindingLocation::PIXEL_SHADER);
 	psMaterialBufferArray->AddBuffer(materialBuffer);
+	*/
+
+	PhongMaterialIndexBuffer materialIndex = {};
+	materialIndex.materialIndex = elementNumber - 1; // Have to subtract 1 because materials array is zero indexed and we start with Hydrogen as element 1
+	
+	std::shared_ptr<ConstantBuffer> materialIndexBuffer = std::make_shared<ConstantBuffer>();
+	materialIndexBuffer->CreateBuffer<PhongMaterialIndexBuffer>(D3D11_USAGE_DEFAULT, 0, 0, 0, static_cast<void*>(&materialIndex));
+
+	m_materialIndexBufferArray = std::make_unique<ConstantBufferArray>(ConstantBufferBindingLocation::PIXEL_SHADER);
+	m_materialIndexBufferArray->AddBuffer(materialIndexBuffer);
 }
 
 void Sphere::Update() const noexcept
@@ -126,9 +137,9 @@ void Sphere::Draw() const noexcept_release_only
 	rasterizerState->Bind();
 	depthStencilState->Bind();
 
-	// Good idea to assert that the material buffer array is not null, because it is only created in SetAtomType()
-	assert(psMaterialBufferArray != nullptr);
-	psMaterialBufferArray->Bind();
+	// Good idea to assert that the material index buffer array is not null, because it is only created in SetAtomType()
+	assert(m_materialIndexBufferArray != nullptr);
+	m_materialIndexBufferArray->Bind();
 
 
 	for (const std::unique_ptr<Bindable>& bindable : m_bindables)

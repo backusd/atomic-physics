@@ -24,5 +24,5 @@ private:
 
 	float m_radius;
 
-	std::unique_ptr<ConstantBufferArray> psMaterialBufferArray;
+	std::unique_ptr<ConstantBufferArray> m_materialIndexBufferArray;
 };

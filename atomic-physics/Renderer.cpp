@@ -15,6 +15,9 @@ Renderer::Renderer(D3D11_VIEWPORT vp) noexcept :
 
 	// eye position - will always bind second slot in Pixel Shader
 	m_eyePositionBufferArray = std::make_unique<EyePositionBufferArray>(m_moveLookController);
+
+	// materials
+	m_materialBufferArray = std::make_unique<MaterialBufferArray>();
 }
 
 void Renderer::Update()
@@ -60,6 +63,7 @@ void Renderer::Render()
 	m_lighting->Bind();
 	m_eyePositionBufferArray->Bind();
 	m_eyePositionBufferArray->Update(); // This update should always come immediate AFTER the Bind call so we are guaranteed that the buffer is bound to the correct slot
+	m_materialBufferArray->Bind();
 
 	// Draw each drawable
 	for (const std::unique_ptr<Drawable>& drawable : m_drawables)

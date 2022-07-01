@@ -97,11 +97,12 @@ void ConstantBufferArray::BindPS() const noexcept_release_only
 	// Default PS Buffers:
 	//		slot 0 - Lighting data
 	//		slot 1 - User/eye position data
+	//		slot 2 - All Phong Materials
 	//
-	// Therefore, you MUST start at slot 2
+	// Therefore, you MUST start at slot 3
 	//
 	GFX_THROW_INFO_ONLY(
-		DeviceResources::D3DDeviceContext()->PSSetConstantBuffers(2u, static_cast<unsigned int>(m_rawBufferPointers.size()), m_rawBufferPointers.data())
+		DeviceResources::D3DDeviceContext()->PSSetConstantBuffers(3u, static_cast<unsigned int>(m_rawBufferPointers.size()), m_rawBufferPointers.data())
 	);
 }
 

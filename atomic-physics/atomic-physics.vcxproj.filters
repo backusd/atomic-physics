@@ -133,6 +133,9 @@
     <ClCompile Include="EyePositionBufferArray.cpp">
       <Filter>Source Files\UI\3DScene\Bindables</Filter>
     </ClCompile>
+    <ClCompile Include="MaterialBufferArray.cpp">
+      <Filter>Source Files\UI\3DScene\Bindables</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -251,6 +254,9 @@
     </ClInclude>
     <ClInclude Include="PhysicsConstants.h">
       <Filter>Source Files\Simulation</Filter>
+    </ClInclude>
+    <ClInclude Include="MaterialBufferArray.h">
+      <Filter>Source Files\UI\3DScene\Bindables</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
