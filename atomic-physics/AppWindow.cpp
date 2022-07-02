@@ -34,6 +34,12 @@ void AppWindow::Update()
 	// All we need to do on the window side is query the Simulation to render it
 	m_simulationRenderer->Update();
 
+	// Ideally, the window should keep some logic about whether or not the mouse is
+	// over the simulation viewport and whether or not it needs to have the renderer
+	// process mouse events, or if some other control needs to process the events. For
+	// right now, we only have the renderer, so it can just process all mouse events
+	m_simulationRenderer->ProcessMouseEvents();
+
 	// Update data for ImGui ... ???
 	//
 	// ... ??
@@ -178,30 +184,69 @@ LRESULT AppWindow::OnDestroy(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) 
 
 LRESULT AppWindow::OnLButtonDown(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) const noexcept
 {
+	const POINTS pt = MAKEPOINTS(lParam);
+	Mouse::OnLeftPressed(pt.x, pt.y);
+
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 LRESULT AppWindow::OnLButtonUp(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) const noexcept
 {
+	const POINTS pt = MAKEPOINTS(lParam);
+	Mouse::OnLeftReleased(pt.x, pt.y);
+	// release mouse if outside of window
+	if (pt.x < 0 || pt.x >= m_width || pt.y < 0 || pt.y >= m_height)
+	{
+		ReleaseCapture();
+		Mouse::OnMouseLeave();
+	}
+
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 LRESULT AppWindow::OnLButtonDoubleClick(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) const noexcept
 {
+	const POINTS pt = MAKEPOINTS(lParam);
+	Mouse::OnLeftDoubleClick(pt.x, pt.y);
+
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 LRESULT AppWindow::OnMButtonDown(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) const noexcept
 {
+	const POINTS pt = MAKEPOINTS(lParam);
+	Mouse::OnMiddlePressed(pt.x, pt.y);
+
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 LRESULT AppWindow::OnMButtonUp(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) const noexcept
 {
+	const POINTS pt = MAKEPOINTS(lParam);
+	Mouse::OnMiddleReleased(pt.x, pt.y);
+	// release mouse if outside of window
+	if (pt.x < 0 || pt.x >= m_width || pt.y < 0 || pt.y >= m_height)
+	{
+		ReleaseCapture();
+		Mouse::OnMouseLeave();
+	}
+
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 LRESULT AppWindow::OnRButtonDown(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) const noexcept
 {
+	const POINTS pt = MAKEPOINTS(lParam);
+	Mouse::OnRightPressed(pt.x, pt.y);
+
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 LRESULT AppWindow::OnRButtonUp(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) const noexcept
 {
+	const POINTS pt = MAKEPOINTS(lParam);
+	Mouse::OnRightReleased(pt.x, pt.y);
+	// release mouse if outside of window
+	if (pt.x < 0 || pt.x >= m_width || pt.y < 0 || pt.y >= m_height)
+	{
+		ReleaseCapture();
+		Mouse::OnMouseLeave();
+	}
+
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
@@ -217,6 +262,32 @@ LRESULT AppWindow::OnResize(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) c
 
 LRESULT AppWindow::OnMouseMove(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) const noexcept
 {
+	const POINTS pt = MAKEPOINTS(lParam);
+	// in client region -> log move, and log enter + capture mouse (if not previously in window)
+	if (pt.x >= 0 && pt.x < m_width && pt.y >= 0 && pt.y < m_height)
+	{
+		Mouse::OnMouseMove(pt.x, pt.y);
+		if (!Mouse::IsInWindow()) // IsInWindow() will tell you if it was PREVIOUSLY in the window or not
+		{
+			SetCapture(hWnd);
+			Mouse::OnMouseEnter();
+		}
+	}
+	// not in client -> log move / maintain capture if button down
+	else
+	{
+		if (wParam & (MK_LBUTTON | MK_RBUTTON | MK_MBUTTON))
+		{
+			Mouse::OnMouseMove(pt.x, pt.y);
+		}
+		// button up -> release capture / log event for leaving
+		else
+		{
+			ReleaseCapture();
+			Mouse::OnMouseLeave();
+		}
+	}
+
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 LRESULT AppWindow::OnMouseLeave(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) const noexcept
@@ -225,6 +296,10 @@ LRESULT AppWindow::OnMouseLeave(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lPara
 }
 LRESULT AppWindow::OnMouseWheel(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) const noexcept
 {
+	const POINTS pt = MAKEPOINTS(lParam);
+	const int delta = GET_WHEEL_DELTA_WPARAM(wParam);
+	Mouse::OnWheelDelta(pt.x, pt.y, delta);
+
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 

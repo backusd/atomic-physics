@@ -35,6 +35,9 @@
     <Filter Include="Source Files\UI\3DScene\Drawables">
       <UniqueIdentifier>{c172e355-7f8d-4fa4-94a3-403b82b71f13}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Window\Input">
+      <UniqueIdentifier>{7e40405b-cf7b-4a17-a474-d9e4239580a0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="WinMain.cpp">
@@ -141,6 +144,9 @@
     </ClCompile>
     <ClCompile Include="Box.cpp">
       <Filter>Source Files\UI\3DScene\Drawables</Filter>
+    </ClCompile>
+    <ClCompile Include="Mouse.cpp">
+      <Filter>Source Files\Window\Input</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -269,6 +275,9 @@
     </ClInclude>
     <ClInclude Include="Box.h">
       <Filter>Source Files\UI\3DScene\Drawables</Filter>
+    </ClInclude>
+    <ClInclude Include="Mouse.h">
+      <Filter>Source Files\Window\Input</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -6,6 +6,7 @@
 #include "EyePositionBufferArray.h"
 #include "Lighting.h"
 #include "MaterialBufferArray.h"
+#include "Mouse.h"
 #include "MoveLookController.h"
 #include "Sphere.h"
 #include "SimulationManager.h"
@@ -22,6 +23,8 @@ public:
 
 	void Update();
 	void Render();
+
+	void ProcessMouseEvents() noexcept;
 
 	D3D11_VIEWPORT GetViewport() const noexcept { return m_viewport; }
 

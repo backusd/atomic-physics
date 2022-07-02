@@ -1,6 +1,7 @@
 #pragma once
 #include "pch.h"
 #include "AppWindowTemplate.h"
+#include "Mouse.h"
 #include "Renderer.h"
 
 #include <optional>

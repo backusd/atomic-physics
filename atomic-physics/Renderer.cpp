@@ -57,6 +57,30 @@ void Renderer::Update()
 		drawable->Update();
 }
 
+void Renderer::ProcessMouseEvents() noexcept
+{
+	while (!Mouse::IsEmpty())
+	{
+		Mouse::Event e = Mouse::Read();
+		switch (e.GetType())
+		{
+		case Mouse::Event::Type::LPress: break;
+		case Mouse::Event::Type::LRelease: break;
+		case Mouse::Event::Type::LDoubleClick: break;
+		case Mouse::Event::Type::RPress: break;
+		case Mouse::Event::Type::RRelease: break;
+		case Mouse::Event::Type::MPress: break;
+		case Mouse::Event::Type::MRelease: break;
+		case Mouse::Event::Type::WheelUp: break;
+		case Mouse::Event::Type::WheelDown: break;
+		case Mouse::Event::Type::Move: break;
+		case Mouse::Event::Type::Enter: break;
+		case Mouse::Event::Type::Leave: break;
+		case Mouse::Event::Type::Invalid: break;
+		}
+	}
+}
+
 void Renderer::Render()
 {
 	// Set the viewport (should be specific to this renderer)
