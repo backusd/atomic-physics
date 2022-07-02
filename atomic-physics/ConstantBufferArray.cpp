@@ -29,8 +29,23 @@ ConstantBufferArray::ConstantBufferArray(ConstantBufferBindingLocation bindToSta
 
 	switch (geometry)
 	{
+	case BasicGeometry::BOX:	CreateBoxConstantBufferArray(); break;
 	case BasicGeometry::SPHERE: CreateSphereConstantBufferArray(); break;
 	}
+}
+
+void ConstantBufferArray::CreateBoxConstantBufferArray() noexcept
+{
+	// Model/view/projection buffer
+	std::shared_ptr<ConstantBuffer> mvpBuffer = std::make_shared<ConstantBuffer>();
+	mvpBuffer->CreateBuffer<ModelViewProjection>(D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE, 0, 0);
+	AddBuffer(mvpBuffer);
+
+	// Color buffer (Set color to black)
+	ColorConstantBuffer ccb = { { 0.0f, 0.0f, 0.0f, 1.0f } };
+	std::shared_ptr<ConstantBuffer> colorBuffer = std::make_shared<ConstantBuffer>();
+	colorBuffer->CreateBuffer<ColorConstantBuffer>(D3D11_USAGE_DEFAULT, 0, 0, 0, static_cast<void*>(&ccb));
+	AddBuffer(colorBuffer);
 }
 
 void ConstantBufferArray::CreateSphereConstantBufferArray() noexcept

@@ -30,6 +30,7 @@ public:
 	Microsoft::WRL::ComPtr<ID3DBlob> GetVertexShaderFileBlob() noexcept { return m_blob; }
 
 private:
+	void CreateBoxInputLayout();
 	void CreateSphereInputLayout();
 
 	std::vector<std::string> m_semanticNames;

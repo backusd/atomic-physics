@@ -150,6 +150,8 @@
     <ClCompile Include="App.cpp" />
     <ClCompile Include="AppWindow.cpp" />
     <ClCompile Include="BaseException.cpp" />
+    <ClCompile Include="Box.cpp" />
+    <ClCompile Include="BoxMesh.cpp" />
     <ClCompile Include="ConstantBufferArray.cpp" />
     <ClCompile Include="DepthStencilState.cpp" />
     <ClCompile Include="DeviceResources.cpp" />
@@ -188,6 +190,8 @@
     <ClInclude Include="BaseException.h" />
     <ClInclude Include="BasicGeometry.h" />
     <ClInclude Include="Bindable.h" />
+    <ClInclude Include="Box.h" />
+    <ClInclude Include="BoxMesh.h" />
     <ClInclude Include="ConstantBuffer.h" />
     <ClInclude Include="ConstantBufferArray.h" />
     <ClInclude Include="DepthStencilState.h" />

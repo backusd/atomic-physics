@@ -16,10 +16,17 @@ InputLayout::InputLayout(std::wstring vertexShaderFile, BasicGeometry geometry) 
 
 	switch (geometry)
 	{
+	case BasicGeometry::BOX:	CreateBoxInputLayout(); break;
 	case BasicGeometry::SPHERE: CreateSphereInputLayout(); break;
 	}
 }
 
+void InputLayout::CreateBoxInputLayout()
+{
+	AddDescription("POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0,                            0, D3D11_INPUT_PER_VERTEX_DATA, 0);
+	AddDescription(  "NORMAL", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0);
+	CreateLayout();
+}
 
 void InputLayout::CreateSphereInputLayout()
 {

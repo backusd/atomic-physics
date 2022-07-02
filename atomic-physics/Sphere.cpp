@@ -51,15 +51,7 @@ void Sphere::Update() const noexcept
 
 void Sphere::Draw() const noexcept_release_only
 {
-	// Hold static variables that will always be used to render spheres
-	// static std::unique_ptr<InputLayout>			inputLayout			= std::make_unique<InputLayout>(L"PhongVS.cso", BasicGeometry::SPHERE);
-	//static std::unique_ptr<VertexShader>		vertexShader		= std::make_unique<VertexShader>(m_inputLayout->GetVertexShaderFileBlob());
-	//static std::unique_ptr<PixelShader>			pixelShader			= std::make_unique<PixelShader>(L"PhongPS.cso");
-	//static std::unique_ptr<SphereMesh>			mesh				= std::make_unique<SphereMesh>();
-	//static std::unique_ptr<ConstantBufferArray> vsBuffers			= std::make_unique<ConstantBufferArray>(ConstantBufferBindingLocation::VERTEX_SHADER, BasicGeometry::SPHERE );
-	//static std::unique_ptr<RasterizerState>		rasterizerState		= std::make_unique<RasterizerState>();
-	//static std::unique_ptr<DepthStencilState>	depthStencilState	= std::make_unique<DepthStencilState>(1);
-
+	// Bind all static variables
 	m_inputLayout->Bind();
 	m_vertexShader->Bind();
 	m_pixelShader->Bind();
@@ -71,10 +63,6 @@ void Sphere::Draw() const noexcept_release_only
 	// Good idea to assert that the material index buffer array is not null, because it is only created in SetAtomType()
 	assert(m_materialIndexBufferArray != nullptr);
 	m_materialIndexBufferArray->Bind();
-
-
-	for (const std::unique_ptr<Bindable>& bindable : m_bindables)
-		bindable->Bind();
 
 	// In order to update the model-view-projection constant buffer, it must first be bound to the pipeline in
 	// order to Map to it. Therefore, this kind of update must occur here as opposed to in the actual Update() function

@@ -38,6 +38,7 @@ public:
 
 
 protected:
+	void CreateBoxConstantBufferArray() noexcept;
 	void CreateSphereConstantBufferArray() noexcept;
 
 	std::function<void()> BindFunc;

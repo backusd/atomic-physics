@@ -16,7 +16,7 @@ public:
 	template <typename T, typename A>
 	void LoadBuffers(std::vector<T, A>& vertices, std::vector<unsigned short>& indices);
 
-private:
+protected:
 
 
 	D3D11_PRIMITIVE_TOPOLOGY m_topology;

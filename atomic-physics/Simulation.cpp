@@ -1,11 +1,8 @@
 #include "Simulation.h"
 
 Simulation::Simulation() :
-	m_boxMinX(-2.0f),
 	m_boxMaxX(2.0f),
-	m_boxMinY(-2.0f),
 	m_boxMaxY(2.0f),
-	m_boxMinZ(-2.0f),
 	m_boxMaxZ(2.0f),
 	m_elapsedTime(0)
 {
@@ -14,7 +11,7 @@ Simulation::Simulation() :
 
 void Simulation::Update() noexcept
 {
-	m_timer->Tick([&]()
+	m_timer->Tick([&]() noexcept
 		{
 			double currentTime = m_timer->GetTotalSeconds();
 			double timeDelta = currentTime - m_elapsedTime;
@@ -29,13 +26,13 @@ void Simulation::Update() noexcept
 				p.p_y += static_cast<float>(p.v_y * timeDelta);
 				p.p_z += static_cast<float>(p.v_z * timeDelta);
 
-				if (p.p_x > m_boxMaxX || p.p_x < m_boxMinX)
+				if (p.p_x > m_boxMaxX || p.p_x < -m_boxMaxX)
 					p.v_x *= -1;
 
-				if (p.p_y > m_boxMaxY || p.p_y < m_boxMinY)
+				if (p.p_y > m_boxMaxY || p.p_y < -m_boxMaxY)
 					p.v_y *= -1;
 
-				if (p.p_z > m_boxMaxZ || p.p_z < m_boxMinZ)
+				if (p.p_z > m_boxMaxZ || p.p_z < -m_boxMaxZ)
 					p.v_z *= -1;
 			}
 		}

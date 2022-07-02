@@ -39,7 +39,6 @@ public:
 protected:
 
 
-	std::vector<std::unique_ptr<Bindable>> m_bindables;
 	std::unique_ptr<Mesh> m_mesh;
 	std::shared_ptr<MoveLookController> m_moveLookController;
 	DirectX::XMFLOAT3 m_position, m_velocity;

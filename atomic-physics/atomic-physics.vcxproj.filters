@@ -136,6 +136,12 @@
     <ClCompile Include="MaterialBufferArray.cpp">
       <Filter>Source Files\UI\3DScene\Bindables</Filter>
     </ClCompile>
+    <ClCompile Include="BoxMesh.cpp">
+      <Filter>Source Files\UI\3DScene\Bindables\Meshes</Filter>
+    </ClCompile>
+    <ClCompile Include="Box.cpp">
+      <Filter>Source Files\UI\3DScene\Drawables</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -257,6 +263,12 @@
     </ClInclude>
     <ClInclude Include="MaterialBufferArray.h">
       <Filter>Source Files\UI\3DScene\Bindables</Filter>
+    </ClInclude>
+    <ClInclude Include="BoxMesh.h">
+      <Filter>Source Files\UI\3DScene\Bindables\Meshes</Filter>
+    </ClInclude>
+    <ClInclude Include="Box.h">
+      <Filter>Source Files\UI\3DScene\Drawables</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

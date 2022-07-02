@@ -6,7 +6,10 @@ Renderer::Renderer(D3D11_VIEWPORT vp) noexcept :
 	m_viewport(vp)
 {
 	m_moveLookController = std::make_shared<MoveLookController>(m_viewport);
-	
+
+	m_box = std::make_unique<Box>(m_moveLookController);
+	m_box->SetBoxSize(SimulationManager::GetSimulationDimensions());
+
 	// lighting
 	m_lighting = std::make_unique<Lighting>();
 	m_lighting->GlobalAmbient(XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f));
@@ -68,5 +71,8 @@ void Renderer::Render()
 	// Draw each drawable
 	for (const std::unique_ptr<Drawable>& drawable : m_drawables)
 		drawable->Draw();
+
+	// Draw the box
+	m_box->Draw();
 }
 

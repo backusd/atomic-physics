@@ -46,22 +46,6 @@ void SphereMesh::InitializeBuffers()
 		}
 	}
 
-	//m_sizeOfVertex = sizeof(PositionNormalVertex);
-	//m_vertexCount = p;
-
-	/*
-	D3D11_BUFFER_DESC bd = {};
-	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	bd.Usage = D3D11_USAGE_DEFAULT;
-	bd.CPUAccessFlags = 0u;
-	bd.MiscFlags = 0u;
-	bd.ByteWidth = static_cast<UINT>(m_vertexCount * m_sizeOfVertex);
-	bd.StructureByteStride = m_sizeOfVertex;
-	D3D11_SUBRESOURCE_DATA sd = {};
-	sd.pSysMem = sphereVertices.data();
-	GFX_THROW_INFO(m_deviceResources->D3DDevice()->CreateBuffer(&bd, &sd, &m_vertexBuffer));
-	*/
-
 	// Load mesh indices. Each trio of indices represents
 	// a triangle to be rendered on the screen.
 	// For example: 0,2,1 means that the vertices with indexes
@@ -105,19 +89,4 @@ void SphereMesh::InitializeBuffers()
 	}
 
 	LoadBuffers(sphereVertices, sphereIndices);
-
-	/*
-	D3D11_BUFFER_DESC ibd = {};
-	ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	ibd.Usage = D3D11_USAGE_DEFAULT;
-	ibd.CPUAccessFlags = 0u;
-	ibd.MiscFlags = 0u;
-	ibd.ByteWidth = static_cast<UINT>(sphereIndices.size() * sizeof(unsigned short)); //sizeof(indices);
-	ibd.StructureByteStride = sizeof(unsigned short);
-	D3D11_SUBRESOURCE_DATA isd = {};
-	isd.pSysMem = sphereIndices.data();
-	GFX_THROW_INFO(m_deviceResources->D3DDevice()->CreateBuffer(&ibd, &isd, &m_indexBuffer));
-
-	m_indexCount = static_cast<unsigned int>(sphereIndices.size());
-	*/
 }
