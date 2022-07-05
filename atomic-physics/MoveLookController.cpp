@@ -95,7 +95,15 @@ void MoveLookController::OnLRelease(Mouse::Event e) noexcept
 
 void MoveLookController::OnLDoubleClick(Mouse::Event e) noexcept
 {
+    // Set automated move flags and initial data - 0.5 seconds for the move
+    InitializeAutomatedMove(0.5);
 
+    // Set eye target location to half the distance to the center
+    m_eyeTarget.x = m_eyeInitial.x / 2.0f;
+    m_eyeTarget.y = m_eyeInitial.y / 2.0f;
+    m_eyeTarget.z = m_eyeInitial.z / 2.0f;
+
+    m_upTarget = m_upInitial;
 }
 
 void MoveLookController::OnRPress(Mouse::Event /* e */) noexcept

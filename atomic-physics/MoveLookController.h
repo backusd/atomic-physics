@@ -18,6 +18,7 @@ public:
 
 	DirectX::XMVECTOR Position() const noexcept { return m_eye; }
 
+	// Mouse Event Handling
 	void OnLPress(Mouse::Event e) noexcept;
 	void OnLRelease(Mouse::Event e) noexcept;
 	void OnLDoubleClick(Mouse::Event e) noexcept;
@@ -43,7 +44,7 @@ private:
 
 	DirectX::XMMATRIX m_projectionMatrix;
 
-	// Pointer Variables
+	// Mouse Variables
 	bool  m_mouseDown;
 	float m_mousePositionX;
 	float m_mousePositionY;
