@@ -161,6 +161,7 @@
     <ClCompile Include="EyePositionBufferArray.cpp" />
     <ClCompile Include="InputLayout.cpp" />
     <ClCompile Include="InputLayoutException.cpp" />
+    <ClCompile Include="Keyboard.cpp" />
     <ClCompile Include="Lighting.cpp" />
     <ClCompile Include="MaterialBufferArray.cpp" />
     <ClCompile Include="Mesh.cpp" />
@@ -205,6 +206,7 @@
     <ClInclude Include="HLSLStructures.h" />
     <ClInclude Include="InputLayout.h" />
     <ClInclude Include="InputLayoutException.h" />
+    <ClInclude Include="Keyboard.h" />
     <ClInclude Include="Lighting.h" />
     <ClInclude Include="MaterialBufferArray.h" />
     <ClInclude Include="Mesh.h" />

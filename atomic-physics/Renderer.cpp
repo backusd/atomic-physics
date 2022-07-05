@@ -84,6 +84,41 @@ void Renderer::ProcessMouseEvents() noexcept
 	}
 }
 
+void Renderer::ProcessKeyboardEvents() noexcept
+{
+	// Read Key events and only process non-character keys
+	while (!Keyboard::KeyIsEmpty())
+	{
+		Keyboard::Event e = Keyboard::ReadKey();
+
+		switch (e.GetCode())
+		{
+		case VK_UP:      OnUpArrowKeyEvent(e); break;
+		case VK_DOWN:    OnDownArrowKeyEvent(e); break;
+		case VK_LEFT:    OnLeftArrowKeyEvent(e); break;
+		case VK_RIGHT:	 OnRightArrowKeyEvent(e); break;
+		case VK_SHIFT:	 OnShiftKeyEvent(e); break;
+		case VK_CONTROL: OnCtrlKeyEvent(e); break;
+		}
+	}
+
+	while (!Keyboard::CharIsEmpty())
+	{
+		OnCharEvent(Keyboard::ReadChar());
+
+		switch (Keyboard::ReadChar())
+		{
+		//case 'p': Play/Pause the simulation
+		case 'w': break;
+		case 'a': break;
+		case 's': break;
+		case 'd': break;
+		case 'c': break;
+		}
+	}
+
+}
+
 void Renderer::Render()
 {
 	// Set the viewport (should be specific to this renderer)
@@ -103,67 +138,102 @@ void Renderer::Render()
 	m_box->Draw();
 }
 
-void Renderer::OnLPress(Mouse::Event e) const noexcept
+void Renderer::OnLPress(const Mouse::Event& e) const noexcept
 {
 	m_moveLookController->OnLPress(e);
 }
 
-void Renderer::OnLRelease(Mouse::Event e) const noexcept
+void Renderer::OnLRelease(const Mouse::Event& e) const noexcept
 {
 	m_moveLookController->OnLRelease(e);
 }
 
-void Renderer::OnLDoubleClick(Mouse::Event e) const noexcept
+void Renderer::OnLDoubleClick(const Mouse::Event& e) const noexcept
 {
 	m_moveLookController->OnLDoubleClick(e);
 }
 
-void Renderer::OnRPress(Mouse::Event e) const noexcept
+void Renderer::OnRPress(const Mouse::Event& e) const noexcept
 {
 	m_moveLookController->OnRPress(e);
 }
 
-void Renderer::OnRRelease(Mouse::Event e) const noexcept
+void Renderer::OnRRelease(const Mouse::Event& e) const noexcept
 {
 	m_moveLookController->OnRRelease(e);
 }
 
-void Renderer::OnMPress(Mouse::Event e) const noexcept
+void Renderer::OnMPress(const Mouse::Event& e) const noexcept
 {
 	m_moveLookController->OnMPress(e);
 }
 
-void Renderer::OnMRelease(Mouse::Event e) const noexcept
+void Renderer::OnMRelease(const Mouse::Event& e) const noexcept
 {
 	m_moveLookController->OnMRelease(e);
 }
 
-void Renderer::OnWheelUp(Mouse::Event e) const noexcept
+void Renderer::OnWheelUp(const Mouse::Event& e) const noexcept
 {
 	m_moveLookController->OnWheelUp(e);
 }
 
-void Renderer::OnWheelDown(Mouse::Event e) const noexcept
+void Renderer::OnWheelDown(const Mouse::Event& e) const noexcept
 {
 	m_moveLookController->OnWheelDown(e);
 }
 
-void Renderer::OnMouseMove(Mouse::Event e) const noexcept
+void Renderer::OnMouseMove(const Mouse::Event& e) const noexcept
 {
 	m_moveLookController->OnMouseMove(e);
 }
 
-void Renderer::OnMouseEnter(Mouse::Event /* e */) const noexcept
+void Renderer::OnMouseEnter(const Mouse::Event& /* e */) const noexcept
 {
 
 }
 
-void Renderer::OnMouseLeave(Mouse::Event /* e */) const noexcept
+void Renderer::OnMouseLeave(const Mouse::Event& /* e */) const noexcept
 {
 
 }
 
-void Renderer::OnMouseInvalidEvent(Mouse::Event /* e */) const noexcept
+void Renderer::OnMouseInvalidEvent(const Mouse::Event& /* e */) const noexcept
 {
 
+}
+
+void Renderer::OnUpArrowKeyEvent(const Keyboard::Event& e) const noexcept
+{
+	m_moveLookController->OnUpArrowKeyEvent(e);
+}
+
+void Renderer::OnDownArrowKeyEvent(const Keyboard::Event& e) const noexcept
+{
+	m_moveLookController->OnDownArrowKeyEvent(e);
+}
+
+void Renderer::OnLeftArrowKeyEvent(const Keyboard::Event& e) const noexcept
+{
+	m_moveLookController->OnLeftArrowKeyEvent(e);
+}
+
+void Renderer::OnRightArrowKeyEvent(const Keyboard::Event& e) const noexcept
+{
+	m_moveLookController->OnRightArrowKeyEvent(e);
+}
+
+void Renderer::OnCtrlKeyEvent(const Keyboard::Event& e) const noexcept
+{
+	m_moveLookController->OnCtrlKeyEvent(e);
+}
+
+void Renderer::OnShiftKeyEvent(const Keyboard::Event& e) const noexcept
+{
+	m_moveLookController->OnShiftKeyEvent(e);
+}
+
+void Renderer::OnCharEvent(char c) const noexcept
+{
+	m_moveLookController->OnCharEvent(c);
 }

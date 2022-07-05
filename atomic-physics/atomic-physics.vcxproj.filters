@@ -148,6 +148,9 @@
     <ClCompile Include="Mouse.cpp">
       <Filter>Source Files\Window\Input</Filter>
     </ClCompile>
+    <ClCompile Include="Keyboard.cpp">
+      <Filter>Source Files\Window\Input</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -277,6 +280,9 @@
       <Filter>Source Files\UI\3DScene\Drawables</Filter>
     </ClInclude>
     <ClInclude Include="Mouse.h">
+      <Filter>Source Files\Window\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Keyboard.h">
       <Filter>Source Files\Window\Input</Filter>
     </ClInclude>
   </ItemGroup>

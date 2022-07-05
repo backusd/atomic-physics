@@ -40,6 +40,12 @@ void AppWindow::Update()
 	// right now, we only have the renderer, so it can just process all mouse events
 	m_simulationRenderer->ProcessMouseEvents();
 
+	// Keyboard events only occur when the window is in focus, but if we have more than
+	// just a single custom control, AppWindow will need to keep track of which control
+	// should be the one to process keyboard events
+	m_simulationRenderer->ProcessKeyboardEvents();
+
+
 	// Update data for ImGui ... ???
 	//
 	// ... ??
@@ -310,30 +316,42 @@ LRESULT AppWindow::OnGetMinMaxInfo(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lP
 
 LRESULT AppWindow::OnChar(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) const noexcept
 {
+	Keyboard::OnChar(static_cast<unsigned char>(wParam));
+
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
 LRESULT AppWindow::OnKeyUp(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) const noexcept
 {
+	Keyboard::OnKeyReleased(static_cast<unsigned char>(wParam));
+
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
 LRESULT AppWindow::OnKeyDown(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) const noexcept
 {
+	if (!(lParam & 0x40000000) || Keyboard::AutorepeatIsEnabled()) // filter autorepeat
+	{
+		Keyboard::OnKeyPressed(static_cast<unsigned char>(wParam));
+	}
+
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
 LRESULT AppWindow::OnSysKeyUp(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) const noexcept
 {
-	return DefWindowProc(hWnd, msg, wParam, lParam);
+	return this->OnKeyUp(hWnd, msg, wParam, lParam);
 }
 
 LRESULT AppWindow::OnSysKeyDown(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) const noexcept
 {
-	return DefWindowProc(hWnd, msg, wParam, lParam);
+	return this->OnKeyDown(hWnd, msg, wParam, lParam);
 }
 
 LRESULT AppWindow::OnKillFocus(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) const noexcept
 {
+	// clear keystate when window loses focus to prevent input getting "stuck"
+	Keyboard::ClearState();
+
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }

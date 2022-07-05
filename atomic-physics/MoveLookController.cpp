@@ -24,11 +24,18 @@ MoveLookController::MoveLookController(D3D11_VIEWPORT vp) noexcept :
     m_upInitial{ 0.0f, 0.0f, 0.0f },
     m_moveStartTime(0),
     m_movementComplete(0),
-    m_movementMaxTime(0)
-    //m_timeAtLastMoveUpdate(0),
-    //m_totalRotationAngle(0.0f),
-    //m_rotatingLeftRight(false),
-    //m_rotatingUpDown(false)
+    m_movementMaxTime(0),
+    m_timeAtLastMoveUpdate(0),
+    m_totalRotationAngle(0.0f),
+    m_rotatingLeftRight(false),
+    m_rotatingUpDown(false),
+    m_leftArrow(false),
+    m_rightArrow(false),
+    m_upArrow(false),
+    m_downArrow(false),
+    m_shift(false),
+    m_ctrl(false),
+    m_elapsedTime(0)
 {
 	CreateProjectionMatrix(vp);
 }
@@ -77,7 +84,7 @@ void MoveLookController::CreateProjectionMatrix(D3D11_VIEWPORT vp) noexcept
     m_projectionMatrix = perspectiveMatrix * orientationMatrix;
 }
 
-void MoveLookController::OnLPress(Mouse::Event e) noexcept
+void MoveLookController::OnLPress(const Mouse::Event& e) noexcept
 {
     // When the pointer is pressed begin tracking the pointer movement.
     m_mouseDown = true;
@@ -85,7 +92,7 @@ void MoveLookController::OnLPress(Mouse::Event e) noexcept
     m_mousePositionY = m_mousePositionYNew = static_cast<float>(e.GetPosY());
 }
 
-void MoveLookController::OnLRelease(Mouse::Event e) noexcept
+void MoveLookController::OnLRelease(const Mouse::Event& e) noexcept
 {
     // Stop tracking pointer movement when the pointer is released.
     m_mouseDown = false;
@@ -93,7 +100,7 @@ void MoveLookController::OnLRelease(Mouse::Event e) noexcept
     m_mousePositionY = m_mousePositionYNew = static_cast<float>(e.GetPosY());
 }
 
-void MoveLookController::OnLDoubleClick(Mouse::Event e) noexcept
+void MoveLookController::OnLDoubleClick(const Mouse::Event& e) noexcept
 {
     // Set automated move flags and initial data - 0.5 seconds for the move
     InitializeAutomatedMove(0.5);
@@ -106,27 +113,27 @@ void MoveLookController::OnLDoubleClick(Mouse::Event e) noexcept
     m_upTarget = m_upInitial;
 }
 
-void MoveLookController::OnRPress(Mouse::Event /* e */) noexcept
+void MoveLookController::OnRPress(const Mouse::Event& /* e */) noexcept
 {
 
 }
 
-void MoveLookController::OnRRelease(Mouse::Event /* e */) noexcept
+void MoveLookController::OnRRelease(const Mouse::Event& /* e */) noexcept
 {
 
 }
 
-void MoveLookController::OnMPress(Mouse::Event /* e */) noexcept
+void MoveLookController::OnMPress(const Mouse::Event& /* e */) noexcept
 {
 
 }
 
-void MoveLookController::OnMRelease(Mouse::Event /* e */) noexcept
+void MoveLookController::OnMRelease(const Mouse::Event& /* e */) noexcept
 {
 
 }
 
-void MoveLookController::OnWheelUp(Mouse::Event e) noexcept
+void MoveLookController::OnWheelUp(const Mouse::Event& e) noexcept
 {
     // Only update if not already moving (this avoids a flood of WM_MOUSEWHEEL messages)
     if (!m_movingToNewLocation)
@@ -144,7 +151,7 @@ void MoveLookController::OnWheelUp(Mouse::Event e) noexcept
     }
 }
 
-void MoveLookController::OnWheelDown(Mouse::Event e) noexcept
+void MoveLookController::OnWheelDown(const Mouse::Event& e) noexcept
 {
     // Only update if not already moving (this avoids a flood of WM_MOUSEWHEEL messages)
     if (!m_movingToNewLocation)
@@ -162,7 +169,7 @@ void MoveLookController::OnWheelDown(Mouse::Event e) noexcept
     }
 }
 
-void MoveLookController::OnMouseMove(Mouse::Event e) noexcept
+void MoveLookController::OnMouseMove(const Mouse::Event& e) noexcept
 {
     m_mousePositionXNew = static_cast<float>(e.GetPosX());
     m_mousePositionYNew = static_cast<float>(e.GetPosY());
@@ -202,8 +209,8 @@ void MoveLookController::Update(D3D11_VIEWPORT viewport) noexcept
         if (m_movementComplete)
         {
             m_movingToNewLocation = false;
-            // m_rotatingLeftRight = false;
-            // m_rotatingUpDown = false;
+            m_rotatingLeftRight = false;
+            m_rotatingUpDown = false;
         }
         else
         {
@@ -211,10 +218,9 @@ void MoveLookController::Update(D3D11_VIEWPORT viewport) noexcept
             if (m_moveStartTime < 0.0)
             {
                 m_moveStartTime = SimulationManager::TotalSeconds();
-                // m_timeAtLastMoveUpdate = m_moveStartTime;
+                m_timeAtLastMoveUpdate = m_moveStartTime;
             }
 
-            /*
             // If rotating left/right, just compute the necessary angle and call RotateLeftRight / RotateUpDown
             if (m_rotatingLeftRight || m_rotatingUpDown)
             {
@@ -239,7 +245,6 @@ void MoveLookController::Update(D3D11_VIEWPORT viewport) noexcept
             }
             else
             {
-            */
                 // Compute the ratio of elapsed time / allowed time to complete
                 double timeRatio = (SimulationManager::TotalSeconds() - m_moveStartTime) / m_movementMaxTime;
 
@@ -271,7 +276,7 @@ void MoveLookController::Update(D3D11_VIEWPORT viewport) noexcept
 
                     m_up = DirectX::XMLoadFloat3(&upCurrent);
                 }
-            // }
+            }
         }
     }
 }
@@ -330,4 +335,149 @@ void MoveLookController::InitializeAutomatedMove(double maxMoveTime) noexcept
 
     DirectX::XMStoreFloat3(&m_eyeInitial, m_eye);
     DirectX::XMStoreFloat3(&m_upInitial, m_up);
+}
+
+void MoveLookController::OnUpArrowKeyEvent(const Keyboard::Event& e) noexcept
+{
+    m_upArrow = e.IsPress();
+
+    // If no longer moving or rotating, reset the time to 0
+    if (!(m_upArrow || m_downArrow || m_leftArrow || m_rightArrow))
+        m_elapsedTime = 0.0f;
+}
+
+void MoveLookController::OnDownArrowKeyEvent(const Keyboard::Event& e) noexcept
+{
+    m_downArrow = e.IsPress();
+
+    // If no longer moving or rotating, reset the time to 0
+    if (!(m_upArrow || m_downArrow || m_leftArrow || m_rightArrow))
+        m_elapsedTime = 0.0f;
+}
+
+void MoveLookController::OnLeftArrowKeyEvent(const Keyboard::Event& e) noexcept
+{
+    m_leftArrow = e.IsPress();
+
+    // If no longer moving or rotating, reset the time to 0
+    if (!(m_upArrow || m_downArrow || m_leftArrow || m_rightArrow))
+        m_elapsedTime = 0.0f;
+}
+
+void MoveLookController::OnRightArrowKeyEvent(const Keyboard::Event& e) noexcept
+{
+    m_rightArrow = e.IsPress();
+
+    // If no longer moving or rotating, reset the time to 0
+    if (!(m_upArrow || m_downArrow || m_leftArrow || m_rightArrow))
+        m_elapsedTime = 0.0f;
+}
+
+void MoveLookController::OnCtrlKeyEvent(const Keyboard::Event& e) noexcept
+{
+    m_ctrl = e.IsPress();
+}
+
+void MoveLookController::OnShiftKeyEvent(const Keyboard::Event& e) noexcept
+{
+    m_shift = e.IsPress();
+}
+
+void MoveLookController::OnCharEvent(char c) noexcept
+{
+    switch (c)
+    {
+    // case 'p': SimulationManager::SwitchPlayPause(); break;
+    case 'c': CenterOnFace(); break;
+    case 'w': RotateUp90(); break;
+    case 'a': RotateLeft90(); break;
+    case 's': RotateDown90(); break;
+    case 'd': RotateRight90(); break;
+    }
+}
+
+void MoveLookController::CenterOnFace() noexcept
+{
+    // Set automated move flags and initial data - 0.5 seconds for the move
+    InitializeAutomatedMove(0.5);
+
+    // Determine the coordinate with the max value and 0 out the other ones
+    m_eyeTarget.x = m_eyeInitial.x;
+    m_eyeTarget.y = m_eyeInitial.y;
+    m_eyeTarget.z = m_eyeInitial.z;
+
+    XMFLOAT3 length3;
+    DirectX::XMStoreFloat3(&length3, DirectX::XMVector3Length(m_eye));
+    float length = length3.x;
+
+    m_eyeTarget.x = (std::abs(m_eyeInitial.x) < std::abs(m_eyeInitial.y) || std::abs(m_eyeInitial.x) < std::abs(m_eyeInitial.z)) ? 0.0f : length;
+    m_eyeTarget.y = (std::abs(m_eyeInitial.y) < std::abs(m_eyeInitial.x) || std::abs(m_eyeInitial.y) < std::abs(m_eyeInitial.z)) ? 0.0f : length;
+    m_eyeTarget.z = (std::abs(m_eyeInitial.z) < std::abs(m_eyeInitial.x) || std::abs(m_eyeInitial.z) < std::abs(m_eyeInitial.y)) ? 0.0f : length;
+
+    m_eyeTarget.x *= (m_eyeInitial.x < 0.0f) ? -1.0f : 1.0f;
+    m_eyeTarget.y *= (m_eyeInitial.y < 0.0f) ? -1.0f : 1.0f;
+    m_eyeTarget.z *= (m_eyeInitial.z < 0.0f) ? -1.0f : 1.0f;
+
+
+
+    // Determine the coordinate with the max value and 0 out the other ones
+    // Whichever coordinate for the eye target is used must not be used for the up target, so zero it out
+    float xInit = (m_eyeTarget.x == 0.0f) ? m_upInitial.x : 0.0f;
+    float yInit = (m_eyeTarget.y == 0.0f) ? m_upInitial.y : 0.0f;
+    float zInit = (m_eyeTarget.z == 0.0f) ? m_upInitial.z : 0.0f;
+
+    DirectX::XMStoreFloat3(&length3, DirectX::XMVector3Length(m_up));
+    length = length3.x;
+
+    m_upTarget.x = (std::abs(xInit) < std::abs(yInit) || std::abs(xInit) < std::abs(zInit)) ? 0.0f : length;
+    m_upTarget.y = (std::abs(yInit) < std::abs(xInit) || std::abs(yInit) < std::abs(zInit)) ? 0.0f : length;
+    m_upTarget.z = (std::abs(zInit) < std::abs(xInit) || std::abs(zInit) < std::abs(yInit)) ? 0.0f : length;
+
+    m_upTarget.x *= (xInit < 0.0f) ? -1.0f : 1.0f;
+    m_upTarget.y *= (yInit < 0.0f) ? -1.0f : 1.0f;
+    m_upTarget.z *= (zInit < 0.0f) ? -1.0f : 1.0f;
+}
+void MoveLookController::RotateLeft90() noexcept
+{
+    // Only allow a single left/right movement at a time
+    if (!m_movingToNewLocation)
+    {
+        // Set automated move flags and initial data - 0.5 seconds for the move
+        InitializeAutomatedMove(0.5);
+        m_rotatingLeftRight = true;
+        m_totalRotationAngle = -1.0f * DirectX::XM_PIDIV2;
+    }
+}
+void MoveLookController::RotateRight90() noexcept
+{
+    // Only allow a single left/right movement at a time
+    if (!m_movingToNewLocation)
+    {
+        // Set automated move flags and initial data - 0.5 seconds for the move
+        InitializeAutomatedMove(0.5);
+        m_rotatingLeftRight = true;
+        m_totalRotationAngle = DirectX::XM_PIDIV2;
+    }
+}
+void MoveLookController::RotateUp90() noexcept
+{
+    // Only allow a single up/down movement at a time
+    if (!m_movingToNewLocation)
+    {
+        // Set automated move flags and initial data - 0.5 seconds for the move
+        InitializeAutomatedMove(0.5);
+        m_rotatingUpDown = true;
+        m_totalRotationAngle = DirectX::XM_PIDIV2;
+    }
+}
+void MoveLookController::RotateDown90() noexcept
+{
+    // Only allow a single up/down movement at a time
+    if (!m_movingToNewLocation)
+    {
+        // Set automated move flags and initial data - 0.5 seconds for the move
+        InitializeAutomatedMove(0.5);
+        m_rotatingUpDown = true;
+        m_totalRotationAngle = -1.0f * DirectX::XM_PIDIV2;
+    }
 }
