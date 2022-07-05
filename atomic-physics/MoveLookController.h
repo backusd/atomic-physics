@@ -2,6 +2,7 @@
 #include "pch.h"
 #include "DeviceResources.h"
 #include "Mouse.h"
+#include "SimulationManager.h"
 
 class MoveLookController
 {
@@ -31,8 +32,9 @@ public:
 private:
 	void CreateProjectionMatrix(D3D11_VIEWPORT vp) noexcept;
 
-	void RotateLeftRight(float theta);
-	void RotateUpDown(float theta);
+	void InitializeAutomatedMove(double maxMoveTime) noexcept;
+	void RotateLeftRight(float theta) noexcept;
+	void RotateUpDown(float theta) noexcept;
 
 	// Eye/at/up vectors
 	DirectX::XMVECTOR m_eye;
@@ -47,4 +49,20 @@ private:
 	float m_mousePositionY;
 	float m_mousePositionXNew;
 	float m_mousePositionYNew;
+
+	// Automated move variables
+	//		When zooming in/out, or rotating 90, etc., we simply need to set the target location and
+	//		Update() will move the camera for us
+	bool	m_movingToNewLocation;
+	DirectX::XMFLOAT3 m_eyeTarget;
+	DirectX::XMFLOAT3 m_eyeInitial;
+	DirectX::XMFLOAT3 m_upTarget;
+	DirectX::XMFLOAT3 m_upInitial;
+	double m_moveStartTime;
+	double m_movementComplete;
+	double m_movementMaxTime;
+	//double m_timeAtLastMoveUpdate;
+	//float  m_totalRotationAngle;
+	//bool m_rotatingLeftRight;
+	//bool m_rotatingUpDown;
 };
