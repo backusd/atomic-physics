@@ -32,6 +32,8 @@ public:
 
 	DirectX::XMFLOAT3 GetSimulationDimensions() const noexcept { return { 2 * m_boxMaxX, 2 * m_boxMaxY, 2 * m_boxMaxZ }; }
 
+	double TotalSeconds() noexcept { return m_timer->GetTotalSeconds(); }
+
 
 private:
 	

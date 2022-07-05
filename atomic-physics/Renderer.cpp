@@ -55,6 +55,9 @@ void Renderer::Update()
 	// I don't think this does anything right now...
 	for (const std::unique_ptr<Drawable>& drawable : m_drawables)
 		drawable->Update();
+
+	// Update the MoveLookController
+	m_moveLookController->Update(m_viewport);
 }
 
 void Renderer::ProcessMouseEvents() noexcept
@@ -64,19 +67,19 @@ void Renderer::ProcessMouseEvents() noexcept
 		Mouse::Event e = Mouse::Read();
 		switch (e.GetType())
 		{
-		case Mouse::Event::Type::LPress: break;
-		case Mouse::Event::Type::LRelease: break;
-		case Mouse::Event::Type::LDoubleClick: break;
-		case Mouse::Event::Type::RPress: break;
-		case Mouse::Event::Type::RRelease: break;
-		case Mouse::Event::Type::MPress: break;
-		case Mouse::Event::Type::MRelease: break;
-		case Mouse::Event::Type::WheelUp: break;
-		case Mouse::Event::Type::WheelDown: break;
-		case Mouse::Event::Type::Move: break;
-		case Mouse::Event::Type::Enter: break;
-		case Mouse::Event::Type::Leave: break;
-		case Mouse::Event::Type::Invalid: break;
+		case Mouse::Event::Type::LPress:		OnLPress(e); break;
+		case Mouse::Event::Type::LRelease:		OnLRelease(e); break;
+		case Mouse::Event::Type::LDoubleClick:	OnLDoubleClick(e); break;
+		case Mouse::Event::Type::RPress:		OnRPress(e); break;
+		case Mouse::Event::Type::RRelease:		OnRRelease(e); break;
+		case Mouse::Event::Type::MPress:		OnMPress(e); break;
+		case Mouse::Event::Type::MRelease:		OnMRelease(e); break;
+		case Mouse::Event::Type::WheelUp:		OnWheelUp(e); break;
+		case Mouse::Event::Type::WheelDown:		OnWheelDown(e); break;
+		case Mouse::Event::Type::Move:			OnMouseMove(e); break;
+		case Mouse::Event::Type::Enter:			OnMouseEnter(e); break;
+		case Mouse::Event::Type::Leave:			OnMouseLeave(e); break;
+		case Mouse::Event::Type::Invalid:		OnMouseInvalidEvent(e); break;
 		}
 	}
 }
@@ -100,3 +103,67 @@ void Renderer::Render()
 	m_box->Draw();
 }
 
+void Renderer::OnLPress(Mouse::Event e) const noexcept
+{
+	m_moveLookController->OnLPress(e);
+}
+
+void Renderer::OnLRelease(Mouse::Event e) const noexcept
+{
+	m_moveLookController->OnLRelease(e);
+}
+
+void Renderer::OnLDoubleClick(Mouse::Event e) const noexcept
+{
+	m_moveLookController->OnLDoubleClick(e);
+}
+
+void Renderer::OnRPress(Mouse::Event e) const noexcept
+{
+	m_moveLookController->OnRPress(e);
+}
+
+void Renderer::OnRRelease(Mouse::Event e) const noexcept
+{
+	m_moveLookController->OnRRelease(e);
+}
+
+void Renderer::OnMPress(Mouse::Event e) const noexcept
+{
+	m_moveLookController->OnMPress(e);
+}
+
+void Renderer::OnMRelease(Mouse::Event e) const noexcept
+{
+	m_moveLookController->OnMRelease(e);
+}
+
+void Renderer::OnWheelUp(Mouse::Event e) const noexcept
+{
+	m_moveLookController->OnWheelUp(e);
+}
+
+void Renderer::OnWheelDown(Mouse::Event e) const noexcept
+{
+	m_moveLookController->OnWheelDown(e);
+}
+
+void Renderer::OnMouseMove(Mouse::Event e) const noexcept
+{
+	m_moveLookController->OnMouseMove(e);
+}
+
+void Renderer::OnMouseEnter(Mouse::Event /* e */) const noexcept
+{
+
+}
+
+void Renderer::OnMouseLeave(Mouse::Event /* e */) const noexcept
+{
+
+}
+
+void Renderer::OnMouseInvalidEvent(Mouse::Event /* e */) const noexcept
+{
+
+}

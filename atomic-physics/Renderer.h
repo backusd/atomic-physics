@@ -28,6 +28,20 @@ public:
 
 	D3D11_VIEWPORT GetViewport() const noexcept { return m_viewport; }
 
+	// Mouse Events
+	void OnLPress(Mouse::Event e) const noexcept;
+	void OnLRelease(Mouse::Event e) const noexcept;
+	void OnLDoubleClick(Mouse::Event e) const noexcept;
+	void OnRPress(Mouse::Event e) const noexcept;
+	void OnRRelease(Mouse::Event e) const noexcept;
+	void OnMPress(Mouse::Event e) const noexcept;
+	void OnMRelease(Mouse::Event e) const noexcept;
+	void OnWheelUp(Mouse::Event e) const noexcept;
+	void OnWheelDown(Mouse::Event e) const noexcept;
+	void OnMouseMove(Mouse::Event e) const noexcept;
+	void OnMouseEnter(Mouse::Event e) const noexcept;
+	void OnMouseLeave(Mouse::Event e) const noexcept;
+	void OnMouseInvalidEvent(Mouse::Event e) const noexcept;
 
 private:
 
