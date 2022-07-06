@@ -87,7 +87,7 @@ void AppWindow::Present() const
 // Forward declare message handler from imgui_impl_win32.cpp
 //extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-LRESULT AppWindow::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) const noexcept
+LRESULT AppWindow::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	//static WindowsMessageMap mm;
 	//OutputDebugString(mm(msg, wParam, lParam).c_str());	
@@ -261,8 +261,16 @@ LRESULT AppWindow::OnPaint(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) co
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
-LRESULT AppWindow::OnResize(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) const noexcept
+LRESULT AppWindow::OnResize(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
+	m_width = LOWORD(lParam);
+	m_height = HIWORD(lParam);
+
+	// For now, just create the viewport for the whole screen
+	CD3D11_VIEWPORT vp = CD3D11_VIEWPORT(0.0f, 0.0f, static_cast<float>(m_width), static_cast<float>(m_height));
+
+	DeviceResources::OnResize();
+	m_simulationRenderer->OnResize(vp);
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 

@@ -54,6 +54,9 @@ public:
 	void OnShiftKeyEvent(const Keyboard::Event& e) const noexcept;
 	void OnCharEvent(char c) const noexcept;
 
+	// Other Events
+	void OnResize(D3D11_VIEWPORT vp) noexcept;
+
 private:
 	void Render_AllSpheres() const noexcept_release_only;
 	void Render_Generic() const noexcept_release_only;

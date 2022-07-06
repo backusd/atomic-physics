@@ -17,7 +17,7 @@ public:
 	void Initialize() noexcept;
 
 
-	LRESULT HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) const noexcept override;
+	LRESULT HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
 
 	void Update();
 	bool Render() const;
@@ -42,7 +42,7 @@ private:
 	LRESULT OnRButtonUp(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) const noexcept;
 
 	LRESULT OnPaint(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) const noexcept;
-	LRESULT OnResize(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) const noexcept;
+	LRESULT OnResize(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 	LRESULT OnMouseMove(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) const noexcept;
 	LRESULT OnMouseLeave(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) const noexcept;

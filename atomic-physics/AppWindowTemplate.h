@@ -9,7 +9,7 @@ public:
 	AppWindowTemplate(int width, int height, const char* name);
 	~AppWindowTemplate();
 
-	virtual LRESULT HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) const noexcept
+	virtual LRESULT HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	{
 		return DefWindowProc(hWnd, msg, wParam, lParam);
 	}

@@ -40,6 +40,9 @@ public:
 	void OnShiftKeyEvent(const Keyboard::Event& e) noexcept;
 	void OnCharEvent(char c) noexcept;
 
+	// Other Events
+	void OnResize(D3D11_VIEWPORT vp) noexcept;
+
 
 private:
 	void CreateProjectionMatrix(D3D11_VIEWPORT vp) noexcept;

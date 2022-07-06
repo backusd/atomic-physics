@@ -33,6 +33,11 @@ void DeviceResources::InitializeImpl(HWND hWnd)
 	CreateWindowSizeDependentResources();
 }
 
+void DeviceResources::OnResizeImpl()
+{
+	CreateWindowSizeDependentResources();
+}
+
 void DeviceResources::CreateDeviceIndependentResources()
 {
 	// Initialize Direct2D Resources

@@ -359,3 +359,9 @@ void Renderer::OnCharEvent(char c) const noexcept
 {
 	m_moveLookController->OnCharEvent(c);
 }
+
+void Renderer::OnResize(D3D11_VIEWPORT vp) noexcept
+{
+	m_viewport = vp;
+	m_moveLookController->OnResize(m_viewport);
+}

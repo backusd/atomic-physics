@@ -513,3 +513,8 @@ void MoveLookController::RotateDown90() noexcept
         m_totalRotationAngle = -1.0f * DirectX::XM_PIDIV2;
     }
 }
+
+void MoveLookController::OnResize(D3D11_VIEWPORT vp) noexcept
+{
+    CreateProjectionMatrix(vp);
+}
