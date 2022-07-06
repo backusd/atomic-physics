@@ -31,6 +31,13 @@ struct ModelViewProjection
     DirectX::XMFLOAT4X4 projection;
 };
 
+constexpr int MAX_INSTANCES = 100;
+
+struct ModelViewProjectionPreMultipliedArray
+{
+    ModelViewProjectionPreMultiplied instanceData[MAX_INSTANCES];
+};
+
 struct _PhongMaterial
 {
     _PhongMaterial()
@@ -65,10 +72,19 @@ struct PhongMaterialProperties
     _PhongMaterial   Materials[NUM_PHONG_MATERIALS];
 };
 
+
+// Not sure why, but the 3 bytes of padding is necessary here.
+// I am getting a problem in HLSL where trying to create a cbuffer with an array
+// of uint adds 3 bytes of HIDDEN padding to each uint element
 struct PhongMaterialIndexBuffer
 {
-    int materialIndex;
-    int padding[3];
+    unsigned int materialIndex;
+    unsigned int padding[3];    // DO NOT REMOVE
+};
+
+struct PhongMaterialIndexArray
+{
+    PhongMaterialIndexBuffer materialIndex[MAX_INSTANCES];
 };
 
 

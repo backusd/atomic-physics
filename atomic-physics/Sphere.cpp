@@ -15,6 +15,7 @@ using DirectX::XMVECTOR;
 
 Sphere::Sphere(std::shared_ptr<MoveLookController> mlc) noexcept :
 	Drawable(mlc),
+	m_elementNumber(0),
 	m_radius(1.0f),
 	m_materialIndexBufferArray(nullptr)
 {
@@ -30,6 +31,8 @@ Sphere::Sphere(std::shared_ptr<MoveLookController> mlc) noexcept :
 
 void Sphere::SetAtomType(int elementNumber) noexcept
 {
+	m_elementNumber = elementNumber;
+
 	// Radius
 	m_radius = Constants::AtomicRadii[elementNumber];
 

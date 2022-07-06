@@ -55,7 +55,12 @@ public:
 	void OnCharEvent(char c) const noexcept;
 
 private:
+	void Render_AllSpheres() const noexcept_release_only;
+	void Render_Generic() const noexcept_release_only;
 
+	void InitializeAllSphereData();
+	void UpdateAllSphereModelViewProjectionInstanceData() const;
+	void UpdateAllSphereMaterialIndexInstanceData() const;
 
 	D3D11_VIEWPORT m_viewport;
 	std::shared_ptr<MoveLookController> m_moveLookController;
@@ -66,5 +71,15 @@ private:
 	std::unique_ptr<Lighting> m_lighting;
 	std::unique_ptr<EyePositionBufferArray> m_eyePositionBufferArray;
 	std::unique_ptr<MaterialBufferArray> m_materialBufferArray;
+
+	// Render resources - ALL SPHERES
+	std::unique_ptr<InputLayout>		 m_allSphere_InputLayout;
+	std::unique_ptr<VertexShader>		 m_allSphere_VertexShader;
+	std::unique_ptr<PixelShader>		 m_allSphere_PixelShader;
+	std::unique_ptr<SphereMesh>			 m_allSphere_Mesh;
+	std::unique_ptr<RasterizerState>	 m_allSphere_RasterizerState;
+	std::unique_ptr<DepthStencilState>	 m_allSphere_DepthStencilState;
+	std::unique_ptr<ConstantBufferArray> m_allSphere_ModelViewProjectionInstanceBufferArray;
+	std::unique_ptr<ConstantBufferArray> m_allSphere_MaterialIndexInstanceBufferArray;
 
 };

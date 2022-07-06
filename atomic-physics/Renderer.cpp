@@ -1,6 +1,7 @@
 #include "Renderer.h"
 
 using DirectX::XMFLOAT4;
+using DirectX::XMMATRIX;
 
 Renderer::Renderer(D3D11_VIEWPORT vp) noexcept :
 	m_viewport(vp)
@@ -21,6 +22,31 @@ Renderer::Renderer(D3D11_VIEWPORT vp) noexcept :
 
 	// materials
 	m_materialBufferArray = std::make_unique<MaterialBufferArray>();
+
+	// Initialize data that will be used when rendering in "All Sphere" mode
+	InitializeAllSphereData();
+}
+
+void Renderer::InitializeAllSphereData()
+{
+	m_allSphere_InputLayout = std::make_unique<InputLayout>(L"PhongInstancedVS.cso", BasicGeometry::SPHERE);
+	m_allSphere_VertexShader = std::make_unique<VertexShader>(m_allSphere_InputLayout->GetVertexShaderFileBlob());
+	m_allSphere_PixelShader = std::make_unique<PixelShader>(L"PhongInstancedPS.cso");
+	m_allSphere_Mesh = std::make_unique<SphereMesh>();
+	m_allSphere_RasterizerState = std::make_unique<RasterizerState>();
+	m_allSphere_DepthStencilState = std::make_unique<DepthStencilState>(1);
+
+	// VS constant buffer
+	std::shared_ptr<ConstantBuffer> mvpBuffer = std::make_shared<ConstantBuffer>();
+	mvpBuffer->CreateBuffer<ModelViewProjectionPreMultipliedArray>(D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE, 0, 0);
+	m_allSphere_ModelViewProjectionInstanceBufferArray = std::make_unique<ConstantBufferArray>(ConstantBufferBindingLocation::VERTEX_SHADER);
+	m_allSphere_ModelViewProjectionInstanceBufferArray->AddBuffer(mvpBuffer);
+
+	// PS constant buffer
+	std::shared_ptr<ConstantBuffer> materialIndexArrayBuffer = std::make_shared<ConstantBuffer>();
+	materialIndexArrayBuffer->CreateBuffer<PhongMaterialIndexArray>(D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE, 0, 0);
+	m_allSphere_MaterialIndexInstanceBufferArray = std::make_unique<ConstantBufferArray>(ConstantBufferBindingLocation::PIXEL_SHADER);
+	m_allSphere_MaterialIndexInstanceBufferArray->AddBuffer(materialIndexArrayBuffer);
 }
 
 void Renderer::Update()
@@ -130,12 +156,108 @@ void Renderer::Render()
 	m_eyePositionBufferArray->Update(); // This update should always come immediate AFTER the Bind call so we are guaranteed that the buffer is bound to the correct slot
 	m_materialBufferArray->Bind();
 
-	// Draw each drawable
-	for (const std::unique_ptr<Drawable>& drawable : m_drawables)
-		drawable->Draw();
+	// This should be a functional/lambda that is SPECIFIC to the draw settings
+	//		For example, when drawing every atom as a sphere, we can make certain
+	//		improvements to the draw pipeline such as instanced rendering
+	Render_AllSpheres();
+	//Render_Generic();
 
 	// Draw the box
 	m_box->Draw();
+}
+
+void Renderer::Render_Generic() const noexcept_release_only
+{
+	// Draw each drawable
+	for (const std::unique_ptr<Drawable>& drawable : m_drawables)
+		drawable->Draw();
+}
+
+void Renderer::Render_AllSpheres() const noexcept_release_only
+{
+	// Specialized Render function for use when all atoms are to be drawn as spheres
+
+	m_allSphere_InputLayout->Bind();
+	m_allSphere_VertexShader->Bind();
+	m_allSphere_PixelShader->Bind();
+	m_allSphere_Mesh->Bind();
+	m_allSphere_RasterizerState->Bind();
+	m_allSphere_DepthStencilState->Bind();
+	m_allSphere_ModelViewProjectionInstanceBufferArray->Bind();
+	m_allSphere_MaterialIndexInstanceBufferArray->Bind();
+
+	// Must update the buffers AFTER they are bound to the pipeline
+	UpdateAllSphereModelViewProjectionInstanceData();
+	UpdateAllSphereMaterialIndexInstanceData();
+
+	// Issue the DrawIndexedInstanced call
+	GFX_THROW_INFO_ONLY(
+		DeviceResources::D3DDeviceContext()->DrawIndexedInstanced(m_allSphere_Mesh->IndexCount(), static_cast<UINT>(m_drawables.size()), 0u, 0u, 0u)
+	);
+}
+
+void Renderer::UpdateAllSphereModelViewProjectionInstanceData() const
+{
+	ID3D11DeviceContext4* context = DeviceResources::D3DDeviceContext();
+	D3D11_MAPPED_SUBRESOURCE ms;
+	ZeroMemory(&ms, sizeof(D3D11_MAPPED_SUBRESOURCE));
+
+	// Update VS constant buffer with model/view/projection info
+	Microsoft::WRL::ComPtr<ID3D11Buffer> vsBuffer;
+	GFX_THROW_INFO_ONLY(
+		context->VSGetConstantBuffers(0, 1, vsBuffer.ReleaseAndGetAddressOf())
+	);
+
+	GFX_THROW_INFO(
+		context->Map(vsBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &ms)
+	);
+
+	ModelViewProjectionPreMultipliedArray* mappedBuffer = (ModelViewProjectionPreMultipliedArray*)ms.pData;
+
+	XMMATRIX viewProjection = m_moveLookController->ViewMatrix() * m_moveLookController->ProjectionMatrix();
+	XMMATRIX model;
+
+	for (unsigned int iii = 0; iii < m_drawables.size(); ++iii)
+	{
+		model = m_drawables[iii]->GetModelMatrix();
+
+		DirectX::XMStoreFloat4x4(&(mappedBuffer->instanceData[iii].model), model);
+		DirectX::XMStoreFloat4x4(&(mappedBuffer->instanceData[iii].modelViewProjection), model * viewProjection);
+		DirectX::XMStoreFloat4x4(&(mappedBuffer->instanceData[iii].inverseTransposeModel), DirectX::XMMatrixTranspose(DirectX::XMMatrixInverse(nullptr, model)));
+	}
+
+	GFX_THROW_INFO_ONLY(
+		context->Unmap(vsBuffer.Get(), 0)
+	);
+}
+
+void Renderer::UpdateAllSphereMaterialIndexInstanceData() const
+{
+	ID3D11DeviceContext4* context = DeviceResources::D3DDeviceContext();
+	D3D11_MAPPED_SUBRESOURCE ms;
+	ZeroMemory(&ms, sizeof(D3D11_MAPPED_SUBRESOURCE));
+
+	// Update VS constant buffer with model/view/projection info
+	Microsoft::WRL::ComPtr<ID3D11Buffer> psBuffer;
+	GFX_THROW_INFO_ONLY(
+		context->PSGetConstantBuffers(3, 1, psBuffer.ReleaseAndGetAddressOf())
+	);
+
+	GFX_THROW_INFO(
+		context->Map(psBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &ms)
+	);
+
+	PhongMaterialIndexArray* mappedBuffer = (PhongMaterialIndexArray*)ms.pData;
+
+	for (unsigned int iii = 0; iii < m_drawables.size(); ++iii)
+	{
+		Sphere* sphere = dynamic_cast<Sphere*>(m_drawables[iii].get());
+		mappedBuffer->materialIndex[iii].materialIndex = sphere->GetElementNumber() - 1;
+	}
+
+	GFX_THROW_INFO_ONLY(
+		context->Unmap(psBuffer.Get(), 0)
+	);
 }
 
 void Renderer::OnLPress(const Mouse::Event& e) const noexcept

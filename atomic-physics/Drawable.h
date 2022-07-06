@@ -29,7 +29,7 @@ public:
 	virtual DirectX::XMMATRIX GetScaleMatrix() const noexcept { return DirectX::XMMatrixIdentity(); }
 	virtual DirectX::XMMATRIX GetRotationMatrix() const noexcept { return DirectX::XMMatrixRotationRollPitchYaw(m_pitch, m_yaw, m_roll); }
 	virtual DirectX::XMMATRIX GetTranslationMatrix() const noexcept { return DirectX::XMMatrixTranslation(m_position.x, m_position.y, m_position.z); }
-
+	DirectX::XMMATRIX GetModelMatrix() const noexcept { return GetScaleMatrix() * GetRotationMatrix() * GetTranslationMatrix(); }
 
 	void Position(float x, float y, float z) noexcept;
 	void Velocity(float x, float y, float z) noexcept;

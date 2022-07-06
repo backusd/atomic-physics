@@ -15,6 +15,7 @@ public:
 	void Update() const noexcept;
 	void Draw() const noexcept_release_only override;
 
+	unsigned int GetElementNumber() const noexcept { return m_elementNumber; }
 	DirectX::XMMATRIX GetScaleMatrix() const noexcept override { return DirectX::XMMatrixScaling(m_radius, m_radius, m_radius); }
 
 	void SetAtomType(int elementNumber) noexcept;
@@ -22,6 +23,7 @@ public:
 private:
 	void UpdateModelViewProjectionBuffer() const;
 
+	unsigned int m_elementNumber;
 	float m_radius;
 
 	std::unique_ptr<ConstantBufferArray> m_materialIndexBufferArray;

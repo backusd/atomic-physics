@@ -203,6 +203,38 @@ void MoveLookController::Update(D3D11_VIEWPORT viewport) noexcept
         m_mousePositionX = m_mousePositionXNew;
         m_mousePositionY = m_mousePositionYNew;
     }
+    else if (m_upArrow || m_downArrow || m_leftArrow || m_rightArrow)
+    {
+        // Cancel out any existing automated movement
+        m_movingToNewLocation = false;
+
+
+        // When a button is pressed, we must begin tracking the time before we can make an update
+        if (m_elapsedTime < 0.01f)
+        {
+            m_elapsedTime = SimulationManager::TotalSeconds();
+            return;
+        }
+
+        // Compute the time delta
+        double currentTime = SimulationManager::TotalSeconds();
+        double timeDelta = currentTime - m_elapsedTime;
+        m_elapsedTime = currentTime;
+
+        // Compute the rotation
+        float radiansPerSecond = 0.5;
+        float theta = static_cast<float>(timeDelta * radiansPerSecond);
+
+        // If rotating up or right, make the angle negative so the rest of the math is the same
+        if (m_upArrow || m_rightArrow)
+            theta *= -1;
+
+        if (m_upArrow || m_downArrow)
+            RotateUpDown(theta);
+
+        if (m_leftArrow || m_rightArrow)
+            RotateLeftRight(theta);
+    }
     else if (m_movingToNewLocation)
     {
         // if the view matrix has officially been read by SceneRenderer, no need to perform any update here
