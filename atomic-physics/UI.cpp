@@ -1,11 +1,14 @@
 #include "UI.h"
 
 UI::UI() noexcept :
-	m_io(ImGui::GetIO())
-	//m_left(0.0f),
-	//m_top(0.0f),
-	//m_right(0.0f),
-	//m_bottom(0.0f)
+	m_io(ImGui::GetIO()),
+	m_viewport(),
+	m_left(0.0f),
+	m_top(0.0f),
+	m_height(0.0f),
+	m_width(0.0f),
+	m_windowOffsetX(0.0f),
+	m_windowOffsetY(0.0f)
 {
 }
 
@@ -19,17 +22,12 @@ void UI::Render() noexcept
 	SimulationDetails();
 	LogWindow();
 	PerformanceWindow();
-	// SimulationViewport();
-
-	//ImVec2 min = ImVec2(m_leftScreenSpace + m_leftWindowSpace, m_topScreenSpace + m_topWindowSpace);
-	//ImVec2 max = ImVec2(m_rightScreenSpace + m_leftWindowSpace, m_bottomScreenSpace + m_topWindowSpace);
-	//ImGui::GetForegroundDrawList()->AddRect(min, max, IM_COL32(255, 255, 0, 255));
 
 	m_viewport = CD3D11_VIEWPORT(
-		m_leftScreenSpace,
-		m_topScreenSpace,
-		m_rightScreenSpace - m_leftScreenSpace,
-		m_bottomScreenSpace - m_topScreenSpace
+		m_left,
+		m_top,
+		m_width,
+		m_height
 	);
 
 	// --------------------------------------------------
@@ -128,18 +126,17 @@ void UI::MenuBar() noexcept
 {
 	if (ImGui::BeginMenuBar())
 	{
-		ImVec2 regionMin = ImGui::GetWindowContentRegionMin();
-		ImVec2 regionMax = ImGui::GetWindowContentRegionMax();
-		m_topScreenSpace = regionMin.y;
+		m_top = ImGui::GetWindowContentRegionMin().y;
+		m_windowOffsetY = ImGui::GetWindowPos().y;
+		m_windowOffsetX = ImGui::GetWindowPos().x;
 
-		regionMin.x += ImGui::GetWindowPos().x;
-		regionMin.y += ImGui::GetWindowPos().y;
-		regionMax.x += ImGui::GetWindowPos().x;
-		regionMax.y += ImGui::GetWindowPos().y;
-
-		// ImGui::GetForegroundDrawList()->AddRect(regionMin, regionMax, IM_COL32(255, 255, 0, 255));
-
-		m_topWindowSpace = regionMin.y;
+		//ImVec2 regionMin = ImGui::GetWindowContentRegionMin();
+		//ImVec2 regionMax = ImGui::GetWindowContentRegionMax();
+		//regionMin.x += ImGui::GetWindowPos().x;
+		//regionMin.y += ImGui::GetWindowPos().y;
+		//regionMax.x += ImGui::GetWindowPos().x;
+		//regionMax.y += ImGui::GetWindowPos().y;
+		//ImGui::GetForegroundDrawList()->AddRect(regionMin, regionMax, IM_COL32(255, 255, 0, 255));
 
 		// File
 		if (ImGui::BeginMenu("File"))
@@ -208,18 +205,7 @@ void UI::SimulationDetails() noexcept
 	ImGui::Begin("Simulation");
 	ImGui::PopStyleVar();
 
-	ImVec2 regionMin = ImGui::GetWindowContentRegionMin();
-	ImVec2 regionMax = ImGui::GetWindowContentRegionMax();
-	m_leftScreenSpace = regionMax.x;
-
-	regionMin.x += ImGui::GetWindowPos().x;
-	regionMin.y += ImGui::GetWindowPos().y;
-	regionMax.x += ImGui::GetWindowPos().x;
-	regionMax.y += ImGui::GetWindowPos().y;
-
-	// ImGui::GetForegroundDrawList()->AddRect(regionMin, regionMax, IM_COL32(255, 255, 0, 255));
-
-	m_leftWindowSpace = regionMax.x;
+	m_left = ImGui::GetWindowContentRegionMax().x;
 
 	ImGui::Text(" Application average %.3f ms/frame (%.1f FPS)", 1000.0f / m_io.Framerate, m_io.Framerate);
 	ImGui::End();
@@ -231,18 +217,7 @@ void UI::LogWindow() noexcept
 	ImGui::Begin("Log");
 	ImGui::PopStyleVar();
 
-	ImVec2 regionMin = ImGui::GetWindowContentRegionMin();
-	ImVec2 regionMax = ImGui::GetWindowContentRegionMax();
-
-	regionMin.x += ImGui::GetWindowPos().x;
-	regionMin.y += ImGui::GetWindowPos().y;
-	regionMax.x += ImGui::GetWindowPos().x;
-	regionMax.y += ImGui::GetWindowPos().y;
-
-	// ImGui::GetForegroundDrawList()->AddRect(regionMin, regionMax, IM_COL32(255, 255, 0, 255));
-
-	m_bottomWindowSpace = regionMin.y;
-	m_bottomScreenSpace = regionMin.y - m_topWindowSpace + m_topScreenSpace - 19; // minus 19 because that is how many pixels high the tab region (non-content) is
+	m_height = ImGui::GetWindowPos().y - m_windowOffsetY - m_top;
 
 	ImGui::Text("  Application average %.3f ms/frame (%.1f FPS)", 1000.0f / m_io.Framerate, m_io.Framerate);
 	ImGui::End();
@@ -254,30 +229,8 @@ void UI::PerformanceWindow() noexcept
 	ImGui::Begin("Performance");
 	ImGui::PopStyleVar();
 
-	ImVec2 regionMin = ImGui::GetWindowContentRegionMin();
-	ImVec2 regionMax = ImGui::GetWindowContentRegionMax();
-
-	regionMin.x += ImGui::GetWindowPos().x;
-	regionMin.y += ImGui::GetWindowPos().y;
-	regionMax.x += ImGui::GetWindowPos().x;
-	regionMax.y += ImGui::GetWindowPos().y;
-
-	// ImGui::GetForegroundDrawList()->AddRect(regionMin, regionMax, IM_COL32(255, 255, 0, 255));
-
-	m_rightWindowSpace = regionMin.x;
-	m_rightScreenSpace = regionMin.x - m_leftWindowSpace + m_leftScreenSpace;
-
+	m_width = ImGui::GetWindowPos().x - m_windowOffsetX - m_left;
 
 	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / m_io.Framerate, m_io.Framerate);
-	ImGui::End();
-}
-
-void UI::SimulationViewport() noexcept
-{
-	
-	ImGui::Begin("Viewport");
-
-
-	// m_viewport = CD3D11_VIEWPORT(pos.x, pos.y, width, height);
 	ImGui::End();
 }

@@ -24,19 +24,12 @@ private:
 	void SimulationDetails() noexcept;
 	void LogWindow() noexcept;
 	void PerformanceWindow() noexcept;
-	void SimulationViewport() noexcept;
 
 
 	ImGuiIO& m_io;
 	D3D11_VIEWPORT m_viewport;
 
-	float m_leftScreenSpace;
-	float m_topScreenSpace;
-	float m_rightScreenSpace;
-	float m_bottomScreenSpace;
-
-	float m_leftWindowSpace;
-	float m_topWindowSpace;
-	float m_rightWindowSpace;
-	float m_bottomWindowSpace;
+	float m_top, m_left;
+	float m_height, m_width;
+	float m_windowOffsetX, m_windowOffsetY;
 };
