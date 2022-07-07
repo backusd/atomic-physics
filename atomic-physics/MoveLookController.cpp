@@ -100,7 +100,7 @@ void MoveLookController::OnLRelease(const Mouse::Event& e) noexcept
     m_mousePositionY = m_mousePositionYNew = static_cast<float>(e.GetPosY());
 }
 
-void MoveLookController::OnLDoubleClick(const Mouse::Event& e) noexcept
+void MoveLookController::OnLDoubleClick(const Mouse::Event& /* e */) noexcept
 {
     // Set automated move flags and initial data - 0.5 seconds for the move
     InitializeAutomatedMove(0.5);
@@ -133,7 +133,7 @@ void MoveLookController::OnMRelease(const Mouse::Event& /* e */) noexcept
 
 }
 
-void MoveLookController::OnWheelUp(const Mouse::Event& e) noexcept
+void MoveLookController::OnWheelUp(const Mouse::Event& /* e */) noexcept
 {
     // Only update if not already moving (this avoids a flood of WM_MOUSEWHEEL messages)
     if (!m_movingToNewLocation)
@@ -151,7 +151,7 @@ void MoveLookController::OnWheelUp(const Mouse::Event& e) noexcept
     }
 }
 
-void MoveLookController::OnWheelDown(const Mouse::Event& e) noexcept
+void MoveLookController::OnWheelDown(const Mouse::Event& /* e */) noexcept
 {
     // Only update if not already moving (this avoids a flood of WM_MOUSEWHEEL messages)
     if (!m_movingToNewLocation)

@@ -187,6 +187,7 @@
     <ClCompile Include="StepTimerException.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TextureArray.cpp" />
+    <ClCompile Include="UI.cpp" />
     <ClCompile Include="VertexShader.cpp" />
     <ClCompile Include="WindowException.cpp" />
     <ClCompile Include="WindowsMessageMap.cpp" />
@@ -242,6 +243,7 @@
     <ClInclude Include="StepTimerException.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureArray.h" />
+    <ClInclude Include="UI.h" />
     <ClInclude Include="VertexShader.h" />
     <ClInclude Include="WindowException.h" />
     <ClInclude Include="WindowsMessageMap.h" />

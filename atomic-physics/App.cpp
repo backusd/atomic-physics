@@ -2,6 +2,12 @@
 
 App::App()
 {
+	// Initialize ImGui
+	//		MUST set this here so that the AppWindow constructor can call ImGui::GetIO()
+	//		Setup Dear ImGui context
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+
 	// Create the window
 	m_window = std::make_unique<AppWindow>(1000, 800, "Main Window");
 
@@ -25,7 +31,8 @@ App::App()
 	// The content within AppWindow does NOT get created in the AppWindow constructor. This is to
 	// allow the AppWindowTemplate the ability to create itself and give us a window, however,
 	// the window contents need access to DeviceResources, so you MUST initialize DeviceResources 
-	// in between constructing AppWindow and calling AppWindow->Initialize()
+	// in between constructing AppWindow and calling AppWindow->Initialize(). The same holds true
+	// for initializing ImGui as well
 	m_window->Initialize();
 }
 
@@ -36,6 +43,11 @@ int App::Run() const
 		// process all messages pending, but to not block for new messages
 		if (const auto ecode = m_window->ProcessMessages())
 		{
+			// Shutdown ImGui
+			ImGui_ImplDX11_Shutdown();
+			ImGui_ImplWin32_Shutdown();
+			ImGui::DestroyContext();
+
 			// if return optional has value, means we're quitting so return exit code
 			return *ecode;
 		}

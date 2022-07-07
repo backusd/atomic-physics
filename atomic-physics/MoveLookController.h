@@ -16,6 +16,7 @@ public:
 
 	DirectX::XMMATRIX ViewMatrix() const noexcept;
 	DirectX::XMMATRIX ProjectionMatrix() const noexcept;
+	void CreateProjectionMatrix(D3D11_VIEWPORT vp) noexcept;
 
 	DirectX::XMVECTOR Position() const noexcept { return m_eye; }
 
@@ -45,8 +46,6 @@ public:
 
 
 private:
-	void CreateProjectionMatrix(D3D11_VIEWPORT vp) noexcept;
-
 	void InitializeAutomatedMove(double maxMoveTime) noexcept;
 	void RotateLeftRight(float theta) noexcept;
 	void RotateUpDown(float theta) noexcept;

@@ -38,7 +38,7 @@
     <Filter Include="Source Files\Window\Input">
       <UniqueIdentifier>{7e40405b-cf7b-4a17-a474-d9e4239580a0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\ImGui">
+    <Filter Include="Source Files\UI\ImGuiSource">
       <UniqueIdentifier>{b41cfb27-9c80-4e0d-b8a9-1ef409891e8a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -155,25 +155,28 @@
       <Filter>Source Files\Window\Input</Filter>
     </ClCompile>
     <ClCompile Include="imgui.cpp">
-      <Filter>Source Files\ImGui</Filter>
+      <Filter>Source Files\UI\ImGuiSource</Filter>
     </ClCompile>
     <ClCompile Include="imgui_demo.cpp">
-      <Filter>Source Files\ImGui</Filter>
+      <Filter>Source Files\UI\ImGuiSource</Filter>
     </ClCompile>
     <ClCompile Include="imgui_draw.cpp">
-      <Filter>Source Files\ImGui</Filter>
+      <Filter>Source Files\UI\ImGuiSource</Filter>
     </ClCompile>
     <ClCompile Include="imgui_impl_dx11.cpp">
-      <Filter>Source Files\ImGui</Filter>
+      <Filter>Source Files\UI\ImGuiSource</Filter>
     </ClCompile>
     <ClCompile Include="imgui_impl_win32.cpp">
-      <Filter>Source Files\ImGui</Filter>
+      <Filter>Source Files\UI\ImGuiSource</Filter>
     </ClCompile>
     <ClCompile Include="imgui_tables.cpp">
-      <Filter>Source Files\ImGui</Filter>
+      <Filter>Source Files\UI\ImGuiSource</Filter>
     </ClCompile>
     <ClCompile Include="imgui_widgets.cpp">
-      <Filter>Source Files\ImGui</Filter>
+      <Filter>Source Files\UI\ImGuiSource</Filter>
+    </ClCompile>
+    <ClCompile Include="UI.cpp">
+      <Filter>Source Files\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -310,28 +313,31 @@
       <Filter>Source Files\Window\Input</Filter>
     </ClInclude>
     <ClInclude Include="imconfig.h">
-      <Filter>Source Files\ImGui</Filter>
+      <Filter>Source Files\UI\ImGuiSource</Filter>
     </ClInclude>
     <ClInclude Include="imgui.h">
-      <Filter>Source Files\ImGui</Filter>
+      <Filter>Source Files\UI\ImGuiSource</Filter>
     </ClInclude>
     <ClInclude Include="imgui_impl_dx11.h">
-      <Filter>Source Files\ImGui</Filter>
+      <Filter>Source Files\UI\ImGuiSource</Filter>
     </ClInclude>
     <ClInclude Include="imgui_impl_win32.h">
-      <Filter>Source Files\ImGui</Filter>
+      <Filter>Source Files\UI\ImGuiSource</Filter>
     </ClInclude>
     <ClInclude Include="imgui_internal.h">
-      <Filter>Source Files\ImGui</Filter>
+      <Filter>Source Files\UI\ImGuiSource</Filter>
     </ClInclude>
     <ClInclude Include="imstb_rectpack.h">
-      <Filter>Source Files\ImGui</Filter>
+      <Filter>Source Files\UI\ImGuiSource</Filter>
     </ClInclude>
     <ClInclude Include="imstb_textedit.h">
-      <Filter>Source Files\ImGui</Filter>
+      <Filter>Source Files\UI\ImGuiSource</Filter>
     </ClInclude>
     <ClInclude Include="imstb_truetype.h">
-      <Filter>Source Files\ImGui</Filter>
+      <Filter>Source Files\UI\ImGuiSource</Filter>
+    </ClInclude>
+    <ClInclude Include="UI.h">
+      <Filter>Source Files\UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -356,7 +362,7 @@
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="imgui.natvis">
-      <Filter>Source Files\ImGui</Filter>
+      <Filter>Source Files\UI\ImGuiSource</Filter>
     </Natvis>
   </ItemGroup>
 </Project>

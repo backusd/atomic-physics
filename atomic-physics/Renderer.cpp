@@ -49,6 +49,20 @@ void Renderer::InitializeAllSphereData()
 	m_allSphere_MaterialIndexInstanceBufferArray->AddBuffer(materialIndexArrayBuffer);
 }
 
+void Renderer::SetViewport(D3D11_VIEWPORT viewport) noexcept 
+{ 
+	// If they are different, then we need to update the viewport and also the projection matrix
+	if (m_viewport.Height != viewport.Height ||
+		m_viewport.Width != viewport.Width ||
+		m_viewport.TopLeftX != viewport.TopLeftX ||
+		m_viewport.TopLeftY != viewport.TopLeftY)
+	{
+		m_viewport = viewport;
+
+		m_moveLookController->CreateProjectionMatrix(m_viewport);
+	}	 
+}
+
 void Renderer::Update()
 {
 	const std::vector<Particle>& particles = SimulationManager::GetParticles();

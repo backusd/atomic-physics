@@ -4,6 +4,13 @@
 #include "Keyboard.h"
 #include "Mouse.h"
 #include "Renderer.h"
+#include "UI.h"
+
+// ImGui ------------------------
+#include "imgui.h"
+#include "imgui_impl_win32.h"
+#include "imgui_impl_dx11.h"
+// ------------------------------
 
 #include <optional>
 #include <memory>
@@ -20,7 +27,7 @@ public:
 	LRESULT HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
 
 	void Update();
-	bool Render() const;
+	bool Render();
 	void Present() const;
 
 	std::optional<int> ProcessMessages() const noexcept;
@@ -58,9 +65,16 @@ private:
 
 	LRESULT OnKillFocus(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) const noexcept;
 
+	void InitializeImGui() noexcept;
+
 	int m_height;
 	int m_width;
 
 	const float m_clearColor[4];
 	std::unique_ptr<Renderer> m_simulationRenderer;
+
+	// ImGui -------------------
+	ImGuiIO& m_io;
+	std::unique_ptr<UI> m_ui;
+	D3D11_VIEWPORT m_viewport;
 };

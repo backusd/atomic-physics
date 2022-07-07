@@ -29,6 +29,7 @@ public:
 	void ProcessKeyboardEvents() noexcept;
 
 	D3D11_VIEWPORT GetViewport() const noexcept { return m_viewport; }
+	void SetViewport(D3D11_VIEWPORT viewport) noexcept;
 
 	// Mouse Events
 	void OnLPress(const Mouse::Event& e) const noexcept;
