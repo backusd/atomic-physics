@@ -5,6 +5,8 @@
 #include "imgui.h"
 #include "imgui_impl_win32.h"
 #include "imgui_impl_dx11.h"
+
+#include "implot.h"
 // ------------------------------
 
 class UI
@@ -23,7 +25,10 @@ private:
 	void MenuBar() noexcept;
 	void SimulationDetails() noexcept;
 	void LogWindow() noexcept;
+
+
 	void PerformanceWindow() noexcept;
+	void PerformanceFPS() noexcept;
 
 
 	ImGuiIO& m_io;

@@ -41,6 +41,9 @@
     <Filter Include="Source Files\UI\ImGuiSource">
       <UniqueIdentifier>{b41cfb27-9c80-4e0d-b8a9-1ef409891e8a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\UI\ImGuiSource\ImPlot">
+      <UniqueIdentifier>{1cdeb833-e16a-4350-9e6c-aa1abbfcf6bd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="WinMain.cpp">
@@ -177,6 +180,15 @@
     </ClCompile>
     <ClCompile Include="UI.cpp">
       <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="implot.cpp">
+      <Filter>Source Files\UI\ImGuiSource\ImPlot</Filter>
+    </ClCompile>
+    <ClCompile Include="implot_items.cpp">
+      <Filter>Source Files\UI\ImGuiSource\ImPlot</Filter>
+    </ClCompile>
+    <ClCompile Include="implot_demo.cpp">
+      <Filter>Source Files\UI\ImGuiSource\ImPlot</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -338,6 +350,12 @@
     </ClInclude>
     <ClInclude Include="UI.h">
       <Filter>Source Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="implot.h">
+      <Filter>Source Files\UI\ImGuiSource\ImPlot</Filter>
+    </ClInclude>
+    <ClInclude Include="implot_internal.h">
+      <Filter>Source Files\UI\ImGuiSource\ImPlot</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

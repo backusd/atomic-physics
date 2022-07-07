@@ -1,5 +1,7 @@
 #include "App.h"
 
+#include "implot.h"
+
 App::App()
 {
 	// Initialize ImGui
@@ -7,6 +9,7 @@ App::App()
 	//		Setup Dear ImGui context
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
+	ImPlot::CreateContext();
 
 	// Create the window
 	m_window = std::make_unique<AppWindow>(1000, 800, "Main Window");
@@ -46,6 +49,7 @@ int App::Run() const
 			// Shutdown ImGui
 			ImGui_ImplDX11_Shutdown();
 			ImGui_ImplWin32_Shutdown();
+			ImPlot::DestroyContext();
 			ImGui::DestroyContext();
 
 			// if return optional has value, means we're quitting so return exit code

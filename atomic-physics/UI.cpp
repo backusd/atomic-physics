@@ -1,4 +1,6 @@
 #include "UI.h"
+#include <algorithm>
+#include <vector>
 
 UI::UI() noexcept :
 	m_io(ImGui::GetIO()),
@@ -18,6 +20,7 @@ void UI::Render() noexcept
 
 	// DEMO
 	ImGui::ShowDemoWindow();
+	ImPlot::ShowDemoWindow();
 
 	SimulationDetails();
 	LogWindow();
@@ -201,11 +204,12 @@ void UI::MenuBar() noexcept
 
 void UI::SimulationDetails() noexcept
 {
-	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+	ImVec2 padding = ImVec2(5.0f, 5.0f);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, padding);
 	ImGui::Begin("Simulation");
 	ImGui::PopStyleVar();
 
-	m_left = ImGui::GetWindowContentRegionMax().x;
+	m_left = ImGui::GetWindowContentRegionMax().x + padding.x;
 
 	ImGui::Text(" Application average %.3f ms/frame (%.1f FPS)", 1000.0f / m_io.Framerate, m_io.Framerate);
 	ImGui::End();
@@ -213,7 +217,7 @@ void UI::SimulationDetails() noexcept
 
 void UI::LogWindow() noexcept
 {
-	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(5.0f, 5.0f));
 	ImGui::Begin("Log");
 	ImGui::PopStyleVar();
 
@@ -225,12 +229,52 @@ void UI::LogWindow() noexcept
 
 void UI::PerformanceWindow() noexcept
 {
-	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(5.0f, 5.0f));
 	ImGui::Begin("Performance");
 	ImGui::PopStyleVar();
 
 	m_width = ImGui::GetWindowPos().x - m_windowOffsetX - m_left;
 
-	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / m_io.Framerate, m_io.Framerate);
+	PerformanceFPS();
+
+
+
+
+
+
 	ImGui::End();
+}
+
+void UI::PerformanceFPS() noexcept
+{
+	if (ImGui::CollapsingHeader("FPS", ImGuiTreeNodeFlags_None))
+	{
+		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / m_io.Framerate, m_io.Framerate);
+
+		static std::vector<float> fps(2000);
+		static float totalTime = 0.0f;
+		static std::vector<float> time(2000);
+		static int offset = 0;
+		static float history = 10.0f;
+
+		totalTime += m_io.DeltaTime;
+		time[offset] = totalTime;
+
+		fps[offset] = m_io.Framerate;
+		offset = (offset + 1) % fps.size();
+
+		float maxY = *std::max_element(fps.begin(), fps.end());
+		float minY = *std::min_element(fps.begin(), fps.end());
+
+		static ImPlotAxisFlags flags = ImPlotAxisFlags_None; // ImPlotAxisFlags_NoTickLabels;
+
+		if (ImPlot::BeginPlot("FPS##Scrolling", ImVec2(-1, 150))) {
+			ImPlot::SetupAxes(NULL, NULL, flags, flags);
+			ImPlot::SetupAxisLimits(ImAxis_X1, totalTime - history, totalTime, ImGuiCond_Always);
+			ImPlot::SetupAxisLimits(ImAxis_Y1, std::max(0.0f, minY - 10.0f), maxY + 10.0f, ImGuiCond_Always);
+			ImPlot::SetNextFillStyle(IMPLOT_AUTO_COL, 0.5f);
+			ImPlot::PlotLine("FPS", &time[0], &fps[0], fps.size(), 0, offset, sizeof(float));
+			ImPlot::EndPlot();
+		}
+	}
 }
