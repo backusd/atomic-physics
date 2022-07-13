@@ -67,3 +67,6 @@
 #include <DirectXColors.h>
 #include <d3dcompiler.h>
 #pragma comment(lib, "D3DCompiler")
+
+// Profiling may be used virtually throughout the application so just include it here
+#include "Profile.h"

@@ -249,7 +249,7 @@ void UI::PerformanceFPS() noexcept
 {
 	if (ImGui::CollapsingHeader("FPS", ImGuiTreeNodeFlags_None))
 	{
-		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / m_io.Framerate, m_io.Framerate);
+		ImGui::Text("%.3f ms/frame (%.1f FPS)", 1000.0f / m_io.Framerate, m_io.Framerate);
 
 		static std::vector<float> fps(2000);
 		static float totalTime = 0.0f;
@@ -273,8 +273,8 @@ void UI::PerformanceFPS() noexcept
 			ImPlot::SetupAxisLimits(ImAxis_X1, totalTime - history, totalTime, ImGuiCond_Always);
 			ImPlot::SetupAxisLimits(ImAxis_Y1, std::max(0.0f, minY - 10.0f), maxY + 10.0f, ImGuiCond_Always);
 			ImPlot::SetNextFillStyle(IMPLOT_AUTO_COL, 0.5f);
-			ImPlot::PlotLine("FPS", &time[0], &fps[0], fps.size(), 0, offset, sizeof(float));
-			ImPlot::EndPlot();
+			ImPlot::PlotLine("FPS", &time[0], &fps[0], static_cast<int>(fps.size()), 0, offset, sizeof(float));
+			ImPlot::EndPlot(); 
 		}
 	}
 }

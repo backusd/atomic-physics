@@ -4,6 +4,8 @@
 
 App::App()
 {
+	PROFILE_BEGIN_SESSION("Startup", "Profile-Startup.json");
+
 	// Initialize ImGui
 	//		MUST set this here so that the AppWindow constructor can call ImGui::GetIO()
 	//		Setup Dear ImGui context
@@ -37,20 +39,29 @@ App::App()
 	// in between constructing AppWindow and calling AppWindow->Initialize(). The same holds true
 	// for initializing ImGui as well
 	m_window->Initialize();
+
+	PROFILE_END_SESSION();
 }
 
 int App::Run() const
 {
+	PROFILE_BEGIN_SESSION("Runtime", "Profile-Runtime.json");
+
 	while (true)
 	{
 		// process all messages pending, but to not block for new messages
 		if (const auto ecode = m_window->ProcessMessages())
 		{
+			PROFILE_END_SESSION(); // End the Runtime session
+			PROFILE_BEGIN_SESSION("Shutdown", "Profile-Shutdown.json");
+
 			// Shutdown ImGui
 			ImGui_ImplDX11_Shutdown();
 			ImGui_ImplWin32_Shutdown();
 			ImPlot::DestroyContext();
 			ImGui::DestroyContext();
+
+			PROFILE_END_SESSION(); // End shutdown
 
 			// if return optional has value, means we're quitting so return exit code
 			return *ecode;

@@ -44,6 +44,9 @@
     <Filter Include="Source Files\UI\ImGuiSource\ImPlot">
       <UniqueIdentifier>{1cdeb833-e16a-4350-9e6c-aa1abbfcf6bd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Testing">
+      <UniqueIdentifier>{85d2a1bb-5f54-4bad-82d2-df2f8605fa43}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="WinMain.cpp">
@@ -356,6 +359,12 @@
     </ClInclude>
     <ClInclude Include="implot_internal.h">
       <Filter>Source Files\UI\ImGuiSource\ImPlot</Filter>
+    </ClInclude>
+    <ClInclude Include="Profile.h">
+      <Filter>Source Files\Testing</Filter>
+    </ClInclude>
+    <ClInclude Include="TestConfig.h">
+      <Filter>Source Files\Testing</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

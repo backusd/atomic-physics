@@ -85,6 +85,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <Profile>true</Profile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -123,6 +124,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <Profile>true</Profile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -202,6 +204,7 @@
     <ClInclude Include="AppWindowTemplate.h" />
     <ClInclude Include="BaseException.h" />
     <ClInclude Include="BasicGeometry.h" />
+    <ClInclude Include="Profile.h" />
     <ClInclude Include="Bindable.h" />
     <ClInclude Include="Box.h" />
     <ClInclude Include="BoxMesh.h" />
@@ -246,6 +249,7 @@
     <ClInclude Include="SphereMesh.h" />
     <ClInclude Include="StepTimer.h" />
     <ClInclude Include="StepTimerException.h" />
+    <ClInclude Include="TestConfig.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureArray.h" />
     <ClInclude Include="UI.h" />

@@ -102,6 +102,8 @@ void AppWindow::Update()
 
 bool AppWindow::Render()
 { 
+	PROFILE_FUNCTION();
+
 	// Clear the window
 	ID3D11DeviceContext4* context = DeviceResources::D3DDeviceContext();
 	context->ClearDepthStencilView(DeviceResources::DepthStencilView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
@@ -118,16 +120,25 @@ bool AppWindow::Render()
 	ImGui::NewFrame();
 
 	// Render the UI
-	m_ui->Render();
+	{
+		PROFILE_SCOPE("UI Render");
+		m_ui->Render();
+	}
 
 	// Render 3D scene - MUST render here because we render on top of ImGui, but if we render
 	//					 after finalizing the ImGui draw, then Present will be called by ImGui
 	//					 which will discard the render target (I believe)
 	m_simulationRenderer->SetViewport(m_ui->GetViewport());
-	m_simulationRenderer->Render();
+	{
+		PROFILE_SCOPE("3D Render");
+		m_simulationRenderer->Render();
+	}
 
 	// Render ImGui
-	ImGui::Render();
+	{
+		PROFILE_SCOPE("ImGui Render");
+		ImGui::Render();
+	}
 
 
 
