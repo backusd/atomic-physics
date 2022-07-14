@@ -181,6 +181,7 @@
     <ClCompile Include="MoveLookController.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="PixelShader.cpp" />
+    <ClCompile Include="Profile.cpp" />
     <ClCompile Include="RasterizerState.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="SamplerState.cpp" />

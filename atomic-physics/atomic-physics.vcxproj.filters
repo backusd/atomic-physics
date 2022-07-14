@@ -193,6 +193,9 @@
     <ClCompile Include="implot_demo.cpp">
       <Filter>Source Files\UI\ImGuiSource\ImPlot</Filter>
     </ClCompile>
+    <ClCompile Include="Profile.cpp">
+      <Filter>Source Files\Testing</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
