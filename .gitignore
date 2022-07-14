@@ -361,3 +361,7 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# json - ignore all json files for now because the profiler outputs
+#		 json files and the app doesn't use json files for any other purpose
+*.json
