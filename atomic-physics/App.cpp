@@ -45,14 +45,11 @@ App::App()
 
 int App::Run() const
 {
-	// PROFILE_BEGIN_SESSION("Runtime", "profile/Profile-Runtime.json");
-
 	while (true)
 	{
 		// process all messages pending, but to not block for new messages
 		if (const auto ecode = m_window->ProcessMessages())
 		{
-			// PROFILE_END_SESSION(); // End the Runtime session
 			PROFILE_BEGIN_SESSION("Shutdown", "profile/Profile-Shutdown.json");
 
 			// Shutdown ImGui

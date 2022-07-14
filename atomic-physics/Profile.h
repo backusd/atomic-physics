@@ -75,6 +75,17 @@ public:
 		m_filepath = filepath;
 	}
 
+	void CaptureSeconds(unsigned int seconds, const std::string& name, const std::string& filepath)
+	{
+		m_capturingSeconds = true;
+
+		m_capturingEndTime = std::chrono::time_point_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now()).time_since_epoch().count();
+		m_capturingEndTime += (1000 * seconds);
+
+		m_name = name;
+		m_filepath = filepath;
+	}
+
 	void NotifyNextFrame()
 	{
 		if (SessionIsActive())
@@ -90,8 +101,17 @@ public:
 					EndSession();
 				}
 			}
+			else if (m_capturingSeconds)
+			{
+				long long current = std::chrono::time_point_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now()).time_since_epoch().count();
+				if (current > m_capturingEndTime)
+				{
+					m_capturingSeconds = false;
+					EndSession();
+				}
+			}
 		}
-		else if (m_capturingFrames)
+		else if (m_capturingFrames || m_capturingSeconds)
 		{
 			// If there is no active session, but we need to start capturing frames, begin a new session
 			BeginSession();
@@ -173,6 +193,9 @@ private:
 
 	unsigned int m_remainingFrames;
 	bool m_capturingFrames;
+
+	bool m_capturingSeconds;
+	long long m_capturingEndTime;
 };
 
 

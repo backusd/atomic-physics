@@ -255,7 +255,11 @@ void UI::PerformanceWindow() noexcept
 	m_width = ImGui::GetWindowPos().x - m_windowOffsetX - m_left;
 
 	PerformanceFPS(); 
+#ifdef PROFILE
 	PerformanceProfile();
+#endif
+
+
 
 	ImGui::End();
 }
@@ -304,27 +308,33 @@ void UI::PerformanceProfile() noexcept
 	{
 		ImGui::Indent();
 
-		static char resultsFile[128] = "profile/results.json";
-		ImGui::SetNextItemWidth(200.0f);
-		ImGui::InputText("Output Results File", resultsFile, IM_ARRAYSIZE(resultsFile));
-
-
-		static int numFramesToCapture = 0;
-		ImGui::SetNextItemWidth(125.0f);
-		ImGui::InputInt("Frames to Capture", &numFramesToCapture);
-		ImGui::SameLine();
-		if (ImGui::Button("Capture##Frames_to_capture"))
+		if (Instrumentor::Get().SessionIsActive())
 		{
-			Instrumentor::Get().CaptureFrames(numFramesToCapture, std::string("Capture Number of Frames"), std::string(resultsFile));
+			ImGui::Text("Active Session: %s", Instrumentor::Get().SessionName().c_str());
 		}
-
-		static int numSecondsToCapture = 0;
-		ImGui::SetNextItemWidth(125.0f);
-		ImGui::InputInt("Seconds to Capture", &numSecondsToCapture);
-		ImGui::SameLine();
-		if (ImGui::Button("Capture##Seconds_to_capture"))
+		else
 		{
-			OutputDebugString("Capture Seconds");
+			static char resultsFile[128] = "profile/results.json";
+			ImGui::SetNextItemWidth(200.0f);
+			ImGui::InputText("Output Results File", resultsFile, IM_ARRAYSIZE(resultsFile));
+
+			static int numFramesToCapture = 0;
+			ImGui::SetNextItemWidth(125.0f);
+			ImGui::InputInt("Frames to Capture", &numFramesToCapture);
+			ImGui::SameLine();
+			if (ImGui::Button("Capture##Frames_to_capture"))
+			{
+				Instrumentor::Get().CaptureFrames(numFramesToCapture, std::string("Capture Number of Frames"), std::string(resultsFile));
+			}
+
+			static int numSecondsToCapture = 0;
+			ImGui::SetNextItemWidth(125.0f);
+			ImGui::InputInt("Seconds to Capture", &numSecondsToCapture);
+			ImGui::SameLine();
+			if (ImGui::Button("Capture##Seconds_to_capture"))
+			{
+				Instrumentor::Get().CaptureSeconds(numSecondsToCapture, std::string("Capture Number of Seconds"), std::string(resultsFile));
+			}
 		}
 
 		ImGui::Unindent();
