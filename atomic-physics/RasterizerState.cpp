@@ -4,6 +4,8 @@
 RasterizerState::RasterizerState() :
 	Bindable()
 {
+	PROFILE_FUNCTION();
+
 	ResetState();
 	LoadChanges();
 }
@@ -24,6 +26,8 @@ void RasterizerState::ResetState() noexcept
 
 void RasterizerState::LoadChanges()
 {
+	PROFILE_FUNCTION();
+
 	GFX_THROW_INFO(
 		DeviceResources::D3DDevice()->CreateRasterizerState(&m_desc, m_rasterizerState.ReleaseAndGetAddressOf())
 	);
@@ -31,6 +35,8 @@ void RasterizerState::LoadChanges()
 
 void RasterizerState::Bind() const noexcept_release_only
 {
+	PROFILE_FUNCTION();
+
 	GFX_THROW_INFO_ONLY(
 		DeviceResources::D3DDeviceContext()->RSSetState(m_rasterizerState.Get())
 	);

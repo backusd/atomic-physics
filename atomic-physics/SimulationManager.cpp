@@ -6,6 +6,8 @@ unsigned int SimulationManager::m_activeSimulationIndex = 0;
 
 void SimulationManager::Initialize()
 {
+	PROFILE_FUNCTION();
+
 	m_simulations.push_back(std::make_unique<Simulation>());
 	m_activeSimulationIndex = 0;
 }
@@ -17,5 +19,7 @@ void SimulationManager::Update() noexcept
 
 void SimulationManager::AddParticle(int type, int mass, float p_x, float p_y, float p_z, float v_x, float v_y, float v_z) noexcept
 {
+	PROFILE_FUNCTION();
+
 	m_simulations[m_activeSimulationIndex]->AddParticle(type, mass, p_x, p_y, p_z, v_x, v_y, v_z);
 }

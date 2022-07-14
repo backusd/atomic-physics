@@ -3,6 +3,8 @@
 ConstantBufferArray::ConstantBufferArray(ConstantBufferBindingLocation bindToStage) noexcept :
 	Bindable()
 {
+	PROFILE_FUNCTION();
+
 	switch (bindToStage)
 	{
 	case ConstantBufferBindingLocation::COMPUTE_SHADER:	 BindFunc = std::bind(&ConstantBufferArray::BindCS, this); break;
@@ -17,6 +19,8 @@ ConstantBufferArray::ConstantBufferArray(ConstantBufferBindingLocation bindToSta
 ConstantBufferArray::ConstantBufferArray(ConstantBufferBindingLocation bindToStage, BasicGeometry geometry) :
 	Bindable()
 {
+	PROFILE_FUNCTION();
+
 	switch (bindToStage)
 	{
 	case ConstantBufferBindingLocation::COMPUTE_SHADER:	 BindFunc = std::bind(&ConstantBufferArray::BindCS, this); break;
@@ -36,6 +40,8 @@ ConstantBufferArray::ConstantBufferArray(ConstantBufferBindingLocation bindToSta
 
 void ConstantBufferArray::CreateBoxConstantBufferArray() noexcept
 {
+	PROFILE_FUNCTION();
+
 	// Model/view/projection buffer
 	std::shared_ptr<ConstantBuffer> mvpBuffer = std::make_shared<ConstantBuffer>();
 	mvpBuffer->CreateBuffer<ModelViewProjection>(D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE, 0, 0);
@@ -50,6 +56,8 @@ void ConstantBufferArray::CreateBoxConstantBufferArray() noexcept
 
 void ConstantBufferArray::CreateSphereConstantBufferArray() noexcept
 {
+	PROFILE_FUNCTION();
+
 	std::shared_ptr<ConstantBuffer> mvpBuffer = std::make_shared<ConstantBuffer>();
 	mvpBuffer->CreateBuffer<ModelViewProjectionPreMultiplied>(D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE, 0, 0);
 
@@ -69,6 +77,8 @@ void ConstantBufferArray::ClearBuffers() noexcept
 
 void ConstantBufferArray::Bind() const noexcept_release_only
 {
+	PROFILE_FUNCTION();
+
 	BindFunc();
 }
 

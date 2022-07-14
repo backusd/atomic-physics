@@ -6,13 +6,19 @@ Simulation::Simulation() :
 	m_boxMaxZ(2.0f),
 	m_elapsedTime(0)
 {
+	PROFILE_FUNCTION();
+
 	m_timer = std::make_unique<StepTimer>();
 }
 
 void Simulation::Update() noexcept
 {
+	PROFILE_FUNCTION();
+
 	m_timer->Tick([&]() noexcept
 		{
+			PROFILE_SCOPE("Simulation Update Physics");
+
 			double currentTime = m_timer->GetTotalSeconds();
 			double timeDelta = currentTime - m_elapsedTime;
 			m_elapsedTime = currentTime;
@@ -41,5 +47,7 @@ void Simulation::Update() noexcept
 
 void Simulation::AddParticle(int type, int mass, float p_x, float p_y, float p_z, float v_x, float v_y, float v_z) noexcept
 {
+	PROFILE_FUNCTION();
+
 	m_particles.emplace_back(type, mass, p_x, p_y, p_z, v_x, v_y, v_z);
 }

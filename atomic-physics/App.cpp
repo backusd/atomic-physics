@@ -4,7 +4,7 @@
 
 App::App()
 {
-	PROFILE_BEGIN_SESSION("Startup", "Profile-Startup.json");
+	PROFILE_BEGIN_SESSION("Startup", "profile/Profile-Startup.json");
 
 	// Initialize ImGui
 	//		MUST set this here so that the AppWindow constructor can call ImGui::GetIO()
@@ -45,27 +45,42 @@ App::App()
 
 int App::Run() const
 {
-	PROFILE_BEGIN_SESSION("Runtime", "Profile-Runtime.json");
+	// PROFILE_BEGIN_SESSION("Runtime", "profile/Profile-Runtime.json");
 
 	while (true)
 	{
 		// process all messages pending, but to not block for new messages
 		if (const auto ecode = m_window->ProcessMessages())
 		{
-			PROFILE_END_SESSION(); // End the Runtime session
-			PROFILE_BEGIN_SESSION("Shutdown", "Profile-Shutdown.json");
+			// PROFILE_END_SESSION(); // End the Runtime session
+			PROFILE_BEGIN_SESSION("Shutdown", "profile/Profile-Shutdown.json");
 
 			// Shutdown ImGui
-			ImGui_ImplDX11_Shutdown();
-			ImGui_ImplWin32_Shutdown();
-			ImPlot::DestroyContext();
-			ImGui::DestroyContext();
+			{
+				PROFILE_SCOPE("ImGui_ImplDX11_Shutdown");
+				ImGui_ImplDX11_Shutdown();
+			}
+			{
+				PROFILE_SCOPE("ImGui_ImplWin32_Shutdown");
+				ImGui_ImplWin32_Shutdown();
+			}
+			{
+				PROFILE_SCOPE("ImPlot::DestroyContext()");
+				ImPlot::DestroyContext();
+			}
+			{
+				PROFILE_SCOPE("ImGui::DestroyContext()");
+				ImGui::DestroyContext();
+			}
 
 			PROFILE_END_SESSION(); // End shutdown
 
 			// if return optional has value, means we're quitting so return exit code
 			return *ecode;
 		}
+
+		// Inform the Instrumentor that we are starting the next frame
+		PROFILE_NEXT_FRAME();
 
 		// Update the active simulation before updating the window
 		SimulationManager::Update();

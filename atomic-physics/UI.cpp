@@ -12,15 +12,24 @@ UI::UI() noexcept :
 	m_windowOffsetX(0.0f),
 	m_windowOffsetY(0.0f)
 {
+	PROFILE_FUNCTION();
 }
 
 void UI::Render() noexcept
 {
+	PROFILE_FUNCTION();
+
 	CreateDockSpaceAndMenuBar();
 
 	// DEMO
-	ImGui::ShowDemoWindow();
-	ImPlot::ShowDemoWindow();
+	{
+		PROFILE_SCOPE("ImGui::ShowDemoWindow()");
+		ImGui::ShowDemoWindow();
+	}
+	{
+		PROFILE_SCOPE("ImPlot::ShowDemoWindow()");
+		ImPlot::ShowDemoWindow();
+	}
 
 	SimulationDetails();
 	LogWindow();
@@ -96,6 +105,8 @@ void UI::Render() noexcept
 
 void UI::CreateDockSpaceAndMenuBar() noexcept
 {
+	PROFILE_FUNCTION();
+
 	ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None | ImGuiDockNodeFlags_PassthruCentralNode;
 
 	const ImGuiViewport* viewport = ImGui::GetMainViewport();
@@ -127,6 +138,8 @@ void UI::CreateDockSpaceAndMenuBar() noexcept
 
 void UI::MenuBar() noexcept
 {
+	PROFILE_FUNCTION();
+
 	if (ImGui::BeginMenuBar())
 	{
 		m_top = ImGui::GetWindowContentRegionMin().y;
@@ -204,6 +217,8 @@ void UI::MenuBar() noexcept
 
 void UI::SimulationDetails() noexcept
 {
+	PROFILE_FUNCTION();
+
 	ImVec2 padding = ImVec2(5.0f, 5.0f);
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, padding);
 	ImGui::Begin("Simulation");
@@ -217,6 +232,8 @@ void UI::SimulationDetails() noexcept
 
 void UI::LogWindow() noexcept
 {
+	PROFILE_FUNCTION();
+
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(5.0f, 5.0f));
 	ImGui::Begin("Log");
 	ImGui::PopStyleVar();
@@ -229,24 +246,24 @@ void UI::LogWindow() noexcept
 
 void UI::PerformanceWindow() noexcept
 {
+	PROFILE_FUNCTION();
+
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(5.0f, 5.0f));
 	ImGui::Begin("Performance");
 	ImGui::PopStyleVar();
 
 	m_width = ImGui::GetWindowPos().x - m_windowOffsetX - m_left;
 
-	PerformanceFPS();
-
-
-
-
-
+	PerformanceFPS(); 
+	PerformanceProfile();
 
 	ImGui::End();
 }
 
 void UI::PerformanceFPS() noexcept
 {
+	PROFILE_FUNCTION();
+
 	if (ImGui::CollapsingHeader("FPS", ImGuiTreeNodeFlags_None))
 	{
 		ImGui::Text("%.3f ms/frame (%.1f FPS)", 1000.0f / m_io.Framerate, m_io.Framerate);
@@ -276,5 +293,40 @@ void UI::PerformanceFPS() noexcept
 			ImPlot::PlotLine("FPS", &time[0], &fps[0], static_cast<int>(fps.size()), 0, offset, sizeof(float));
 			ImPlot::EndPlot(); 
 		}
+	}
+}
+
+void UI::PerformanceProfile() noexcept
+{
+	PROFILE_FUNCTION();
+
+	if (ImGui::CollapsingHeader("Profile", ImGuiTreeNodeFlags_None))
+	{
+		ImGui::Indent();
+
+		static char resultsFile[128] = "profile/results.json";
+		ImGui::SetNextItemWidth(200.0f);
+		ImGui::InputText("Output Results File", resultsFile, IM_ARRAYSIZE(resultsFile));
+
+
+		static int numFramesToCapture = 0;
+		ImGui::SetNextItemWidth(125.0f);
+		ImGui::InputInt("Frames to Capture", &numFramesToCapture);
+		ImGui::SameLine();
+		if (ImGui::Button("Capture##Frames_to_capture"))
+		{
+			Instrumentor::Get().CaptureFrames(numFramesToCapture, std::string("Capture Number of Frames"), std::string(resultsFile));
+		}
+
+		static int numSecondsToCapture = 0;
+		ImGui::SetNextItemWidth(125.0f);
+		ImGui::InputInt("Seconds to Capture", &numSecondsToCapture);
+		ImGui::SameLine();
+		if (ImGui::Button("Capture##Seconds_to_capture"))
+		{
+			OutputDebugString("Capture Seconds");
+		}
+
+		ImGui::Unindent();
 	}
 }

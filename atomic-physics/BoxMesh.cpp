@@ -5,6 +5,8 @@ using DirectX::XMFLOAT4;
 BoxMesh::BoxMesh() :
 	Mesh()
 {
+	PROFILE_FUNCTION();
+
 	m_topology = D3D11_PRIMITIVE_TOPOLOGY_LINELIST;
 
 	InitializeBuffers();
@@ -12,6 +14,8 @@ BoxMesh::BoxMesh() :
 
 void BoxMesh::InitializeBuffers()
 {
+	PROFILE_FUNCTION();
+
 	// Create a unit cube - will be scaled up to size of simulation during rendering
 	float x = 1.0f;
 	float y = 1.0f;

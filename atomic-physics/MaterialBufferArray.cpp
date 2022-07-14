@@ -6,8 +6,9 @@ using DirectX::XMMATRIX;
 MaterialBufferArray::MaterialBufferArray() :
 	ConstantBufferArray(ConstantBufferBindingLocation::PIXEL_SHADER)
 {
-	BindFunc = std::bind(&MaterialBufferArray::BindMaterialBuffer, this);
+	PROFILE_FUNCTION();
 
+	BindFunc = std::bind(&MaterialBufferArray::BindMaterialBuffer, this);
 
 	m_materials = std::make_unique<PhongMaterialProperties>();
 
@@ -90,6 +91,8 @@ MaterialBufferArray::MaterialBufferArray() :
 
 void MaterialBufferArray::BindMaterialBuffer() const noexcept_release_only
 {
+	PROFILE_FUNCTION();
+
 	// Call PSSetConstantBuffers to bind the buffer to slot 2
 	GFX_THROW_INFO_ONLY(
 		DeviceResources::D3DDeviceContext()->PSSetConstantBuffers(2u, static_cast<unsigned int>(m_rawBufferPointers.size()), m_rawBufferPointers.data())
@@ -98,6 +101,8 @@ void MaterialBufferArray::BindMaterialBuffer() const noexcept_release_only
 
 void MaterialBufferArray::UpdateMaterialProperties() const noexcept_release_only
 {
+	PROFILE_FUNCTION();
+
 	GFX_THROW_INFO_ONLY(
 		DeviceResources::D3DDeviceContext()->UpdateSubresource(
 			m_buffers[0]->GetRawBufferPointer(),

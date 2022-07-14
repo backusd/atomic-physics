@@ -37,6 +37,8 @@ MoveLookController::MoveLookController(D3D11_VIEWPORT vp) noexcept :
     m_ctrl(false),
     m_elapsedTime(0)
 {
+    PROFILE_FUNCTION();
+
 	CreateProjectionMatrix(vp);
 }
 
@@ -52,6 +54,8 @@ XMMATRIX MoveLookController::ProjectionMatrix() const noexcept
 
 void MoveLookController::CreateProjectionMatrix(D3D11_VIEWPORT vp) noexcept
 {
+    PROFILE_FUNCTION();
+
     // Perspective Matrix
     float aspectRatio = vp.Width / vp.Height;
     float fovAngleY = DirectX::XM_PI / 4;
@@ -177,6 +181,8 @@ void MoveLookController::OnMouseMove(const Mouse::Event& e) noexcept
 
 void MoveLookController::Update(D3D11_VIEWPORT viewport) noexcept
 {
+    PROFILE_FUNCTION();
+
     if (m_mouseDown)
     {
         // Cancel out any existing automated movement
@@ -315,6 +321,8 @@ void MoveLookController::Update(D3D11_VIEWPORT viewport) noexcept
 
 void MoveLookController::RotateLeftRight(float theta) noexcept
 {
+    PROFILE_FUNCTION();
+
     // Use Rodrigue's Rotation Formula
         //     See here: https://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula
         //     v_rot : vector after rotation
@@ -332,6 +340,8 @@ void MoveLookController::RotateLeftRight(float theta) noexcept
 
 void MoveLookController::RotateUpDown(float theta) noexcept
 {
+    PROFILE_FUNCTION();
+
     // Use Rodrigue's Rotation Formula
     //     See here: https://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula
     //     v_rot : vector after rotation

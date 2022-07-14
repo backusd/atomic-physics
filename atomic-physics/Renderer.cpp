@@ -6,6 +6,8 @@ using DirectX::XMMATRIX;
 Renderer::Renderer(D3D11_VIEWPORT vp) noexcept :
 	m_viewport(vp)
 {
+	PROFILE_FUNCTION();
+
 	m_moveLookController = std::make_shared<MoveLookController>(m_viewport);
 
 	m_box = std::make_unique<Box>(m_moveLookController);
@@ -29,6 +31,8 @@ Renderer::Renderer(D3D11_VIEWPORT vp) noexcept :
 
 void Renderer::InitializeAllSphereData()
 {
+	PROFILE_FUNCTION();
+
 	m_allSphere_InputLayout = std::make_unique<InputLayout>(L"PhongInstancedVS.cso", BasicGeometry::SPHERE);
 	m_allSphere_VertexShader = std::make_unique<VertexShader>(m_allSphere_InputLayout->GetVertexShaderFileBlob());
 	m_allSphere_PixelShader = std::make_unique<PixelShader>(L"PhongInstancedPS.cso");
@@ -51,6 +55,8 @@ void Renderer::InitializeAllSphereData()
 
 void Renderer::SetViewport(D3D11_VIEWPORT viewport) noexcept 
 { 
+	PROFILE_FUNCTION();
+
 	// If they are different, then we need to update the viewport and also the projection matrix
 	if (m_viewport.Height != viewport.Height ||
 		m_viewport.Width != viewport.Width ||
@@ -65,11 +71,15 @@ void Renderer::SetViewport(D3D11_VIEWPORT viewport) noexcept
 
 void Renderer::Update()
 {
+	PROFILE_FUNCTION();
+
 	const std::vector<Particle>& particles = SimulationManager::GetParticles();
 	std::unique_ptr<Sphere> sphere;
 
 	if (particles.size() != m_drawables.size())
 	{
+		PROFILE_SCOPE("Renderer Update - Resize");
+
 		m_drawables.clear();
 		m_drawables.reserve(particles.size());
 
@@ -85,6 +95,8 @@ void Renderer::Update()
 	}
 	else
 	{
+		PROFILE_SCOPE("Renderer Update - NO Resize");
+
 		for (unsigned int iii = 0; iii < particles.size(); ++iii)
 		{
 			m_drawables[iii]->Position(particles[iii].p_x, particles[iii].p_y, particles[iii].p_z);
@@ -102,6 +114,8 @@ void Renderer::Update()
 
 void Renderer::ProcessMouseEvents() noexcept
 {
+	PROFILE_FUNCTION();
+
 	while (!Mouse::IsEmpty())
 	{
 		Mouse::Event e = Mouse::Read();
@@ -126,6 +140,8 @@ void Renderer::ProcessMouseEvents() noexcept
 
 void Renderer::ProcessKeyboardEvents() noexcept
 {
+	PROFILE_FUNCTION();
+
 	// Read Key events and only process non-character keys
 	while (!Keyboard::KeyIsEmpty())
 	{
@@ -161,6 +177,8 @@ void Renderer::ProcessKeyboardEvents() noexcept
 
 void Renderer::Render()
 {
+	PROFILE_FUNCTION();
+
 	// Set the viewport (should be specific to this renderer)
 	DeviceResources::SetViewport(m_viewport);
 
@@ -182,6 +200,8 @@ void Renderer::Render()
 
 void Renderer::Render_Generic() const noexcept_release_only
 {
+	PROFILE_FUNCTION();
+
 	// Draw each drawable
 	for (const std::unique_ptr<Drawable>& drawable : m_drawables)
 		drawable->Draw();
@@ -189,6 +209,8 @@ void Renderer::Render_Generic() const noexcept_release_only
 
 void Renderer::Render_AllSpheres() const noexcept_release_only
 {
+	PROFILE_FUNCTION();
+
 	// Specialized Render function for use when all atoms are to be drawn as spheres
 
 	m_allSphere_InputLayout->Bind();
@@ -212,6 +234,8 @@ void Renderer::Render_AllSpheres() const noexcept_release_only
 
 void Renderer::UpdateAllSphereModelViewProjectionInstanceData() const
 {
+	PROFILE_FUNCTION();
+
 	ID3D11DeviceContext4* context = DeviceResources::D3DDeviceContext();
 	D3D11_MAPPED_SUBRESOURCE ms;
 	ZeroMemory(&ms, sizeof(D3D11_MAPPED_SUBRESOURCE));
@@ -247,6 +271,8 @@ void Renderer::UpdateAllSphereModelViewProjectionInstanceData() const
 
 void Renderer::UpdateAllSphereMaterialIndexInstanceData() const
 {
+	PROFILE_FUNCTION();
+
 	ID3D11DeviceContext4* context = DeviceResources::D3DDeviceContext();
 	D3D11_MAPPED_SUBRESOURCE ms;
 	ZeroMemory(&ms, sizeof(D3D11_MAPPED_SUBRESOURCE));

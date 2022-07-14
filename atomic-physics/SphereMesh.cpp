@@ -5,11 +5,15 @@ using DirectX::XMFLOAT4;
 SphereMesh::SphereMesh() :
 	Mesh()
 {
+	PROFILE_FUNCTION();
+
 	InitializeBuffers();
 }
 
 void SphereMesh::InitializeBuffers()
 {
+	PROFILE_FUNCTION();
+
 	unsigned short segments = 26;
 	unsigned int slices = segments / 2;
 	unsigned int numVertices = (slices + 1) * (segments + 1) + 1;

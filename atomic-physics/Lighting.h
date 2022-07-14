@@ -12,7 +12,7 @@ public:
 	Lighting(const Lighting&) = delete;
 	void operator=(const Lighting&) = delete;
 
-	void GlobalAmbient(DirectX::XMFLOAT4 value) noexcept_release_only { m_properties.GlobalAmbient = value; UpdateLightingProperties(); }
+	void GlobalAmbient(DirectX::XMFLOAT4 value) noexcept_release_only { PROFILE_FUNCTION(); m_properties.GlobalAmbient = value; UpdateLightingProperties(); }
 	void EditLight(
 		int index,
 		DirectX::XMFLOAT4 position,

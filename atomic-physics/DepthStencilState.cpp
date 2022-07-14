@@ -5,12 +5,16 @@ DepthStencilState::DepthStencilState(unsigned int stencilReferenceNumber) noexce
 	Bindable(),
 	m_stencilReferenceNumber(stencilReferenceNumber)
 {
+	PROFILE_FUNCTION();
+
 	ResetState();
 	LoadChanges();
 }
 
 void DepthStencilState::ResetState() noexcept
 {
+	PROFILE_FUNCTION();
+
 	m_desc.DepthEnable		= true;
 	m_desc.DepthWriteMask	= D3D11_DEPTH_WRITE_MASK_ALL;
 	m_desc.DepthFunc		= D3D11_COMPARISON_LESS;
@@ -34,6 +38,8 @@ void DepthStencilState::ResetState() noexcept
 
 void DepthStencilState::LoadChanges()
 {
+	PROFILE_FUNCTION();
+
 	GFX_THROW_INFO(
 		DeviceResources::D3DDevice()->CreateDepthStencilState(&m_desc, m_depthStencilState.ReleaseAndGetAddressOf())
 	);
@@ -41,6 +47,8 @@ void DepthStencilState::LoadChanges()
 
 void DepthStencilState::Bind() const noexcept_release_only
 {
+	PROFILE_FUNCTION();
+
 	GFX_THROW_INFO_ONLY(
 		DeviceResources::D3DDeviceContext()->OMSetDepthStencilState(m_depthStencilState.Get(), m_stencilReferenceNumber)
 	);

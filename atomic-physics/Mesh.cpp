@@ -16,6 +16,8 @@ Mesh::Mesh() noexcept :
 
 void Mesh::Bind() const noexcept_release_only
 {
+	PROFILE_FUNCTION();
+
 	ID3D11DeviceContext4* context = DeviceResources::D3DDeviceContext();
 
 	GFX_THROW_INFO_ONLY(

@@ -19,6 +19,8 @@ Sphere::Sphere(std::shared_ptr<MoveLookController> mlc) noexcept :
 	m_radius(1.0f),
 	m_materialIndexBufferArray(nullptr)
 {
+	PROFILE_FUNCTION();
+
 	// Initialize static variables (can NOT do this in the global static definition because we do not yet have access to Device Resources)
 	if (!m_inputLayout)			m_inputLayout = std::make_unique<InputLayout>(L"PhongVS.cso", BasicGeometry::SPHERE);
 	if (!m_vertexShader)		m_vertexShader = std::make_unique<VertexShader>(m_inputLayout->GetVertexShaderFileBlob());
@@ -31,6 +33,8 @@ Sphere::Sphere(std::shared_ptr<MoveLookController> mlc) noexcept :
 
 void Sphere::SetAtomType(int elementNumber) noexcept
 {
+	PROFILE_FUNCTION();
+
 	m_elementNumber = elementNumber;
 
 	// Radius
@@ -49,11 +53,13 @@ void Sphere::SetAtomType(int elementNumber) noexcept
 
 void Sphere::Update() const noexcept
 {
-
+	// PROFILE_FUNCTION();
 }
 
 void Sphere::Draw() const noexcept_release_only
 {
+	PROFILE_FUNCTION();
+
 	// Bind all static variables
 	m_inputLayout->Bind();
 	m_vertexShader->Bind();
@@ -78,6 +84,8 @@ void Sphere::Draw() const noexcept_release_only
 
 void Sphere::UpdateModelViewProjectionBuffer() const
 {
+	PROFILE_FUNCTION();
+
 	ID3D11DeviceContext4* context = DeviceResources::D3DDeviceContext();
 	D3D11_MAPPED_SUBRESOURCE ms;
 	ZeroMemory(&ms, sizeof(D3D11_MAPPED_SUBRESOURCE));

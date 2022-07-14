@@ -3,6 +3,8 @@
 InputLayout::InputLayout(std::wstring vertexShaderFile) :
 	Bindable()
 {
+	PROFILE_FUNCTION();
+
 	GFX_THROW_INFO(
 		D3DReadFileToBlob(vertexShaderFile.c_str(), &m_blob)
 	);
@@ -10,6 +12,8 @@ InputLayout::InputLayout(std::wstring vertexShaderFile) :
 InputLayout::InputLayout(std::wstring vertexShaderFile, BasicGeometry geometry) :
 	Bindable()
 {
+	PROFILE_FUNCTION();
+
 	GFX_THROW_INFO(
 		D3DReadFileToBlob(vertexShaderFile.c_str(), &m_blob)
 	);
@@ -23,6 +27,8 @@ InputLayout::InputLayout(std::wstring vertexShaderFile, BasicGeometry geometry) 
 
 void InputLayout::CreateBoxInputLayout()
 {
+	PROFILE_FUNCTION();
+
 	AddDescription("POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0,                            0, D3D11_INPUT_PER_VERTEX_DATA, 0);
 	AddDescription(  "NORMAL", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0);
 	CreateLayout();
@@ -30,6 +36,8 @@ void InputLayout::CreateBoxInputLayout()
 
 void InputLayout::CreateSphereInputLayout()
 {
+	PROFILE_FUNCTION();
+
 	AddDescription("POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0,                            0, D3D11_INPUT_PER_VERTEX_DATA, 0);
 	AddDescription(  "NORMAL", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0);
 	CreateLayout();
@@ -44,6 +52,8 @@ void InputLayout::AddDescription(
 	D3D11_INPUT_CLASSIFICATION inputSlotClass,
 	unsigned int instanceDataStepRate) noexcept
 {
+	PROFILE_FUNCTION();
+
 	// Add the sematic name to a vector so they don't go out of scope prior to calling CreateLayout
 	m_semanticNames.push_back(semanticName);
 
@@ -61,6 +71,8 @@ void InputLayout::AddDescription(
 
 void InputLayout::CreateLayout()
 {
+	PROFILE_FUNCTION();
+
 	// Set the semantic names here so the c_str doesn't go out of scope
 	for (unsigned int iii = 0; iii < m_semanticNames.size(); ++iii)
 		m_descriptions[iii].SemanticName = m_semanticNames[iii].c_str();
@@ -81,6 +93,8 @@ void InputLayout::CreateLayout()
 
 void InputLayout::Bind() const noexcept_release_only
 {
+	PROFILE_FUNCTION();
+
 	GFX_THROW_INFO_ONLY(
 		DeviceResources::D3DDeviceContext()->IASetInputLayout(m_inputLayout.Get())
 	);

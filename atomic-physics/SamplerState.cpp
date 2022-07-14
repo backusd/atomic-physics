@@ -2,6 +2,8 @@
 
 SamplerState::SamplerState()
 {
+	PROFILE_FUNCTION();
+
 	ResetState();
 	LoadChanges();
 }
@@ -25,6 +27,8 @@ void SamplerState::ResetState() noexcept
 
 void SamplerState::LoadChanges()
 {
+	PROFILE_FUNCTION();
+
 	GFX_THROW_INFO(
 		DeviceResources::D3DDevice()->CreateSamplerState(&m_desc, m_samplerState.ReleaseAndGetAddressOf())
 	);

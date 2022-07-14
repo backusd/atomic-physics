@@ -3,6 +3,8 @@
 VertexShader::VertexShader(Microsoft::WRL::ComPtr<ID3DBlob> blob) :
 	Bindable()
 {
+	PROFILE_FUNCTION();
+
 	Microsoft::WRL::ComPtr<ID3DBlob> pBlob;
 	GFX_THROW_INFO(
 		DeviceResources::D3DDevice()->CreateVertexShader(
@@ -16,6 +18,8 @@ VertexShader::VertexShader(Microsoft::WRL::ComPtr<ID3DBlob> blob) :
 
 void VertexShader::Bind() const noexcept_release_only
 {
+	PROFILE_FUNCTION();
+
 	GFX_THROW_INFO_ONLY(
 		DeviceResources::D3DDeviceContext()->VSSetShader(m_vertexShader.Get(), nullptr, 0u)
 	);

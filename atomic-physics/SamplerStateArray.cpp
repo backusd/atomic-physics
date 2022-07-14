@@ -3,6 +3,8 @@
 SamplerStateArray::SamplerStateArray(SamplerStateBindingLocation bindToStage) noexcept:
 	Bindable()
 {
+	PROFILE_FUNCTION();
+
 	switch (bindToStage)
 	{
 	case SamplerStateBindingLocation::COMPUTE_SHADER:	BindFunc = std::bind(&SamplerStateArray::BindCS, this); break;
@@ -27,6 +29,8 @@ void SamplerStateArray::ClearSamplerStates() noexcept
 
 void SamplerStateArray::Bind() const noexcept_release_only
 {
+	PROFILE_FUNCTION();
+
 	BindFunc();
 }
 

@@ -10,6 +10,8 @@ AppWindow::AppWindow(int width, int height, const char* name) noexcept :
 	m_io(ImGui::GetIO()),
 	m_viewport()
 {
+	PROFILE_FUNCTION();
+
 	m_ui = std::make_unique<UI>();
 
 	// DONT actually do any initialization here. Just allow the AppWindowTemplate to create itself
@@ -22,6 +24,8 @@ AppWindow::AppWindow(int width, int height, const char* name) noexcept :
 
 void AppWindow::Initialize() noexcept
 {
+	PROFILE_FUNCTION();
+
 	// Once window space is allotted, create the viewport then the renderer
 	CD3D11_VIEWPORT vp = CD3D11_VIEWPORT(0.0f, 0.0f, static_cast<float>(m_width), static_cast<float>(m_height));
 	m_simulationRenderer = std::make_unique<Renderer>(vp);
@@ -32,6 +36,8 @@ void AppWindow::Initialize() noexcept
 
 void AppWindow::InitializeImGui() noexcept
 {
+	PROFILE_FUNCTION();
+
 	(void)m_io;
 	m_io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;       // Enable Keyboard Controls
 	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
@@ -58,8 +64,16 @@ void AppWindow::InitializeImGui() noexcept
 	}
 
 	// Setup Platform/Renderer backends
-	ImGui_ImplWin32_Init(m_hWnd);
-	ImGui_ImplDX11_Init(DeviceResources::D3DDevice(), DeviceResources::D3DDeviceContext());
+	{
+		PROFILE_SCOPE("ImGui_ImplWin32_Init");
+		ImGui_ImplWin32_Init(m_hWnd);
+	}
+	{
+		PROFILE_SCOPE("ImGui_ImplDX11_Init");
+		ImGui_ImplDX11_Init(DeviceResources::D3DDevice(), DeviceResources::D3DDeviceContext());
+	}
+
+
 
 	// Load Fonts
 	// - If no fonts are loaded, dear imgui will use the default font. You can also load multiple fonts and use ImGui::PushFont()/PopFont() to select them.
@@ -79,6 +93,8 @@ void AppWindow::InitializeImGui() noexcept
 
 void AppWindow::Update()
 {
+	PROFILE_FUNCTION();
+
 	// At this point for the current frame, the Simulation has already been updated
 	// All we need to do on the window side is query the Simulation to render it
 	m_simulationRenderer->Update();
@@ -106,44 +122,54 @@ bool AppWindow::Render()
 
 	// Clear the window
 	ID3D11DeviceContext4* context = DeviceResources::D3DDeviceContext();
-	context->ClearDepthStencilView(DeviceResources::DepthStencilView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-	context->ClearRenderTargetView(DeviceResources::BackBufferRenderTargetView(), m_clearColor);
+	{
+		PROFILE_SCOPE("Clear DSV/RTV");
+		
+		context->ClearDepthStencilView(DeviceResources::DepthStencilView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+		context->ClearRenderTargetView(DeviceResources::BackBufferRenderTargetView(), m_clearColor);
+	}
 
-	ID3D11RenderTargetView* const targets[1] = { DeviceResources::BackBufferRenderTargetView() };
-	context->OMSetRenderTargets(1, targets, DeviceResources::DepthStencilView());
+	{
+		PROFILE_SCOPE("Set Render Target");
+		ID3D11RenderTargetView* const targets[1] = { DeviceResources::BackBufferRenderTargetView() };
+		context->OMSetRenderTargets(1, targets, DeviceResources::DepthStencilView());
+	}
 
-
-
-	// Start the Dear ImGui frame 
-	ImGui_ImplDX11_NewFrame();
-	ImGui_ImplWin32_NewFrame();
-	ImGui::NewFrame();
+	// Start the Dear ImGui frame
+	{
+		PROFILE_SCOPE("ImGui_ImplDX11_NewFrame");
+		ImGui_ImplDX11_NewFrame();
+	}
+	{
+		PROFILE_SCOPE("ImGui_ImplWin32_NewFrame");
+		ImGui_ImplWin32_NewFrame();
+	}
+	{
+		PROFILE_SCOPE("ImGui::NewFrame()");
+		ImGui::NewFrame();
+	}
 
 	// Render the UI
-	{
-		PROFILE_SCOPE("UI Render");
-		m_ui->Render();
-	}
+	m_ui->Render();
 
 	// Render 3D scene - MUST render here because we render on top of ImGui, but if we render
 	//					 after finalizing the ImGui draw, then Present will be called by ImGui
 	//					 which will discard the render target (I believe)
 	m_simulationRenderer->SetViewport(m_ui->GetViewport());
-	{
-		PROFILE_SCOPE("3D Render");
-		m_simulationRenderer->Render();
-	}
+	m_simulationRenderer->Render();
 
 	// Render ImGui
 	{
-		PROFILE_SCOPE("ImGui Render");
+		PROFILE_SCOPE("ImGui::Render()");
 		ImGui::Render();
 	}
 
 
 
-
-	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+	{
+		PROFILE_SCOPE("ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData())");
+		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+	}
 
 	// Update and Render additional Platform Windows
 	if (m_io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)

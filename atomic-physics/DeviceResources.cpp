@@ -23,6 +23,8 @@ DeviceResources::DeviceResources() noexcept :
 
 void DeviceResources::InitializeImpl(HWND hWnd)
 {
+	PROFILE_FUNCTION();
+
 	m_hWnd = hWnd;
 
 	// Must initialize COM library
@@ -35,11 +37,15 @@ void DeviceResources::InitializeImpl(HWND hWnd)
 
 void DeviceResources::OnResizeImpl()
 {
+	PROFILE_FUNCTION();
+
 	CreateWindowSizeDependentResources();
 }
 
 void DeviceResources::CreateDeviceIndependentResources()
 {
+	PROFILE_FUNCTION();
+
 	// Initialize Direct2D Resources
 	D2D1_FACTORY_OPTIONS options;
 	ZeroMemory(&options, sizeof(D2D1_FACTORY_OPTIONS));
@@ -78,6 +84,8 @@ void DeviceResources::CreateDeviceIndependentResources()
 
 void DeviceResources::CreateDeviceDependentResources()
 {
+	PROFILE_FUNCTION();
+
 	// This flag adds support for surfaces with a different color channel ordering
 	// than the API default. It is required for compatibility with Direct2D
 	UINT creationFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
@@ -172,6 +180,8 @@ void DeviceResources::CreateDeviceDependentResources()
 
 void DeviceResources::CreateWindowSizeDependentResources()
 {
+	PROFILE_FUNCTION();
+
 	// Get height, width, and dpi for the window
 	RECT rect;
 	GetClientRect(m_hWnd, &rect);

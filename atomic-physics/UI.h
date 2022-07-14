@@ -29,6 +29,7 @@ private:
 
 	void PerformanceWindow() noexcept;
 	void PerformanceFPS() noexcept;
+	void PerformanceProfile() noexcept;
 
 
 	ImGuiIO& m_io;

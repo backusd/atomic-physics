@@ -79,6 +79,8 @@ public:
 	template<typename TUpdate>
 	void Tick(const TUpdate& update) noexcept
 	{
+		PROFILE_FUNCTION();
+
 		// Query the current time.
 		LARGE_INTEGER currentTime;
 
@@ -89,6 +91,7 @@ public:
 			// DO NOT THROW because Update methods should be noexcept
 			//
 		}
+
 
 		uint64_t timeDelta = currentTime.QuadPart - m_qpcLastTime.QuadPart;
 
@@ -132,7 +135,10 @@ public:
 				m_leftOverTicks -= m_targetElapsedTicks;
 				m_frameCount++;
 
-				update();
+				{
+					PROFILE_SCOPE("Physics Update 1");
+					update();
+				}
 			}
 		}
 		else
@@ -143,7 +149,10 @@ public:
 			m_leftOverTicks = 0;
 			m_frameCount++;
 
-			update();
+			{
+				PROFILE_SCOPE("Physics Update 2");
+				update();
+			}
 		}
 
 		// Track the current framerate.

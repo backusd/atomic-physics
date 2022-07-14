@@ -3,6 +3,8 @@
 PixelShader::PixelShader(std::wstring pixelShaderFile) :
 	Bindable()
 {
+	PROFILE_FUNCTION();
+
 	Microsoft::WRL::ComPtr<ID3DBlob> pBlob;
 	GFX_THROW_INFO(D3DReadFileToBlob(pixelShaderFile.c_str(), &pBlob));
 	GFX_THROW_INFO(
@@ -18,6 +20,8 @@ PixelShader::PixelShader(std::wstring pixelShaderFile) :
 
 void PixelShader::Bind() const noexcept_release_only
 {
+	PROFILE_FUNCTION();
+
 	GFX_THROW_INFO_ONLY(
 		DeviceResources::D3DDeviceContext()->PSSetShader(m_pixelShader.Get(), nullptr, 0u)
 	);

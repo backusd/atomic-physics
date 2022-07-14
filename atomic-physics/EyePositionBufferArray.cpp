@@ -7,6 +7,8 @@ EyePositionBufferArray::EyePositionBufferArray(std::shared_ptr<MoveLookControlle
 	ConstantBufferArray(ConstantBufferBindingLocation::PIXEL_SHADER),
 	m_moveLookController(mlc)
 {
+	PROFILE_FUNCTION();
+
 	BindFunc = std::bind(&EyePositionBufferArray::BindEyePositionBuffer, this);
 	
 	XMFLOAT4 position;
@@ -20,6 +22,8 @@ EyePositionBufferArray::EyePositionBufferArray(std::shared_ptr<MoveLookControlle
 
 void EyePositionBufferArray::BindEyePositionBuffer() const noexcept_release_only
 {
+	PROFILE_FUNCTION();
+
 	// Call PSSetConstantBuffers to bind the buffer to slot 1
 	GFX_THROW_INFO_ONLY(
 		DeviceResources::D3DDeviceContext()->PSSetConstantBuffers(1u, static_cast<unsigned int>(m_rawBufferPointers.size()), m_rawBufferPointers.data())
@@ -28,6 +32,8 @@ void EyePositionBufferArray::BindEyePositionBuffer() const noexcept_release_only
 
 void EyePositionBufferArray::Update() const
 {
+	PROFILE_FUNCTION();
+
 	ID3D11DeviceContext4* context = DeviceResources::D3DDeviceContext();
 	D3D11_MAPPED_SUBRESOURCE ms;
 	ZeroMemory(&ms, sizeof(D3D11_MAPPED_SUBRESOURCE));

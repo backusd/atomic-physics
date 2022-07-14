@@ -16,6 +16,8 @@ Box::Box(std::shared_ptr<MoveLookController> mlc) noexcept :
 	m_yLength(2.0f),
 	m_zLength(2.0f)
 {
+	PROFILE_FUNCTION();
+
 	// Initialize static variables (can NOT do this in the global static definition because we do not yet have access to Device Resources)
 	if (!m_inputLayout)			m_inputLayout = std::make_unique<InputLayout>(L"SolidVS.cso", BasicGeometry::BOX);
 	if (!m_vertexShader)		m_vertexShader = std::make_unique<VertexShader>(m_inputLayout->GetVertexShaderFileBlob());
@@ -42,6 +44,8 @@ void Box::SetBoxSize(DirectX::XMFLOAT3 dimensions) noexcept
 
 void Box::Draw() const noexcept_release_only
 {
+	PROFILE_FUNCTION();
+
 	// Bind all static variables
 	m_inputLayout->Bind();
 	m_vertexShader->Bind();
@@ -62,6 +66,8 @@ void Box::Draw() const noexcept_release_only
 
 void Box::UpdateModelViewProjectionBuffer() const
 {
+	PROFILE_FUNCTION();
+
 	ID3D11DeviceContext4* context = DeviceResources::D3DDeviceContext();
 	D3D11_MAPPED_SUBRESOURCE ms;
 	ZeroMemory(&ms, sizeof(D3D11_MAPPED_SUBRESOURCE));

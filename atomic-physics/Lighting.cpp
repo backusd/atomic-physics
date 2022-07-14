@@ -8,12 +8,16 @@ using DirectX::XMVECTOR;
 Lighting::Lighting() :
 	ConstantBufferArray(ConstantBufferBindingLocation::PIXEL_SHADER)
 {
+	PROFILE_FUNCTION();
+
 	BindFunc = std::bind(&Lighting::BindLightingBuffer, this);
 	CreateLightProperties();
 }
 
 void Lighting::CreateLightProperties()
 {
+	PROFILE_FUNCTION();
+
 	m_properties = LightProperties();
 	m_properties.GlobalAmbient = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
 
@@ -43,6 +47,8 @@ void Lighting::CreateLightProperties()
 
 void Lighting::BindLightingBuffer() const noexcept_release_only
 {
+	PROFILE_FUNCTION();
+
 	// Call PSSetConstantBuffers to bind the buffer to slot 0
 	GFX_THROW_INFO_ONLY(
 		DeviceResources::D3DDeviceContext()->PSSetConstantBuffers(0u, static_cast<unsigned int>(m_rawBufferPointers.size()), m_rawBufferPointers.data())
@@ -53,6 +59,8 @@ void Lighting::EditLight(int index, DirectX::XMFLOAT4 position, DirectX::XMFLOAT
 						bool enabled, int lightType, DirectX::XMFLOAT4 color, float spotAngle, 
 						float constantAttenuation, float linearAttenuation, float quadraticAttenuation) noexcept_release_only
 {
+	PROFILE_FUNCTION();
+
 	m_properties.Lights[index].Enabled = enabled;
 	m_properties.Lights[index].LightType = lightType;
 	m_properties.Lights[index].Color = color;
@@ -70,6 +78,8 @@ void Lighting::EditLight(int index, DirectX::XMFLOAT4 position, DirectX::XMFLOAT
 
 void Lighting::UpdateLightingProperties() noexcept_release_only
 {
+	PROFILE_FUNCTION();
+
 	GFX_THROW_INFO_ONLY(
 		DeviceResources::D3DDeviceContext()->UpdateSubresource(
 			m_buffers[0]->GetRawBufferPointer(),
