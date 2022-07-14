@@ -47,6 +47,9 @@
     <Filter Include="Source Files\Testing">
       <UniqueIdentifier>{85d2a1bb-5f54-4bad-82d2-df2f8605fa43}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Utils">
+      <UniqueIdentifier>{76bb9058-1f09-4d78-9b42-ca1626a72217}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="WinMain.cpp">
@@ -368,6 +371,9 @@
     </ClInclude>
     <ClInclude Include="TestConfig.h">
       <Filter>Source Files\Testing</Filter>
+    </ClInclude>
+    <ClInclude Include="MacroHelper.h">
+      <Filter>Source Files\Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

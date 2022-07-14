@@ -205,6 +205,7 @@
     <ClInclude Include="AppWindowTemplate.h" />
     <ClInclude Include="BaseException.h" />
     <ClInclude Include="BasicGeometry.h" />
+    <ClInclude Include="MacroHelper.h" />
     <ClInclude Include="Profile.h" />
     <ClInclude Include="Bindable.h" />
     <ClInclude Include="Box.h" />

@@ -1,4 +1,5 @@
 #pragma once
+#include "MacroHelper.h"
 #include "TestConfig.h"
 
 #ifdef PROFILE
@@ -17,8 +18,8 @@
 	#define PROFILE_END_SESSION() Instrumentor::Get().EndSession()
 	#define PROFILE_NEXT_FRAME() Instrumentor::Get().NotifyNextFrame()
 
-	#define CAT2(a,b) a##b
-	#define CAT(a,b) CAT2(a,b)
+//	#define CAT2(a,b) a##b
+//	#define CAT(a,b) CAT2(a,b)
 	#define TIMER_VAR_NAME CAT(timer, __LINE__)
 
 	#define PROFILE_SCOPE(name) InstrumentationTimer TIMER_VAR_NAME(name)

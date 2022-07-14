@@ -16,7 +16,7 @@
 class App
 {
 public:
-	App();
+	App() noexcept;
 	App(const App&) = delete;
 	void operator=(const App&) = delete;
 

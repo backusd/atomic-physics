@@ -1,17 +1,31 @@
 #include "App.h"
+#include "MacroHelper.h"
 
 #include "implot.h"
 
-App::App()
+#include <format>
+
+App::App() noexcept
 {
 	PROFILE_BEGIN_SESSION("Startup", "profile/Profile-Startup.json");
 
 	// Initialize ImGui
 	//		MUST set this here so that the AppWindow constructor can call ImGui::GetIO()
 	//		Setup Dear ImGui context
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	ImPlot::CreateContext();
+	
+	// Does not throw, but will call IM_ASSERT if it finds an error. However, the IM_ASSERT macro may be
+	// updated at some point, so don't rely 100% on an assert actually being fired. Instead, check for
+	// an error return code and handle it appropriately.
+	if (!IMGUI_CHECKVERSION())
+	{
+		ERROR_POPUP(std::format("IMGUI_CHECKVERSION returned error status\nSee File: {} - Line: {}", __FILE__, __LINE__).c_str(), "IMGUI_CHECKVERSION ERROR");
+		std::terminate();
+	}
+
+	// Run each functin in a try-catch block and terminate with a popup window if any exception is thrown
+	TERMINATE_ON_THROW(ImGui::CreateContext());
+	TERMINATE_ON_THROW(ImPlot::CreateContext());
+
 
 	// Create the window
 	m_window = std::make_unique<AppWindow>(1000, 800, "Main Window");
