@@ -9,7 +9,10 @@
 class SimulationManager
 {
 public:
-	static void Initialize();
+	SimulationManager(const SimulationManager&) = delete;
+	void operator=(const SimulationManager&) = delete;
+
+	static void Initialize() noexcept;
 	static void Update() noexcept;
 
 	static void AddParticle(int type, int mass, float p_x, float p_y, float p_z, float v_x, float v_y, float v_z) noexcept;

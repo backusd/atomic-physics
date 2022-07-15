@@ -7,28 +7,28 @@ ConstantBufferArray::ConstantBufferArray(ConstantBufferBindingLocation bindToSta
 
 	switch (bindToStage)
 	{
-	case ConstantBufferBindingLocation::COMPUTE_SHADER:	 BindFunc = std::bind(&ConstantBufferArray::BindCS, this); break;
-	case ConstantBufferBindingLocation::VERTEX_SHADER:	 BindFunc = std::bind(&ConstantBufferArray::BindVS, this); break;
-	case ConstantBufferBindingLocation::HULL_SHADER:	 BindFunc = std::bind(&ConstantBufferArray::BindHS, this); break;
-	case ConstantBufferBindingLocation::DOMAIN_SHADER:	 BindFunc = std::bind(&ConstantBufferArray::BindDS, this); break;
-	case ConstantBufferBindingLocation::GEOMETRY_SHADER: BindFunc = std::bind(&ConstantBufferArray::BindGS, this); break;
-	case ConstantBufferBindingLocation::PIXEL_SHADER:	 BindFunc = std::bind(&ConstantBufferArray::BindPS, this); break;
+	case ConstantBufferBindingLocation::COMPUTE_SHADER:	 BindFunc = [this]() { this->BindCS(); }; break;
+	case ConstantBufferBindingLocation::VERTEX_SHADER:	 BindFunc = [this]() { this->BindVS(); }; break;
+	case ConstantBufferBindingLocation::HULL_SHADER:	 BindFunc = [this]() { this->BindHS(); }; break;
+	case ConstantBufferBindingLocation::DOMAIN_SHADER:	 BindFunc = [this]() { this->BindDS(); }; break;
+	case ConstantBufferBindingLocation::GEOMETRY_SHADER: BindFunc = [this]() { this->BindGS(); }; break;
+	case ConstantBufferBindingLocation::PIXEL_SHADER:	 BindFunc = [this]() { this->BindPS(); }; break;
 	}
 }
 
-ConstantBufferArray::ConstantBufferArray(ConstantBufferBindingLocation bindToStage, BasicGeometry geometry) :
+ConstantBufferArray::ConstantBufferArray(ConstantBufferBindingLocation bindToStage, BasicGeometry geometry) noexcept :
 	Bindable()
 {
 	PROFILE_FUNCTION();
 
 	switch (bindToStage)
 	{
-	case ConstantBufferBindingLocation::COMPUTE_SHADER:	 BindFunc = std::bind(&ConstantBufferArray::BindCS, this); break;
-	case ConstantBufferBindingLocation::VERTEX_SHADER:	 BindFunc = std::bind(&ConstantBufferArray::BindVS, this); break;
-	case ConstantBufferBindingLocation::HULL_SHADER:	 BindFunc = std::bind(&ConstantBufferArray::BindHS, this); break;
-	case ConstantBufferBindingLocation::DOMAIN_SHADER:	 BindFunc = std::bind(&ConstantBufferArray::BindDS, this); break;
-	case ConstantBufferBindingLocation::GEOMETRY_SHADER: BindFunc = std::bind(&ConstantBufferArray::BindGS, this); break;
-	case ConstantBufferBindingLocation::PIXEL_SHADER:	 BindFunc = std::bind(&ConstantBufferArray::BindPS, this); break;
+	case ConstantBufferBindingLocation::COMPUTE_SHADER:	 BindFunc = [this]() { this->BindCS(); }; break;
+	case ConstantBufferBindingLocation::VERTEX_SHADER:	 BindFunc = [this]() { this->BindVS(); }; break;
+	case ConstantBufferBindingLocation::HULL_SHADER:	 BindFunc = [this]() { this->BindHS(); }; break;
+	case ConstantBufferBindingLocation::DOMAIN_SHADER:	 BindFunc = [this]() { this->BindDS(); }; break;
+	case ConstantBufferBindingLocation::GEOMETRY_SHADER: BindFunc = [this]() { this->BindGS(); }; break;
+	case ConstantBufferBindingLocation::PIXEL_SHADER:	 BindFunc = [this]() { this->BindPS(); }; break;
 	}
 
 	switch (geometry)

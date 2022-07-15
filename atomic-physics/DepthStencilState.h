@@ -36,7 +36,7 @@ public:
 	void ResetState() noexcept;
 
 private:
-	void LoadChanges();
+	void LoadChanges() noexcept;
 
 	unsigned int m_stencilReferenceNumber;
 	D3D11_DEPTH_STENCIL_DESC m_desc;

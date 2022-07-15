@@ -10,9 +10,9 @@ public:
 	void operator=(const ConstantBuffer&) = delete;
 
 	template <typename T>
-	void CreateBuffer(D3D11_USAGE usage, unsigned int cpuAccessFlags, unsigned int miscFlags, unsigned int structuredByteStride);
+	void CreateBuffer(D3D11_USAGE usage, unsigned int cpuAccessFlags, unsigned int miscFlags, unsigned int structuredByteStride) noexcept;
 	template <typename T>
-	void CreateBuffer(D3D11_USAGE usage, unsigned int cpuAccessFlags, unsigned int miscFlags, unsigned int structuredByteStride, void* initialData);
+	void CreateBuffer(D3D11_USAGE usage, unsigned int cpuAccessFlags, unsigned int miscFlags, unsigned int structuredByteStride, void* initialData) noexcept;
 
 	ID3D11Buffer* GetRawBufferPointer() const noexcept { return m_buffer.Get(); }
 
@@ -21,7 +21,7 @@ private:
 };
 
 template <typename T>
-void ConstantBuffer::CreateBuffer(D3D11_USAGE usage, unsigned int cpuAccessFlags, unsigned int miscFlags, unsigned int structuredByteStride)
+void ConstantBuffer::CreateBuffer(D3D11_USAGE usage, unsigned int cpuAccessFlags, unsigned int miscFlags, unsigned int structuredByteStride) noexcept
 {
 	D3D11_BUFFER_DESC desc;
 	desc.ByteWidth = sizeof(T);
@@ -41,7 +41,7 @@ void ConstantBuffer::CreateBuffer(D3D11_USAGE usage, unsigned int cpuAccessFlags
 }
 
 template <typename T>
-void ConstantBuffer::CreateBuffer(D3D11_USAGE usage, unsigned int cpuAccessFlags, unsigned int miscFlags, unsigned int structuredByteStride, void* initialData)
+void ConstantBuffer::CreateBuffer(D3D11_USAGE usage, unsigned int cpuAccessFlags, unsigned int miscFlags, unsigned int structuredByteStride, void* initialData) noexcept
 {
 	D3D11_BUFFER_DESC desc;
 	desc.ByteWidth = sizeof(T);

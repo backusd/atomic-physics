@@ -1,6 +1,6 @@
 #include "Simulation.h"
 
-Simulation::Simulation() :
+Simulation::Simulation() noexcept :
 	m_boxMaxX(2.0f),
 	m_boxMaxY(2.0f),
 	m_boxMaxZ(2.0f),

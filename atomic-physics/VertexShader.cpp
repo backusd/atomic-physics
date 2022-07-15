@@ -1,6 +1,6 @@
 #include "VertexShader.h"
 
-VertexShader::VertexShader(Microsoft::WRL::ComPtr<ID3DBlob> blob) :
+VertexShader::VertexShader(Microsoft::WRL::ComPtr<ID3DBlob> blob) noexcept :
 	Bindable()
 {
 	PROFILE_FUNCTION();

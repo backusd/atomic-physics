@@ -1,4 +1,6 @@
 #include "DeviceResources.h"
+#include "MacroHelper.h"
+#include "WindowException.h"
 
 using Microsoft::WRL::ComPtr;
 
@@ -21,7 +23,7 @@ DeviceResources::DeviceResources() noexcept :
 {
 }
 
-void DeviceResources::InitializeImpl(HWND hWnd)
+void DeviceResources::InitializeImpl(HWND hWnd) noexcept
 {
 	PROFILE_FUNCTION();
 
@@ -82,7 +84,7 @@ void DeviceResources::CreateDeviceIndependentResources() noexcept
 	);
 }
 
-void DeviceResources::CreateDeviceDependentResources()
+void DeviceResources::CreateDeviceDependentResources() noexcept
 {
 	PROFILE_FUNCTION();
 
@@ -178,22 +180,32 @@ void DeviceResources::CreateDeviceDependentResources()
 	);
 }
 
-void DeviceResources::CreateWindowSizeDependentResources()
+void DeviceResources::CreateWindowSizeDependentResources() noexcept
 {
 	PROFILE_FUNCTION();
 
 	// Get height, width, and dpi for the window
 	RECT rect;
-	GetClientRect(m_hWnd, &rect);
+	if (GetClientRect(m_hWnd, &rect) == 0)
+	{
+		TERMINATE_ON_THROW(throw WINDOW_LAST_EXCEPT());
+	}
+
 	float height = static_cast<float>(rect.bottom);
 	float width = static_cast<float>(rect.right);
 
-	float dpi = static_cast<float>(GetDpiForWindow(m_hWnd));
+	float dpi = 0.0f;
+	unsigned int _dpi = GetDpiForWindow(m_hWnd);
+	if (_dpi == 0)
+	{
+		TERMINATE_ON_THROW(
+			throw std::exception("GetDpiForWindow returned 0\nFILE: " STRINGIFY(__FILE__) "\nLINE: " STRINGIFY(__LINE__))
+		)
+	}
 	m_dpiScale = dpi / 96.0f;
 
 	// Clear the previous window size specific context
-	ID3D11RenderTargetView* nullViews[] = { nullptr };
-	m_d3dDeviceContext->OMSetRenderTargets(ARRAYSIZE(nullViews), nullViews, nullptr);
+	m_d3dDeviceContext->OMSetRenderTargets(0, nullptr, nullptr); // These are the appropriate parameters to clear the render targets
 	m_d3dRenderTargetView = nullptr;
 	m_d2dDeviceContext->SetTarget(nullptr);
 	m_d2dBitmap = nullptr;
@@ -278,7 +290,9 @@ void DeviceResources::CreateWindowSizeDependentResources()
 		GFX_THROW_INFO(dxgiDevice->SetMaximumFrameLatency(1));
 	}
 
-	m_dxgiSwapChain->SetRotation(DXGI_MODE_ROTATION_IDENTITY);
+	GFX_THROW_INFO(
+		m_dxgiSwapChain->SetRotation(DXGI_MODE_ROTATION_IDENTITY)
+	);
 
 	// Create a render target view of the swap chain back buffer
 	ComPtr<ID3D11Texture2D1> backBuffer;
@@ -384,7 +398,7 @@ void DeviceResources::CreateWindowSizeDependentResources()
 }
 
 // Recreate all device resources and set them back to the current state
-void DeviceResources::HandleDeviceLost()
+void DeviceResources::HandleDeviceLost() noexcept
 {
 	m_dxgiSwapChain = nullptr;
 	CreateDeviceDependentResources();

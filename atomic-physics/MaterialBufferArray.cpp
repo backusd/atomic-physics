@@ -8,7 +8,7 @@ MaterialBufferArray::MaterialBufferArray() :
 {
 	PROFILE_FUNCTION();
 
-	BindFunc = std::bind(&MaterialBufferArray::BindMaterialBuffer, this);
+	BindFunc = [this]() { this->BindMaterialBuffer(); };
 
 	m_materials = std::make_unique<PhongMaterialProperties>();
 

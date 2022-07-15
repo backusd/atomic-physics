@@ -6,12 +6,12 @@
 class BoxMesh : public Mesh
 {
 public:
-	BoxMesh();
+	BoxMesh() noexcept;
 	BoxMesh(const BoxMesh&) = delete;
 	void operator=(const BoxMesh&) = delete;
 
 
 private:
-	void InitializeBuffers();
+	void InitializeBuffers() noexcept;
 
 };

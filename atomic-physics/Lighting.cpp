@@ -1,20 +1,22 @@
 #include "Lighting.h"
+#include "MacroHelper.h"
 
 using DirectX::XMFLOAT4;
 using DirectX::XMVECTORF32;
 using DirectX::XMVECTOR;
 
 
-Lighting::Lighting() :
+Lighting::Lighting() noexcept :
 	ConstantBufferArray(ConstantBufferBindingLocation::PIXEL_SHADER)
 {
 	PROFILE_FUNCTION();
 
-	BindFunc = std::bind(&Lighting::BindLightingBuffer, this);
+	BindFunc = [this]() { this->BindLightingBuffer(); };
+
 	CreateLightProperties();
 }
 
-void Lighting::CreateLightProperties()
+void Lighting::CreateLightProperties() noexcept
 {
 	PROFILE_FUNCTION();
 

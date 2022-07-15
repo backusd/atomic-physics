@@ -20,7 +20,7 @@ struct Particle
 class Simulation
 {
 public:
-	Simulation();
+	Simulation() noexcept;
 	Simulation(const Simulation&) = delete;
 	void operator=(const Simulation&) = delete;
 	// ~Simulation --> automatically gets called because Simulation does get destructed on program close

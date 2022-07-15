@@ -2,7 +2,7 @@
 
 using DirectX::XMFLOAT4;
 
-BoxMesh::BoxMesh() :
+BoxMesh::BoxMesh() noexcept :
 	Mesh()
 {
 	PROFILE_FUNCTION();
@@ -12,7 +12,7 @@ BoxMesh::BoxMesh() :
 	InitializeBuffers();
 }
 
-void BoxMesh::InitializeBuffers()
+void BoxMesh::InitializeBuffers() noexcept
 {
 	PROFILE_FUNCTION();
 

@@ -5,7 +5,7 @@
 class PixelShader : public Bindable
 {
 public:
-	PixelShader(std::wstring pixelShaderFile);
+	PixelShader(std::wstring pixelShaderFile) noexcept;
 	PixelShader(const PixelShader&) = delete;
 	void operator=(const PixelShader&) = delete;
 

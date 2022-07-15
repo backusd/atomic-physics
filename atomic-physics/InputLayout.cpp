@@ -1,6 +1,6 @@
 #include "InputLayout.h"
 
-InputLayout::InputLayout(std::wstring vertexShaderFile) :
+InputLayout::InputLayout(std::wstring vertexShaderFile) noexcept :
 	Bindable()
 {
 	PROFILE_FUNCTION();
@@ -9,7 +9,7 @@ InputLayout::InputLayout(std::wstring vertexShaderFile) :
 		D3DReadFileToBlob(vertexShaderFile.c_str(), &m_blob)
 	);
 }
-InputLayout::InputLayout(std::wstring vertexShaderFile, BasicGeometry geometry) :
+InputLayout::InputLayout(std::wstring vertexShaderFile, BasicGeometry geometry) noexcept :
 	Bindable()
 {
 	PROFILE_FUNCTION();
@@ -25,7 +25,7 @@ InputLayout::InputLayout(std::wstring vertexShaderFile, BasicGeometry geometry) 
 	}
 }
 
-void InputLayout::CreateBoxInputLayout()
+void InputLayout::CreateBoxInputLayout() noexcept
 {
 	PROFILE_FUNCTION();
 
@@ -34,7 +34,7 @@ void InputLayout::CreateBoxInputLayout()
 	CreateLayout();
 }
 
-void InputLayout::CreateSphereInputLayout()
+void InputLayout::CreateSphereInputLayout() noexcept
 {
 	PROFILE_FUNCTION();
 
@@ -69,7 +69,7 @@ void InputLayout::AddDescription(
 	m_descriptions.push_back(desc);
 }
 
-void InputLayout::CreateLayout()
+void InputLayout::CreateLayout() noexcept
 {
 	PROFILE_FUNCTION();
 

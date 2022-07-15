@@ -7,12 +7,12 @@ SamplerStateArray::SamplerStateArray(SamplerStateBindingLocation bindToStage) no
 
 	switch (bindToStage)
 	{
-	case SamplerStateBindingLocation::COMPUTE_SHADER:	BindFunc = std::bind(&SamplerStateArray::BindCS, this); break;
-	case SamplerStateBindingLocation::VERTEX_SHADER:	BindFunc = std::bind(&SamplerStateArray::BindVS, this); break;
-	case SamplerStateBindingLocation::HULL_SHADER:		BindFunc = std::bind(&SamplerStateArray::BindHS, this); break;
-	case SamplerStateBindingLocation::DOMAIN_SHADER:	BindFunc = std::bind(&SamplerStateArray::BindDS, this); break;
-	case SamplerStateBindingLocation::GEOMETRY_SHADER:	BindFunc = std::bind(&SamplerStateArray::BindGS, this); break;
-	case SamplerStateBindingLocation::PIXEL_SHADER:		BindFunc = std::bind(&SamplerStateArray::BindPS, this); break;
+	case SamplerStateBindingLocation::COMPUTE_SHADER:	BindFunc = [this]() { this->BindCS(); }; break;
+	case SamplerStateBindingLocation::VERTEX_SHADER:	BindFunc = [this]() { this->BindVS(); }; break;
+	case SamplerStateBindingLocation::HULL_SHADER:		BindFunc = [this]() { this->BindHS(); }; break;
+	case SamplerStateBindingLocation::DOMAIN_SHADER:	BindFunc = [this]() { this->BindDS(); }; break;
+	case SamplerStateBindingLocation::GEOMETRY_SHADER:	BindFunc = [this]() { this->BindGS(); }; break;
+	case SamplerStateBindingLocation::PIXEL_SHADER:		BindFunc = [this]() { this->BindPS(); }; break;
 	}
 }
 

@@ -5,7 +5,7 @@
 class VertexShader : public Bindable
 {
 public:
-	VertexShader(Microsoft::WRL::ComPtr<ID3DBlob> blob);
+	VertexShader(Microsoft::WRL::ComPtr<ID3DBlob> blob) noexcept;
 	VertexShader(const VertexShader&) = delete;
 	void operator=(const VertexShader&) = delete;
 

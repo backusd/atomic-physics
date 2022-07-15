@@ -9,7 +9,7 @@ EyePositionBufferArray::EyePositionBufferArray(std::shared_ptr<MoveLookControlle
 {
 	PROFILE_FUNCTION();
 
-	BindFunc = std::bind(&EyePositionBufferArray::BindEyePositionBuffer, this);
+	BindFunc = [this]() { this->BindEyePositionBuffer(); };
 	
 	XMFLOAT4 position;
 	DirectX::XMStoreFloat4(&position, m_moveLookController->Position());

@@ -1,12 +1,13 @@
 #pragma once
 #include "pch.h"
+#include "MacroHelper.h"
 #include "StepTimerException.h"
 
 // Helper class for animation and simulation timing.
 class StepTimer
 {
 public:
-	StepTimer() :
+	StepTimer() noexcept :
 		m_elapsedTicks(0),
 		m_totalTicks(0),
 		m_leftOverTicks(0),
@@ -19,12 +20,12 @@ public:
 	{
 		if (!QueryPerformanceFrequency(&m_qpcFrequency))
 		{
-			throw TIMER_EXCEPT("FAILED: StepTimer -> Constructor -> QueryPerformanceFrequency");
+			TERMINATE_ON_THROW(throw TIMER_EXCEPT("FAILED: StepTimer -> Constructor -> QueryPerformanceFrequency"))
 		}
 
 		if (!QueryPerformanceCounter(&m_qpcLastTime))
 		{
-			throw TIMER_EXCEPT("FAILED: StepTimer -> Constructor -> QueryPerformanceCounter");
+			TERMINATE_ON_THROW(throw TIMER_EXCEPT("FAILED: StepTimer -> Constructor -> QueryPerformanceCounter"))
 		}
 
 		// Initialize max delta to 1/10 of a second.

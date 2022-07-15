@@ -36,7 +36,7 @@ void DepthStencilState::ResetState() noexcept
 	m_desc.BackFace.StencilFunc			= D3D11_COMPARISON_ALWAYS;
 }
 
-void DepthStencilState::LoadChanges()
+void DepthStencilState::LoadChanges() noexcept
 {
 	PROFILE_FUNCTION();
 

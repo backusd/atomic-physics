@@ -8,7 +8,7 @@
 class Lighting : public ConstantBufferArray
 {
 public:
-	Lighting();
+	Lighting() noexcept;
 	Lighting(const Lighting&) = delete;
 	void operator=(const Lighting&) = delete;
 
@@ -27,7 +27,7 @@ public:
 
 
 private:
-	void CreateLightProperties();
+	void CreateLightProperties() noexcept;
 	void BindLightingBuffer() const noexcept_release_only;
 	void UpdateLightingProperties() noexcept_release_only;
 

@@ -10,7 +10,7 @@ public:
 	void operator=(const DeviceResources&) = delete;
 
 
-	static void Initialize(HWND hWnd) { return Get().InitializeImpl(hWnd); }
+	static void Initialize(HWND hWnd) noexcept { return Get().InitializeImpl(hWnd); }
 	static void SetViewport(D3D11_VIEWPORT viewport) noexcept { Get().SetViewportImpl(viewport); }
 	static void Present() { Get().PresentImpl(); }
 
@@ -38,11 +38,11 @@ private:
 		return deviceResources;
 	}
 
-	void InitializeImpl(HWND hWnd);
-	void CreateDeviceDependentResources();
+	void InitializeImpl(HWND hWnd) noexcept;
+	void CreateDeviceDependentResources() noexcept;
 	void CreateDeviceIndependentResources() noexcept;
-	void CreateWindowSizeDependentResources();
-	void HandleDeviceLost();
+	void CreateWindowSizeDependentResources() noexcept;
+	void HandleDeviceLost() noexcept;
 	void SetViewportImpl(D3D11_VIEWPORT viewport) noexcept;
 	void PresentImpl();
 

@@ -1,7 +1,7 @@
 #include "RasterizerState.h"
 
 
-RasterizerState::RasterizerState() :
+RasterizerState::RasterizerState() noexcept :
 	Bindable()
 {
 	PROFILE_FUNCTION();
@@ -24,7 +24,7 @@ void RasterizerState::ResetState() noexcept
 	m_desc.AntialiasedLineEnable = false;
 }
 
-void RasterizerState::LoadChanges()
+void RasterizerState::LoadChanges() noexcept
 {
 	PROFILE_FUNCTION();
 

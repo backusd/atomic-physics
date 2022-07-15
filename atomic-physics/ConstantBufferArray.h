@@ -23,7 +23,7 @@ class ConstantBufferArray : public Bindable
 {
 public:
 	ConstantBufferArray(ConstantBufferBindingLocation bindToStage) noexcept;
-	ConstantBufferArray(ConstantBufferBindingLocation bindToStage, BasicGeometry geometry);
+	ConstantBufferArray(ConstantBufferBindingLocation bindToStage, BasicGeometry geometry) noexcept;
 	ConstantBufferArray(const ConstantBufferArray&) = delete;
 	void operator=(const ConstantBufferArray&) = delete;
 

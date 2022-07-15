@@ -1,6 +1,6 @@
 #include "PixelShader.h"
 
-PixelShader::PixelShader(std::wstring pixelShaderFile) :
+PixelShader::PixelShader(std::wstring pixelShaderFile) noexcept :
 	Bindable()
 {
 	PROFILE_FUNCTION();

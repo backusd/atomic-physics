@@ -14,7 +14,7 @@ public:
 	unsigned int VertexCount() const noexcept { return m_vertexCount; }
 
 	template <typename T, typename A>
-	void LoadBuffers(std::vector<T, A>& vertices, std::vector<unsigned short>& indices);
+	void LoadBuffers(std::vector<T, A>& vertices, std::vector<unsigned short>& indices) noexcept;
 
 protected:
 
@@ -29,7 +29,7 @@ protected:
 };
 
 template <typename T, typename A>
-void Mesh::LoadBuffers(std::vector<T, A>& vertices, std::vector<unsigned short>& indices)
+void Mesh::LoadBuffers(std::vector<T, A>& vertices, std::vector<unsigned short>& indices) noexcept
 {
 	m_sizeOfVertex = sizeof(T);
 	m_vertexCount = static_cast<unsigned int>(vertices.size());

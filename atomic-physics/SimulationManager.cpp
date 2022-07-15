@@ -4,7 +4,7 @@
 std::vector<std::unique_ptr<Simulation>> SimulationManager::m_simulations;
 unsigned int SimulationManager::m_activeSimulationIndex = 0;
 
-void SimulationManager::Initialize()
+void SimulationManager::Initialize() noexcept
 {
 	PROFILE_FUNCTION();
 

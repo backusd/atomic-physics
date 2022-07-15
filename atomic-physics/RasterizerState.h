@@ -5,7 +5,7 @@
 class RasterizerState : public Bindable
 {
 public:
-	RasterizerState();
+	RasterizerState() noexcept;
 	RasterizerState(const RasterizerState&) = delete;
 	void operator=(const RasterizerState&) = delete;
 
@@ -25,7 +25,7 @@ public:
 	void ResetState() noexcept;
 
 private:
-	void LoadChanges();
+	void LoadChanges() noexcept;
 
 	D3D11_RASTERIZER_DESC m_desc;
 	Microsoft::WRL::ComPtr<ID3D11RasterizerState> m_rasterizerState;

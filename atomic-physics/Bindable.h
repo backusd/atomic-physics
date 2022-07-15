@@ -5,7 +5,7 @@
 class Bindable
 {
 public:
-	Bindable() {}
+	Bindable() noexcept {}
 	Bindable(const Bindable&) = delete;
 	void operator=(const Bindable&) = delete;
 	virtual ~Bindable() = default; // MUST be declared virtual so derived classes are properly destructed

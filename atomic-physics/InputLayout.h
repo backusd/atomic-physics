@@ -10,8 +10,8 @@
 class InputLayout : public Bindable
 {
 public:
-	InputLayout(std::wstring vertexShaderFile);
-	InputLayout(std::wstring vertexShaderFile, BasicGeometry geometry);
+	InputLayout(std::wstring vertexShaderFile) noexcept;
+	InputLayout(std::wstring vertexShaderFile, BasicGeometry geometry) noexcept;
 	InputLayout(const InputLayout&) = delete;
 	void operator=(const InputLayout&) = delete;
 
@@ -23,15 +23,15 @@ public:
 						D3D11_INPUT_CLASSIFICATION inputSlotClass,
 						unsigned int instanceDataStepRate) noexcept;
 
-	void CreateLayout();
+	void CreateLayout() noexcept;
 
 	void Bind() const noexcept_release_only override;
 
-	Microsoft::WRL::ComPtr<ID3DBlob> GetVertexShaderFileBlob() noexcept { return m_blob; }
+	Microsoft::WRL::ComPtr<ID3DBlob> GetVertexShaderFileBlob() const noexcept { return m_blob; }
 
 private:
-	void CreateBoxInputLayout();
-	void CreateSphereInputLayout();
+	void CreateBoxInputLayout() noexcept;
+	void CreateSphereInputLayout() noexcept;
 
 	std::vector<std::string> m_semanticNames;
 	std::vector<D3D11_INPUT_ELEMENT_DESC> m_descriptions;
