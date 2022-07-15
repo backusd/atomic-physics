@@ -7,7 +7,7 @@ AppWindow::AppWindow(int width, int height, const char* name) noexcept :
 	m_height(height),
 	m_width(width),
 	m_clearColor{ 55.0f / 255.0f, 55.0f / 255.0f, 55.0f / 255.0f, 1.0f },
-	m_io(ImGui::GetIO()),
+	m_io(ImGui::GetIO()), // ImGui::GetIO uses IM_ASSERT, so no need to try-catch here
 	m_viewport()
 {
 	PROFILE_FUNCTION();

@@ -1,12 +1,13 @@
 #pragma once
 #include "pch.h"
+#include "MacroHelper.h"
 #include "WindowException.h"
 
 template<typename T>
 class AppWindowTemplate
 {
 public:
-	AppWindowTemplate(int width, int height, const char* name);
+	AppWindowTemplate(int width, int height, const char* name) noexcept;
 	~AppWindowTemplate();
 
 	virtual LRESULT HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -32,10 +33,10 @@ protected:
 };
 
 template<typename T>
-AppWindowTemplate<T>::AppWindowTemplate(int width, int height, const char* name) :
+AppWindowTemplate<T>::AppWindowTemplate(int width, int height, const char* name) noexcept :
 	m_height(height),
 	m_width(width),
-	m_hInst(GetModuleHandle(nullptr))
+	m_hInst(GetModuleHandle(nullptr)) // I believe GetModuleHandle should not ever throw, even though it is not marked noexcept
 {
 	// Register the window class
 	WNDCLASSEX wc = { 0 };
@@ -64,7 +65,7 @@ AppWindowTemplate<T>::AppWindowTemplate(int width, int height, const char* name)
 
 	if (AdjustWindowRect(&rect, WS_options, FALSE) == 0)
 	{
-		throw WINDOW_LAST_EXCEPT();
+		TERMINATE_ON_THROW(throw WINDOW_LAST_EXCEPT());
 	};
 
 	// create window & get hWnd
@@ -84,7 +85,8 @@ AppWindowTemplate<T>::AppWindowTemplate(int width, int height, const char* name)
 
 	if (m_hWnd == nullptr)
 	{
-		throw WINDOW_LAST_EXCEPT();
+		//throw WINDOW_LAST_EXCEPT();
+		TERMINATE_ON_THROW(throw WINDOW_LAST_EXCEPT());
 	}
 
 	// show window

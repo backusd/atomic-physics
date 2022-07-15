@@ -148,6 +148,7 @@ InstrumentationTimer::InstrumentationTimer(const char* name) noexcept :
 		//		Replace " -> '
 		std::replace(m_name.begin(), m_name.end(), '"', '\'');
 
+		// std::chrono::high_resolution_clock::now() is noexcept, so nothing to handle
 		m_startTimePoint = std::chrono::high_resolution_clock::now();
 	}
 }

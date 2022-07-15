@@ -42,7 +42,7 @@ void DeviceResources::OnResizeImpl()
 	CreateWindowSizeDependentResources();
 }
 
-void DeviceResources::CreateDeviceIndependentResources()
+void DeviceResources::CreateDeviceIndependentResources() noexcept
 {
 	PROFILE_FUNCTION();
 

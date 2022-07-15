@@ -22,10 +22,9 @@ App::App() noexcept
 		std::terminate();
 	}
 
-	// Run each functin in a try-catch block and terminate with a popup window if any exception is thrown
-	TERMINATE_ON_THROW(ImGui::CreateContext());
-	TERMINATE_ON_THROW(ImPlot::CreateContext());
-
+	// Run each function in a try-catch block and terminate with a popup window if any exception is thrown
+	TERMINATE_ON_THROW(ImGui::CreateContext())
+	TERMINATE_ON_THROW(ImPlot::CreateContext())
 
 	// Create the window
 	m_window = std::make_unique<AppWindow>(1000, 800, "Main Window");

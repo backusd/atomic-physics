@@ -40,7 +40,7 @@ private:
 
 	void InitializeImpl(HWND hWnd);
 	void CreateDeviceDependentResources();
-	void CreateDeviceIndependentResources();
+	void CreateDeviceIndependentResources() noexcept;
 	void CreateWindowSizeDependentResources();
 	void HandleDeviceLost();
 	void SetViewportImpl(D3D11_VIEWPORT viewport) noexcept;
