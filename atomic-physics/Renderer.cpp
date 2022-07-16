@@ -29,7 +29,7 @@ Renderer::Renderer(D3D11_VIEWPORT vp) noexcept :
 	InitializeAllSphereData();
 }
 
-void Renderer::InitializeAllSphereData()
+void Renderer::InitializeAllSphereData() noexcept
 {
 	PROFILE_FUNCTION();
 

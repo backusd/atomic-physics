@@ -3,7 +3,7 @@
 using DirectX::XMFLOAT4;
 using DirectX::XMMATRIX;
 
-MaterialBufferArray::MaterialBufferArray() :
+MaterialBufferArray::MaterialBufferArray() noexcept :
 	ConstantBufferArray(ConstantBufferBindingLocation::PIXEL_SHADER)
 {
 	PROFILE_FUNCTION();
@@ -89,7 +89,7 @@ MaterialBufferArray::MaterialBufferArray() :
 	AddBuffer(materialsBuffer);
 }
 
-void MaterialBufferArray::BindMaterialBuffer() const noexcept_release_only
+void MaterialBufferArray::BindMaterialBuffer() const noexcept
 {
 	PROFILE_FUNCTION();
 
@@ -99,7 +99,7 @@ void MaterialBufferArray::BindMaterialBuffer() const noexcept_release_only
 	);
 }
 
-void MaterialBufferArray::UpdateMaterialProperties() const noexcept_release_only
+void MaterialBufferArray::UpdateMaterialProperties() const noexcept
 {
 	PROFILE_FUNCTION();
 

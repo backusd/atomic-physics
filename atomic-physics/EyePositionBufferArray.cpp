@@ -3,7 +3,7 @@
 using DirectX::XMFLOAT4;
 using DirectX::XMMATRIX;
 
-EyePositionBufferArray::EyePositionBufferArray(std::shared_ptr<MoveLookController> mlc) :
+EyePositionBufferArray::EyePositionBufferArray(std::shared_ptr<MoveLookController> mlc) noexcept :
 	ConstantBufferArray(ConstantBufferBindingLocation::PIXEL_SHADER),
 	m_moveLookController(mlc)
 {

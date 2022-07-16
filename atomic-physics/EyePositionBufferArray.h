@@ -9,7 +9,7 @@
 class EyePositionBufferArray : public ConstantBufferArray
 {
 public:
-	EyePositionBufferArray(std::shared_ptr<MoveLookController> mlc);
+	EyePositionBufferArray(std::shared_ptr<MoveLookController> mlc) noexcept;
 	EyePositionBufferArray(const EyePositionBufferArray&) = delete;
 	void operator=(const EyePositionBufferArray&) = delete;
 

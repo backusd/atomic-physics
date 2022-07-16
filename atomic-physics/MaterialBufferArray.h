@@ -8,14 +8,14 @@
 class MaterialBufferArray : public ConstantBufferArray
 {
 public:
-	MaterialBufferArray();
+	MaterialBufferArray() noexcept;
 	MaterialBufferArray(const MaterialBufferArray&) = delete;
 	void operator=(const MaterialBufferArray&) = delete;
 
-	void UpdateMaterialProperties() const noexcept_release_only;
+	void UpdateMaterialProperties() const noexcept;
 
 private:
-	void BindMaterialBuffer() const noexcept_release_only;
+	void BindMaterialBuffer() const noexcept;
 
 	std::unique_ptr<PhongMaterialProperties> m_materials;
 };

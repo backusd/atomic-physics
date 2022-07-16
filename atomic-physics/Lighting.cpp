@@ -47,7 +47,7 @@ void Lighting::CreateLightProperties() noexcept
 	AddBuffer(lightingBuffer);
 }
 
-void Lighting::BindLightingBuffer() const noexcept_release_only
+void Lighting::BindLightingBuffer() const noexcept
 {
 	PROFILE_FUNCTION();
 
@@ -59,7 +59,7 @@ void Lighting::BindLightingBuffer() const noexcept_release_only
 
 void Lighting::EditLight(int index, DirectX::XMFLOAT4 position, DirectX::XMFLOAT4 direction, 
 						bool enabled, int lightType, DirectX::XMFLOAT4 color, float spotAngle, 
-						float constantAttenuation, float linearAttenuation, float quadraticAttenuation) noexcept_release_only
+						float constantAttenuation, float linearAttenuation, float quadraticAttenuation) noexcept
 {
 	PROFILE_FUNCTION();
 
@@ -78,7 +78,7 @@ void Lighting::EditLight(int index, DirectX::XMFLOAT4 position, DirectX::XMFLOAT
 	UpdateLightingProperties();
 }
 
-void Lighting::UpdateLightingProperties() noexcept_release_only
+void Lighting::UpdateLightingProperties() noexcept
 {
 	PROFILE_FUNCTION();
 

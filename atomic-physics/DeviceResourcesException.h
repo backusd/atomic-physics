@@ -23,7 +23,12 @@
 #define GFX_THROW_INFO(hrcall) TERMINATE_ON_THROW(HR INFOMAN infoManager.Set(); if( FAILED( hr = (hrcall) ) ) throw GFX_EXCEPT(hr) )
 
 #define GFX_DEVICE_REMOVED_EXCEPT(hr) { INFOMAN DeviceRemovedException( __LINE__,__FILE__,(hr),infoManager.GetMessages() ) }
-#define GFX_THROW_INFO_ONLY(call) { INFOMAN infoManager.Set(); (call); {auto v = infoManager.GetMessages(); if(!v.empty()) {throw InfoException( __LINE__,__FILE__,v);}}}
+
+
+//#define GFX_THROW_INFO_ONLY(call) { INFOMAN infoManager.Set(); (call); {auto v = infoManager.GetMessages(); if(!v.empty()) {throw InfoException( __LINE__,__FILE__,v);}}}
+#define GFX_THROW_INFO_ONLY(call) TERMINATE_ON_THROW(INFOMAN infoManager.Set(); call; {auto v = infoManager.GetMessages(); if(!v.empty()) {throw InfoException( __LINE__,__FILE__,v);}})
+
+
 #define noexcept_release_only
 #else
 #define GFX_EXCEPT(hr) DeviceResourcesException( __LINE__,__FILE__,(hr) )

@@ -12,7 +12,7 @@ public:
 	Lighting(const Lighting&) = delete;
 	void operator=(const Lighting&) = delete;
 
-	void GlobalAmbient(DirectX::XMFLOAT4 value) noexcept_release_only { PROFILE_FUNCTION(); m_properties.GlobalAmbient = value; UpdateLightingProperties(); }
+	void GlobalAmbient(DirectX::XMFLOAT4 value) noexcept { PROFILE_FUNCTION(); m_properties.GlobalAmbient = value; UpdateLightingProperties(); }
 	void EditLight(
 		int index,
 		DirectX::XMFLOAT4 position,
@@ -23,13 +23,13 @@ public:
 		float spotAngle = DirectX::XMConvertToRadians(45.0f),
 		float constantAttenuation = 1.0f,
 		float linearAttenuation = 0.08f,
-		float quadraticAttenuation = 0.0f) noexcept_release_only;
+		float quadraticAttenuation = 0.0f) noexcept;
 
 
 private:
 	void CreateLightProperties() noexcept;
-	void BindLightingBuffer() const noexcept_release_only;
-	void UpdateLightingProperties() noexcept_release_only;
+	void BindLightingBuffer() const noexcept;
+	void UpdateLightingProperties() noexcept;
 
 	LightProperties m_properties;
 };

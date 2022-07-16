@@ -62,7 +62,7 @@ private:
 	void Render_AllSpheres() const noexcept_release_only;
 	void Render_Generic() const noexcept_release_only;
 
-	void InitializeAllSphereData();
+	void InitializeAllSphereData() noexcept;
 	void UpdateAllSphereModelViewProjectionInstanceData() const;
 	void UpdateAllSphereMaterialIndexInstanceData() const;
 
