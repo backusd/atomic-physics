@@ -61,11 +61,15 @@ public:
 	Lighting* GetLighting() const noexcept { return m_lighting.get(); }
 	Box* GetBox() const noexcept { return m_box.get(); }
 
+	void DrawLights(bool draw) noexcept { m_drawLights = draw; }
+
 private:
 	void Render_AllSpheres() const noexcept;
 	void Render_Generic() const noexcept;
+	void Render_Lights() const noexcept;
 
 	void InitializeAllSphereData() noexcept;
+	void InitializeLightingData() noexcept;
 	void UpdateAllSphereModelViewProjectionInstanceData() const noexcept;
 	void UpdateAllSphereMaterialIndexInstanceData() const noexcept;
 
@@ -88,5 +92,16 @@ private:
 	std::unique_ptr<DepthStencilState>	 m_allSphere_DepthStencilState;
 	std::unique_ptr<ConstantBufferArray> m_allSphere_ModelViewProjectionInstanceBufferArray;
 	std::unique_ptr<ConstantBufferArray> m_allSphere_MaterialIndexInstanceBufferArray;
+
+	// Render resources - Drawing lights
+	bool m_drawLights;
+	std::unique_ptr<InputLayout>		 m_lighting_InputLayout;
+	std::unique_ptr<VertexShader>		 m_lighting_VertexShader;
+	std::unique_ptr<PixelShader>		 m_lighting_PixelShader;
+	std::unique_ptr<SphereMesh>			 m_lighting_Mesh;
+	std::unique_ptr<RasterizerState>	 m_lighting_RasterizerState;
+	std::unique_ptr<DepthStencilState>	 m_lighting_DepthStencilState;
+	std::unique_ptr<ConstantBufferArray> m_lighting_ModelViewProjectionBuffer;
+	std::unique_ptr<ConstantBufferArray> m_lighting_MaterialIndexBuffer;
 
 };

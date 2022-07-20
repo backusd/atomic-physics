@@ -317,8 +317,13 @@ void UI::SceneEditWindow(const std::unique_ptr<Renderer>& renderer) noexcept
 
 void UI::SceneLighting(const std::unique_ptr<Renderer>& renderer) noexcept
 {
+	PROFILE_FUNCTION();
+
 	if (ImGui::CollapsingHeader("Lighting", ImGuiTreeNodeFlags_None))
 	{
+		// If this header is open, then draw the lights in the simulation
+		renderer->DrawLights(true);
+
 		ImGui::Indent(); // 1
 
 		Lighting* lighting = renderer->GetLighting();
@@ -400,5 +405,10 @@ void UI::SceneLighting(const std::unique_ptr<Renderer>& renderer) noexcept
 
 		ImGui::Unindent(); // 2
 		ImGui::Unindent(); // 1
+	}
+	else
+	{
+		// Header not open -> Don't draw lights
+		renderer->DrawLights(false);
 	}
 }

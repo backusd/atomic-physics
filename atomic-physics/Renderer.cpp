@@ -4,7 +4,8 @@ using DirectX::XMFLOAT4;
 using DirectX::XMMATRIX;
 
 Renderer::Renderer(D3D11_VIEWPORT vp) noexcept :
-	m_viewport(vp)
+	m_viewport(vp),
+	m_drawLights(false)
 {
 	PROFILE_FUNCTION();
 
@@ -27,6 +28,9 @@ Renderer::Renderer(D3D11_VIEWPORT vp) noexcept :
 
 	// Initialize data that will be used when rendering in "All Sphere" mode
 	InitializeAllSphereData();
+
+	// Initialize data that will be used when render lights in the scene
+	InitializeLightingData();
 }
 
 void Renderer::InitializeAllSphereData() noexcept
@@ -51,6 +55,30 @@ void Renderer::InitializeAllSphereData() noexcept
 	materialIndexArrayBuffer->CreateBuffer<PhongMaterialIndexArray>(D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE, 0, 0);
 	m_allSphere_MaterialIndexInstanceBufferArray = std::make_unique<ConstantBufferArray>(ConstantBufferBindingLocation::PIXEL_SHADER);
 	m_allSphere_MaterialIndexInstanceBufferArray->AddBuffer(materialIndexArrayBuffer);
+}
+
+void Renderer::InitializeLightingData() noexcept
+{
+	PROFILE_FUNCTION();
+
+	m_lighting_InputLayout = std::make_unique<InputLayout>(L"PhongVS.cso", BasicGeometry::SPHERE);
+	m_lighting_VertexShader = std::make_unique<VertexShader>(m_lighting_InputLayout->GetVertexShaderFileBlob());
+	m_lighting_PixelShader = std::make_unique<PixelShader>(L"PhongPS.cso");
+	m_lighting_Mesh = std::make_unique<SphereMesh>();
+	m_lighting_RasterizerState = std::make_unique<RasterizerState>();
+	m_lighting_DepthStencilState = std::make_unique<DepthStencilState>(1);
+
+	// VS constant buffer
+	std::shared_ptr<ConstantBuffer> mvpBuffer = std::make_shared<ConstantBuffer>();
+	mvpBuffer->CreateBuffer<ModelViewProjectionPreMultiplied>(D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE, 0, 0);
+	m_lighting_ModelViewProjectionBuffer = std::make_unique<ConstantBufferArray>(ConstantBufferBindingLocation::VERTEX_SHADER);
+	m_lighting_ModelViewProjectionBuffer->AddBuffer(mvpBuffer);
+
+	// PS constant buffer
+	std::shared_ptr<ConstantBuffer> materialIndexBuffer = std::make_shared<ConstantBuffer>();
+	materialIndexBuffer->CreateBuffer<PhongMaterialIndexBuffer>(D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE, 0, 0);
+	m_lighting_MaterialIndexBuffer = std::make_unique<ConstantBufferArray>(ConstantBufferBindingLocation::PIXEL_SHADER);
+	m_lighting_MaterialIndexBuffer->AddBuffer(materialIndexBuffer);
 }
 
 void Renderer::SetViewport(D3D11_VIEWPORT viewport) noexcept 
@@ -198,6 +226,10 @@ void Renderer::Render() noexcept
 
 	// Draw the box
 	m_box->Draw();
+
+	// If editing the lights, draw them in the scene
+	if (m_drawLights)
+		Render_Lights();
 }
 
 void Renderer::Render_Generic() const noexcept
@@ -232,6 +264,78 @@ void Renderer::Render_AllSpheres() const noexcept
 	GFX_THROW_INFO_ONLY(
 		DeviceResources::D3DDeviceContext()->DrawIndexedInstanced(m_allSphere_Mesh->IndexCount(), static_cast<UINT>(m_drawables.size()), 0u, 0u, 0u)
 	);
+}
+
+void Renderer::Render_Lights() const noexcept
+{
+	PROFILE_FUNCTION();
+
+	m_lighting_InputLayout->Bind();
+	m_lighting_VertexShader->Bind();
+	m_lighting_PixelShader->Bind();
+	m_lighting_Mesh->Bind();
+	m_lighting_RasterizerState->Bind();
+	m_lighting_DepthStencilState->Bind();
+	m_lighting_ModelViewProjectionBuffer->Bind();
+	m_lighting_MaterialIndexBuffer->Bind();
+
+	XMMATRIX viewProjection = m_moveLookController->ViewMatrix() * m_moveLookController->ProjectionMatrix();
+	XMMATRIX model;
+	ID3D11DeviceContext4* context = DeviceResources::D3DDeviceContext();
+	D3D11_MAPPED_SUBRESOURCE ms;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> buffer;
+	LightProperties* properties = m_lighting->GetLightProperties();
+	for (unsigned int iii = 0; iii < MAX_LIGHTS; ++iii)
+	{
+		if (properties->Lights[iii].Enabled)
+		{
+			// Update Model/View/Projection buffer ---------------------------------
+			ZeroMemory(&ms, sizeof(D3D11_MAPPED_SUBRESOURCE));
+
+			GFX_THROW_INFO_ONLY(
+				context->VSGetConstantBuffers(0, 1, buffer.ReleaseAndGetAddressOf())
+			);
+
+			GFX_THROW_INFO(
+				context->Map(buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &ms)
+			);
+
+			ModelViewProjectionPreMultiplied* mvpMappedBuffer = (ModelViewProjectionPreMultiplied*)ms.pData;
+
+			model = DirectX::XMMatrixScaling(0.25f, 0.25f, 0.25f) * DirectX::XMMatrixTranslation(properties->Lights[iii].Position.x, properties->Lights[iii].Position.y, properties->Lights[iii].Position.z);
+
+			DirectX::XMStoreFloat4x4(&(mvpMappedBuffer->model), model);
+			DirectX::XMStoreFloat4x4(&(mvpMappedBuffer->modelViewProjection), model * viewProjection);
+			DirectX::XMStoreFloat4x4(&(mvpMappedBuffer->inverseTransposeModel), DirectX::XMMatrixTranspose(DirectX::XMMatrixInverse(nullptr, model)));
+
+			GFX_THROW_INFO_ONLY(
+				context->Unmap(buffer.Get(), 0)
+			);
+
+			// Update Pixel Shader buffer ---------------------------------
+			ZeroMemory(&ms, sizeof(D3D11_MAPPED_SUBRESOURCE));
+
+			GFX_THROW_INFO_ONLY(
+				context->PSGetConstantBuffers(3, 1, buffer.ReleaseAndGetAddressOf())
+			);
+
+			GFX_THROW_INFO(
+				context->Map(buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &ms)
+			);
+
+			PhongMaterialIndexBuffer* indexMappedBuffer = (PhongMaterialIndexBuffer*)ms.pData;
+			indexMappedBuffer->materialIndex = 0; // Just use value same as hydrogen (white)
+
+			GFX_THROW_INFO_ONLY(
+				context->Unmap(buffer.Get(), 0)
+			);
+
+			GFX_THROW_INFO_ONLY(
+				DeviceResources::D3DDeviceContext()->DrawIndexed(m_lighting_Mesh->IndexCount(), 0u, 0u)
+			);
+		}
+	}
+	
 }
 
 void Renderer::UpdateAllSphereModelViewProjectionInstanceData() const noexcept
