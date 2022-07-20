@@ -23,6 +23,9 @@ public:
 	// Methods to query the StepTimer
 	static double TotalSeconds() noexcept { return m_simulations[m_activeSimulationIndex]->TotalSeconds(); }
 
+	static bool SimulationIsPlaying() noexcept { return m_simulations[m_activeSimulationIndex]->IsPlaying(); }
+	static void SwitchPlayPause() noexcept { m_simulations[m_activeSimulationIndex]->SwitchPlayPause(); }
+
 private:
 	SimulationManager(); // Don't allow construction
 

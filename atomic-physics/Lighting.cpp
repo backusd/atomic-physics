@@ -90,3 +90,13 @@ void Lighting::UpdateLightingProperties() noexcept
 			0, 0)
 	);
 }
+
+void Lighting::SetGlobalAmbient(float r, float g, float b, float a) noexcept
+{
+	m_properties.GlobalAmbient.x = r;
+	m_properties.GlobalAmbient.y = g;
+	m_properties.GlobalAmbient.z = b;
+	m_properties.GlobalAmbient.w = a;
+
+	UpdateLightingProperties();
+}

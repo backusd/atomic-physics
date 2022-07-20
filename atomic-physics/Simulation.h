@@ -34,6 +34,8 @@ public:
 
 	double TotalSeconds() const noexcept { return m_timer->GetTotalSeconds(); }
 
+	bool IsPlaying() const noexcept { return m_isPlaying; }
+	void SwitchPlayPause() noexcept { m_isPlaying = !m_isPlaying; }
 
 private:
 	
@@ -41,4 +43,5 @@ private:
 	std::vector<Particle> m_particles;
 	float m_boxMaxX, m_boxMaxY, m_boxMaxZ;
 	double m_elapsedTime;
+	bool m_isPlaying;
 };

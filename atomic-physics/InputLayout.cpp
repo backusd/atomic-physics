@@ -74,7 +74,8 @@ void InputLayout::CreateLayout() noexcept
 	PROFILE_FUNCTION();
 
 	// Set the semantic names here so the c_str doesn't go out of scope
-	for (unsigned int iii = 0; iii < m_semanticNames.size(); ++iii)
+	size_t size = m_semanticNames.size();
+	for (unsigned int iii = 0; iii < size; ++iii)
 		m_descriptions[iii].SemanticName = m_semanticNames[iii].c_str();
 
 	GFX_THROW_INFO(

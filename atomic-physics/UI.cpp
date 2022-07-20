@@ -1,5 +1,8 @@
 #include "UI.h"
+#include "HLSLStructures.h"
+
 #include <algorithm>
+#include <string>
 #include <vector>
 
 UI::UI() noexcept :
@@ -15,7 +18,7 @@ UI::UI() noexcept :
 	PROFILE_FUNCTION();
 }
 
-void UI::Render() noexcept
+void UI::Render(const std::unique_ptr<Renderer>& renderer) noexcept
 {
 	PROFILE_FUNCTION();
 
@@ -31,9 +34,12 @@ void UI::Render() noexcept
 		ImPlot::ShowDemoWindow();
 	}
 
-	SimulationDetails();
+	SimulationDetailsWindow();
 	LogWindow();
 	PerformanceWindow();
+	SceneEditWindow(renderer);
+
+	
 
 	m_viewport = CD3D11_VIEWPORT(
 		m_left,
@@ -41,66 +47,6 @@ void UI::Render() noexcept
 		m_width,
 		m_height
 	);
-
-	// --------------------------------------------------
-
-	//ImGui::Begin("Render Stats");
-	//ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / m_io.Framerate, m_io.Framerate);
-	//ImGui::End();
-
-	// --------------------------------------------------
-	// CreateDockSpace();
-
-	/*
-	// Demonstrate the various window flags. Typically you would just use the default!
-	static bool no_titlebar = true;
-	static bool no_scrollbar = false;
-	static bool no_menu = false;
-	static bool no_move = false;
-	static bool no_resize = false;
-	static bool no_collapse = false;
-	static bool no_close = false;
-	static bool no_nav = false;
-	static bool no_background = false;
-	static bool no_bring_to_front = false;
-	static bool no_docking = false;
-	static bool unsaved_document = false;
-
-	ImGuiWindowFlags window_flags = 0;
-	if (no_titlebar)        window_flags |= ImGuiWindowFlags_NoTitleBar;
-	if (no_scrollbar)       window_flags |= ImGuiWindowFlags_NoScrollbar;
-	if (!no_menu)           window_flags |= ImGuiWindowFlags_MenuBar;
-	if (no_move)            window_flags |= ImGuiWindowFlags_NoMove;
-	if (no_resize)          window_flags |= ImGuiWindowFlags_NoResize;
-	if (no_collapse)        window_flags |= ImGuiWindowFlags_NoCollapse;
-	if (no_nav)             window_flags |= ImGuiWindowFlags_NoNav;
-	if (no_background)      window_flags |= ImGuiWindowFlags_NoBackground;
-	if (no_bring_to_front)  window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus;
-	if (no_docking)         window_flags |= ImGuiWindowFlags_NoDocking;
-	if (unsaved_document)   window_flags |= ImGuiWindowFlags_UnsavedDocument;
-	//if (no_close)           p_open = NULL; // Don't pass our bool* to Begin
-
-	// We specify a default position/size in case there's no data in the .ini file.
-	// We only do it to make the demo applications a little more welcoming, but typically this isn't required.
-	//const ImGuiViewport* main_viewport = ImGui::GetMainViewport();
-	//ImGui::SetNextWindowPos(ImVec2(main_viewport->WorkPos.x + 650, main_viewport->WorkPos.y + 20), ImGuiCond_FirstUseEver);
-	//ImGui::SetNextWindowSize(ImVec2(550, 680), ImGuiCond_FirstUseEver);
-
-	// Main body of the Demo window starts here.
-	if (!ImGui::Begin("UI", 0, window_flags))
-	{
-		// Early out if the window is collapsed, as an optimization.
-		ImGui::End();
-		return;
-	}
-
-
-	DrawMenuBar();
-
-	//ImGui::Checkbox("No titlebar", &no_titlebar);
-
-	ImGui::End();
-	*/
 }
 
 void UI::CreateDockSpaceAndMenuBar() noexcept
@@ -215,7 +161,7 @@ void UI::MenuBar() noexcept
 	}	
 }
 
-void UI::SimulationDetails() noexcept
+void UI::SimulationDetailsWindow() noexcept
 {
 	PROFILE_FUNCTION();
 
@@ -227,6 +173,19 @@ void UI::SimulationDetails() noexcept
 	m_left = ImGui::GetWindowContentRegionMax().x + padding.x;
 
 	ImGui::Text(" Application average %.3f ms/frame (%.1f FPS)", 1000.0f / m_io.Framerate, m_io.Framerate);
+	
+	if (SimulationManager::SimulationIsPlaying())
+	{
+		if (ImGui::Button("Pause##Simulation_Details"))
+			SimulationManager::SwitchPlayPause();
+	}
+	else
+	{
+		if (ImGui::Button("Play##Simulation_Details"))
+			SimulationManager::SwitchPlayPause();
+	}
+	
+	
 	ImGui::End();
 }
 
@@ -252,7 +211,9 @@ void UI::PerformanceWindow() noexcept
 	ImGui::Begin("Performance");
 	ImGui::PopStyleVar();
 
-	m_width = ImGui::GetWindowPos().x - m_windowOffsetX - m_left;
+	// Temporary hack using std::max. For some reason, the width comes up as negative
+	// when the program is launched which causes an issue setting the viewport
+	m_width = std::max(ImGui::GetWindowPos().x - m_windowOffsetX - m_left, 1.0f);
 
 	PerformanceFPS(); 
 #ifdef PROFILE
@@ -338,5 +299,106 @@ void UI::PerformanceProfile() noexcept
 		}
 
 		ImGui::Unindent();
+	}
+}
+
+void UI::SceneEditWindow(const std::unique_ptr<Renderer>& renderer) noexcept
+{
+	PROFILE_FUNCTION();
+
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(5.0f, 5.0f));
+	ImGui::Begin("Scene Edit");
+	ImGui::PopStyleVar();
+
+	SceneLighting(renderer);
+
+	ImGui::End();
+}
+
+void UI::SceneLighting(const std::unique_ptr<Renderer>& renderer) noexcept
+{
+	if (ImGui::CollapsingHeader("Lighting", ImGuiTreeNodeFlags_None))
+	{
+		ImGui::Indent(); // 1
+
+		Lighting* lighting = renderer->GetLighting();
+		LightProperties* properties = lighting->GetLightProperties();
+
+		if (ImGui::ColorEdit4("Global Ambient", (float*)(&properties->GlobalAmbient)))
+			lighting->UpdateLightingProperties();
+
+		std::vector<std::string> lightNames(MAX_LIGHTS);
+		for (unsigned int iii = 0; iii < MAX_LIGHTS; ++iii)
+			lightNames[iii] = std::format("Light {0}", iii + 1);
+
+		static int selectedIndex = 0;
+		static int selectedType = properties->Lights[selectedIndex].LightType;
+		if (ImGui::BeginCombo("Light##Light_Selector", lightNames[selectedIndex].c_str()))
+		{
+			for (unsigned int iii = 0; iii < MAX_LIGHTS; ++iii)
+			{
+				const bool is_selected = (selectedIndex == iii);
+				if (ImGui::Selectable(lightNames[iii].c_str(), is_selected))
+				{
+					selectedIndex = iii;
+					selectedType = properties->Lights[selectedIndex].LightType;
+				}
+
+				// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+				if (is_selected)
+					ImGui::SetItemDefaultFocus();
+			}
+
+			ImGui::EndCombo();
+		}
+
+		ImGui::Indent(); // 2
+
+		// Visibility
+		if (ImGui::Checkbox("Visible##Scene_Light", (bool*)(&properties->Lights[selectedIndex].Enabled)))
+			lighting->UpdateLightingProperties();
+
+		// Light Type
+		if (ImGui::Combo("Light Type##Scene_Light", &properties->Lights[selectedIndex].LightType, "Directional Light\0Point Light\0Spot Cone\0\0"))
+			lighting->UpdateLightingProperties();
+
+		// Position
+		float positionMax = renderer->GetBox()->GetBoxSize().x * 1.5f; // allow the light to go 50% outside the box
+		float positionDragSpeed = 0.1f;
+		if (ImGui::DragFloat3("Position##Scene_Light", (float*)(&properties->Lights[selectedIndex].Position), positionDragSpeed, -positionMax, positionMax))
+			lighting->UpdateLightingProperties();
+
+		// Direction
+		if (ImGui::DragFloat3("Direction##Scene_Light", (float*)(&properties->Lights[selectedIndex].Direction), 0.01f, -1.0f, 1.0f))
+			lighting->UpdateLightingProperties();
+
+		// Color
+		if (ImGui::ColorEdit4("Color##Scene_Light", (float*)(&properties->Lights[selectedIndex].Color)))
+			lighting->UpdateLightingProperties();
+
+		// Spot Angle (Only applicable for spot lights)
+		if (properties->Lights[selectedIndex].LightType == LightType::SpotLight)
+		{
+			if (ImGui::DragFloat("Spot Angle##Scene_Light", &properties->Lights[selectedIndex].SpotAngle, 0.01f, 0.01f, DirectX::XM_PI, "%.03f"))
+				lighting->UpdateLightingProperties();
+		}
+
+		ImGui::Text("Attenuation:");
+
+		// Constant Attenuation
+		if (ImGui::DragFloat("Constant##Scene_Light", &properties->Lights[selectedIndex].ConstantAttenuation, 0.05f, 0.0f, 5.0f, "%.02f"))
+			lighting->UpdateLightingProperties();
+
+		// Linear Attenuation
+		if (ImGui::DragFloat("Linear##Scene_Light", &properties->Lights[selectedIndex].LinearAttenuation, 0.01f, 0.0f, 1.0f, "%.03f"))
+			lighting->UpdateLightingProperties();
+
+		// Quadratic Attenuation
+		if (ImGui::DragFloat("Quadratic##Scene_Light", &properties->Lights[selectedIndex].QuadraticAttenuation, 0.0001f, 0.0f, 0.03f, "%.03f"))
+			lighting->UpdateLightingProperties();
+
+
+		ImGui::Unindent(); // 2
+		ImGui::Unindent(); // 1
 	}
 }

@@ -16,6 +16,7 @@ public:
 
 	DirectX::XMMATRIX GetScaleMatrix() const noexcept override { return DirectX::XMMatrixScaling(m_xLength / 2, m_yLength / 2, m_zLength / 2); }
 
+	DirectX::XMFLOAT3 GetBoxSize() const noexcept { return { m_xLength, m_yLength, m_zLength }; }
 	void SetBoxSize(float x, float y, float z) noexcept;
 	void SetBoxSize(DirectX::XMFLOAT3 dimensions) noexcept;
 

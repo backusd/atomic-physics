@@ -150,7 +150,7 @@ bool AppWindow::Render() noexcept
 	}
 
 	// Render the UI
-	m_ui->Render();
+	m_ui->Render(m_simulationRenderer);
 
 	// Render 3D scene - MUST render here because we render on top of ImGui, but if we render
 	//					 after finalizing the ImGui draw, then Present will be called by ImGui

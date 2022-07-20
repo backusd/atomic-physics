@@ -25,11 +25,15 @@ public:
 		float linearAttenuation = 0.08f,
 		float quadraticAttenuation = 0.0f) noexcept;
 
+	LightProperties* GetLightProperties() noexcept { return &m_properties; }
+
+	void SetGlobalAmbient(float r, float g, float b, float a) noexcept;
+
+	void UpdateLightingProperties() noexcept;
 
 private:
 	void CreateLightProperties() noexcept;
 	void BindLightingBuffer() const noexcept;
-	void UpdateLightingProperties() noexcept;
 
 	LightProperties m_properties;
 };

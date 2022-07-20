@@ -4,7 +4,8 @@ Simulation::Simulation() noexcept :
 	m_boxMaxX(2.0f),
 	m_boxMaxY(2.0f),
 	m_boxMaxZ(2.0f),
-	m_elapsedTime(0)
+	m_elapsedTime(0),
+	m_isPlaying(false)
 {
 	PROFILE_FUNCTION();
 
@@ -23,7 +24,10 @@ void Simulation::Update() noexcept
 			double timeDelta = currentTime - m_elapsedTime;
 			m_elapsedTime = currentTime;
 
-			if (timeDelta > 0.1) // if time delta 
+			if (!m_isPlaying)
+				return;
+
+			if (timeDelta > 0.1)
 				return;
 
 			for (Particle& p : m_particles)

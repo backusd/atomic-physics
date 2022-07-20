@@ -83,7 +83,8 @@ void Renderer::Update() noexcept
 		m_drawables.clear();
 		m_drawables.reserve(particles.size());
 
-		for (unsigned int iii = 0; iii < particles.size(); ++iii)
+		size_t size = particles.size();
+		for (unsigned int iii = 0; iii < size; ++iii)
 		{
 			sphere = std::make_unique<Sphere>(m_moveLookController);
 			sphere->Position(particles[iii].p_x, particles[iii].p_y, particles[iii].p_z);
@@ -97,7 +98,8 @@ void Renderer::Update() noexcept
 	{
 		PROFILE_SCOPE("Renderer Update - NO Resize");
 
-		for (unsigned int iii = 0; iii < particles.size(); ++iii)
+		size_t size = particles.size();
+		for (unsigned int iii = 0; iii < size; ++iii)
 		{
 			m_drawables[iii]->Position(particles[iii].p_x, particles[iii].p_y, particles[iii].p_z);
 			m_drawables[iii]->Velocity(particles[iii].v_x, particles[iii].v_y, particles[iii].v_z);
@@ -255,7 +257,8 @@ void Renderer::UpdateAllSphereModelViewProjectionInstanceData() const noexcept
 	XMMATRIX viewProjection = m_moveLookController->ViewMatrix() * m_moveLookController->ProjectionMatrix();
 	XMMATRIX model;
 
-	for (unsigned int iii = 0; iii < m_drawables.size(); ++iii)
+	size_t size = m_drawables.size();
+	for (unsigned int iii = 0; iii < size; ++iii)
 	{
 		model = m_drawables[iii]->GetModelMatrix();
 
@@ -289,7 +292,8 @@ void Renderer::UpdateAllSphereMaterialIndexInstanceData() const noexcept
 
 	PhongMaterialIndexArray* mappedBuffer = (PhongMaterialIndexArray*)ms.pData;
 
-	for (unsigned int iii = 0; iii < m_drawables.size(); ++iii)
+	size_t size = m_drawables.size();
+	for (unsigned int iii = 0; iii < size; ++iii)
 	{
 		Sphere* sphere = dynamic_cast<Sphere*>(m_drawables[iii].get());
 		mappedBuffer->materialIndex[iii].materialIndex = sphere->GetElementNumber() - 1;

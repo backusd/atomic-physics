@@ -1,5 +1,8 @@
 #pragma once
 #include "pch.h"
+#include "Renderer.h"
+
+#include <memory>
 
 // ImGui ------------------------
 #include "imgui.h"
@@ -16,14 +19,14 @@ public:
 	UI(const UI&) = delete;
 	void operator=(const UI&) = delete;
 
-	void Render() noexcept;
+	void Render(const std::unique_ptr<Renderer>& renderer) noexcept;
 
 	D3D11_VIEWPORT GetViewport() const noexcept { return m_viewport; }
 
 private:
 	void CreateDockSpaceAndMenuBar() noexcept;
 	void MenuBar() noexcept;
-	void SimulationDetails() noexcept;
+	void SimulationDetailsWindow() noexcept;
 	void LogWindow() noexcept;
 
 
@@ -31,6 +34,8 @@ private:
 	void PerformanceFPS() noexcept;
 	void PerformanceProfile() noexcept;
 
+	void SceneEditWindow(const std::unique_ptr<Renderer>& renderer) noexcept;
+	void SceneLighting(const std::unique_ptr<Renderer>& renderer) noexcept;
 
 	ImGuiIO& m_io;
 	D3D11_VIEWPORT m_viewport;

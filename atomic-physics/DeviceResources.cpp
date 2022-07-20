@@ -408,7 +408,9 @@ void DeviceResources::HandleDeviceLost() noexcept
 void DeviceResources::SetViewportImpl(D3D11_VIEWPORT viewport) noexcept
 {
 	m_viewport = viewport;
-	m_d3dDeviceContext->RSSetViewports(1, &m_viewport);
+	GFX_THROW_INFO_ONLY(
+		m_d3dDeviceContext->RSSetViewports(1, &m_viewport)
+	)
 }
 
 void DeviceResources::PresentImpl() noexcept

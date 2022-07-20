@@ -58,6 +58,9 @@ public:
 	// Other Events
 	void OnResize(D3D11_VIEWPORT vp) noexcept;
 
+	Lighting* GetLighting() const noexcept { return m_lighting.get(); }
+	Box* GetBox() const noexcept { return m_box.get(); }
+
 private:
 	void Render_AllSpheres() const noexcept;
 	void Render_Generic() const noexcept;
