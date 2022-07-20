@@ -61,7 +61,7 @@ struct _PhongMaterial
     // Add some padding complete the 16 byte boundary.
     BOOL                UseTexture;
     // Add some padding to complete the 16 byte boundary.
-    float               Padding[2];
+    float               Padding[2] = { 0.0f, 0.0f }; // Initialize just to get rid of unintialization warnings
     //----------------------------------- (16 byte boundary)
 }; // Total:                                80 bytes (5 * 16)
 
@@ -125,7 +125,7 @@ struct Light
     int         LightType;
     int         Enabled;
     // Add some padding to make this struct size a multiple of 16 bytes.
-    int         Padding[2];
+    int         Padding[2] = { 0, 0 }; // Initialize just to get rid of unintialization warnings
     //----------------------------------- (16 byte boundary)
 };  // Total:                              80 bytes ( 5 * 16 )
 

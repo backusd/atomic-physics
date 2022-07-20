@@ -4,6 +4,7 @@
 #include "DxgiInfoManager.h"
 #include "MacroHelper.h"
 
+#include <exception>
 #include <sstream>
 #include <vector>
 
@@ -17,23 +18,18 @@
 #define GFX_THROW_NOINFO(hrcall) { HR if( FAILED( hr = (hrcall) ) ) throw DeviceResourcesException( __LINE__,__FILE__,hr ); }
 
 #if defined(_DEBUG)
-#define GFX_EXCEPT(hr) DeviceResourcesException( __LINE__,__FILE__,(hr),infoManager.GetMessages() )
 
-//#define GFX_THROW_INFO(hrcall) { HR INFOMAN infoManager.Set(); if( FAILED( hr = (hrcall) ) ) throw GFX_EXCEPT(hr); }
-#define GFX_THROW_INFO(hrcall) TERMINATE_ON_THROW(HR INFOMAN infoManager.Set(); if( FAILED( hr = (hrcall) ) ) throw GFX_EXCEPT(hr) )
-
-#define GFX_DEVICE_REMOVED_EXCEPT(hr) { INFOMAN DeviceRemovedException( __LINE__,__FILE__,(hr),infoManager.GetMessages() ) }
-
-
-//#define GFX_THROW_INFO_ONLY(call) { INFOMAN infoManager.Set(); (call); {auto v = infoManager.GetMessages(); if(!v.empty()) {throw InfoException( __LINE__,__FILE__,v);}}}
-#define GFX_THROW_INFO_ONLY(call) TERMINATE_ON_THROW(INFOMAN infoManager.Set(); call; {auto v = infoManager.GetMessages(); if(!v.empty()) {throw InfoException( __LINE__,__FILE__,v);}})
-
+	#define GFX_EXCEPT(hr) DeviceResourcesException( __LINE__,__FILE__,(hr),infoManager.GetMessages() )
+	#define GFX_THROW_INFO(hrcall) TERMINATE_ON_THROW(HR INFOMAN infoManager.Set(); if( FAILED( hr = (hrcall) ) ) throw GFX_EXCEPT(hr) )
+	#define GFX_DEVICE_REMOVED_EXCEPT(hr) { INFOMAN DeviceRemovedException( __LINE__,__FILE__,(hr),infoManager.GetMessages() ) }
+	#define GFX_THROW_INFO_ONLY(call) TERMINATE_ON_THROW(INFOMAN infoManager.Set(); call; {auto v = infoManager.GetMessages(); if(!v.empty()) {throw InfoException( __LINE__,__FILE__,v);}})
 
 #else
-#define GFX_EXCEPT(hr) DeviceResourcesException( __LINE__,__FILE__,(hr) )
-#define GFX_THROW_INFO(hrcall) GFX_THROW_NOINFO(hrcall)
-#define GFX_DEVICE_REMOVED_EXCEPT(hr) DeviceRemovedException( __LINE__,__FILE__,(hr) )
-#define GFX_THROW_INFO_ONLY(call) (call)
+	#define GFX_EXCEPT(hr) DeviceResourcesException( __LINE__,__FILE__,(hr) )
+	//#define GFX_THROW_INFO(hrcall) GFX_THROW_NOINFO(hrcall)
+	#define GFX_THROW_INFO(hrcall) { HR if( FAILED( hr = (hrcall) ) ) std::terminate(); }
+	#define GFX_DEVICE_REMOVED_EXCEPT(hr) DeviceRemovedException( __LINE__,__FILE__,(hr) )
+	#define GFX_THROW_INFO_ONLY(call) call;
 #endif
 
 

@@ -10,7 +10,6 @@
 
 #define ERROR_POPUP(text, caption) MessageBox(nullptr, text, caption, MB_OK | MB_ICONEXCLAMATION)
 
-#if defined(_DEBUG)
 #define TERMINATE_ON_THROW(fn)	\
 	try {																								\
 		fn;																								\
@@ -31,7 +30,4 @@
 		std::terminate();																				\
 	}
 
-#else
-#define TERMINATE_ON_THROW(fn) fn;
-#endif
 
