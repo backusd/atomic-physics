@@ -331,8 +331,8 @@ void UI::SceneLighting(const std::unique_ptr<Renderer>& renderer) noexcept
 		for (unsigned int iii = 0; iii < MAX_LIGHTS; ++iii)
 			lightNames[iii] = std::format("Light {0}", iii + 1);
 
-		static int selectedIndex = 0;
-		static int selectedType = properties->Lights[selectedIndex].LightType;
+		static unsigned int selectedIndex = 0;
+		static unsigned int selectedType = properties->Lights[selectedIndex].LightType;
 		if (ImGui::BeginCombo("Light##Light_Selector", lightNames[selectedIndex].c_str()))
 		{
 			for (unsigned int iii = 0; iii < MAX_LIGHTS; ++iii)
