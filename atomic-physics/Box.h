@@ -12,7 +12,7 @@ public:
 	Box(const Box&) = delete;
 	void operator=(const Box&) = delete;
 
-	void Draw() const noexcept_release_only override;
+	void Draw() const noexcept override;
 
 	DirectX::XMMATRIX GetScaleMatrix() const noexcept override { return DirectX::XMMatrixScaling(m_xLength / 2, m_yLength / 2, m_zLength / 2); }
 

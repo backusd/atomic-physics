@@ -20,7 +20,7 @@ EyePositionBufferArray::EyePositionBufferArray(std::shared_ptr<MoveLookControlle
 	AddBuffer(eyePositionBuffer);
 }
 
-void EyePositionBufferArray::BindEyePositionBuffer() const noexcept_release_only
+void EyePositionBufferArray::BindEyePositionBuffer() const noexcept
 {
 	PROFILE_FUNCTION();
 
@@ -30,7 +30,7 @@ void EyePositionBufferArray::BindEyePositionBuffer() const noexcept_release_only
 	);
 }
 
-void EyePositionBufferArray::Update() const
+void EyePositionBufferArray::Update() const noexcept
 {
 	PROFILE_FUNCTION();
 

@@ -14,7 +14,7 @@ Mesh::Mesh() noexcept :
 {
 }
 
-void Mesh::Bind() const noexcept_release_only
+void Mesh::Bind() const noexcept
 {
 	PROFILE_FUNCTION();
 

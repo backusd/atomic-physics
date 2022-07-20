@@ -411,13 +411,17 @@ void DeviceResources::SetViewportImpl(D3D11_VIEWPORT viewport) noexcept
 	m_d3dDeviceContext->RSSetViewports(1, &m_viewport);
 }
 
-void DeviceResources::PresentImpl()
+void DeviceResources::PresentImpl() noexcept
 {
 	DXGI_PRESENT_PARAMETERS parameters = { 0 };
 	HRESULT hRESULT = m_dxgiSwapChain->Present1(1, 0, &parameters);
 
-	m_d3dDeviceContext->DiscardView1(m_d3dRenderTargetView.Get(), nullptr, 0);
-	m_d3dDeviceContext->DiscardView1(m_d3dDepthStencilView.Get(), nullptr, 0);
+	GFX_THROW_INFO_ONLY(
+		m_d3dDeviceContext->DiscardView1(m_d3dRenderTargetView.Get(), nullptr, 0)
+	)
+	GFX_THROW_INFO_ONLY(
+		m_d3dDeviceContext->DiscardView1(m_d3dDepthStencilView.Get(), nullptr, 0)
+	)
 
 	if (hRESULT == DXGI_ERROR_DEVICE_REMOVED || hRESULT == DXGI_ERROR_DEVICE_RESET)
 	{

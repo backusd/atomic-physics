@@ -42,7 +42,7 @@ void Box::SetBoxSize(DirectX::XMFLOAT3 dimensions) noexcept
 	m_zLength = dimensions.z;
 }
 
-void Box::Draw() const noexcept_release_only
+void Box::Draw() const noexcept
 {
 	PROFILE_FUNCTION();
 

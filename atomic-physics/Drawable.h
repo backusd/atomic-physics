@@ -23,8 +23,8 @@ public:
 	void operator=(const Drawable&) = delete;
 	virtual ~Drawable() = default;
 
-	virtual void Update() const {}
-	virtual void Draw() const noexcept_release_only = 0;
+	virtual void Update() const noexcept {}
+	virtual void Draw() const noexcept = 0;
 
 	virtual DirectX::XMMATRIX GetScaleMatrix() const noexcept { return DirectX::XMMatrixIdentity(); }
 	virtual DirectX::XMMATRIX GetRotationMatrix() const noexcept { return DirectX::XMMatrixRotationRollPitchYaw(m_pitch, m_yaw, m_roll); }

@@ -9,7 +9,7 @@ public:
 	PixelShader(const PixelShader&) = delete;
 	void operator=(const PixelShader&) = delete;
 
-	void Bind() const noexcept_release_only override;
+	void Bind() const noexcept override;
 
 private:
 	Microsoft::WRL::ComPtr<ID3D11PixelShader> m_pixelShader;

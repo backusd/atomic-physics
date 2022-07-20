@@ -30,9 +30,9 @@ public:
 	void AddBuffer(std::shared_ptr<ConstantBuffer> buffer) noexcept;
 	void ClearBuffers() noexcept;
 
-	void Bind() const noexcept_release_only override;
+	void Bind() const noexcept override;
 
-	void UpdateSubresource(int index, void* data) noexcept_release_only;
+	void UpdateSubresource(int index, void* data) noexcept;
 
 	ID3D11Buffer* GetRawBufferPointer(int index) const noexcept { return m_buffers[index]->GetRawBufferPointer(); }
 
@@ -43,12 +43,12 @@ protected:
 
 	std::function<void()> BindFunc;
 
-	void BindCS() const noexcept_release_only;
-	void BindVS() const noexcept_release_only;
-	void BindHS() const noexcept_release_only;
-	void BindDS() const noexcept_release_only;
-	void BindGS() const noexcept_release_only;
-	void BindPS() const noexcept_release_only;
+	void BindCS() const noexcept;
+	void BindVS() const noexcept;
+	void BindHS() const noexcept;
+	void BindDS() const noexcept;
+	void BindGS() const noexcept;
+	void BindPS() const noexcept;
 
 	std::vector<ID3D11Buffer*> m_rawBufferPointers;
 	std::vector<std::shared_ptr<ConstantBuffer>> m_buffers;

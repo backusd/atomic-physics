@@ -16,7 +16,7 @@ VertexShader::VertexShader(Microsoft::WRL::ComPtr<ID3DBlob> blob) noexcept :
 	);
 }
 
-void VertexShader::Bind() const noexcept_release_only
+void VertexShader::Bind() const noexcept
 {
 	PROFILE_FUNCTION();
 

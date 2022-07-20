@@ -22,8 +22,8 @@ public:
 	Renderer(const Renderer&) = delete;
 	void operator=(const Renderer&) = delete;
 
-	void Update();
-	void Render();
+	void Update() noexcept;
+	void Render() noexcept;
 
 	void ProcessMouseEvents() noexcept;
 	void ProcessKeyboardEvents() noexcept;
@@ -59,12 +59,12 @@ public:
 	void OnResize(D3D11_VIEWPORT vp) noexcept;
 
 private:
-	void Render_AllSpheres() const noexcept_release_only;
-	void Render_Generic() const noexcept_release_only;
+	void Render_AllSpheres() const noexcept;
+	void Render_Generic() const noexcept;
 
 	void InitializeAllSphereData() noexcept;
-	void UpdateAllSphereModelViewProjectionInstanceData() const;
-	void UpdateAllSphereMaterialIndexInstanceData() const;
+	void UpdateAllSphereModelViewProjectionInstanceData() const noexcept;
+	void UpdateAllSphereMaterialIndexInstanceData() const noexcept;
 
 	D3D11_VIEWPORT m_viewport;
 	std::shared_ptr<MoveLookController> m_moveLookController;

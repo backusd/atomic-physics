@@ -28,11 +28,11 @@ public:
 	void Update() noexcept;
 
 	void AddParticle(int type, int mass, float p_x, float p_y, float p_z, float v_x, float v_y, float v_z) noexcept;
-	const std::vector<Particle>& GetParticles() noexcept { return m_particles; }
+	const std::vector<Particle>& GetParticles() const noexcept { return m_particles; }
 
 	DirectX::XMFLOAT3 GetSimulationDimensions() const noexcept { return { 2 * m_boxMaxX, 2 * m_boxMaxY, 2 * m_boxMaxZ }; }
 
-	double TotalSeconds() noexcept { return m_timer->GetTotalSeconds(); }
+	double TotalSeconds() const noexcept { return m_timer->GetTotalSeconds(); }
 
 
 private:

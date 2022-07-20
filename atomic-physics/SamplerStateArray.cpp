@@ -27,49 +27,49 @@ void SamplerStateArray::ClearSamplerStates() noexcept
 	m_rawSamplerStatePointers.clear();
 }
 
-void SamplerStateArray::Bind() const noexcept_release_only
+void SamplerStateArray::Bind() const noexcept
 {
 	PROFILE_FUNCTION();
 
 	BindFunc();
 }
 
-void SamplerStateArray::BindCS() const noexcept_release_only
+void SamplerStateArray::BindCS() const noexcept
 {
 	GFX_THROW_INFO_ONLY(
 		DeviceResources::D3DDeviceContext()->CSSetSamplers(0u, static_cast<unsigned int>(m_rawSamplerStatePointers.size()), m_rawSamplerStatePointers.data())
 	);
 }
 
-void SamplerStateArray::BindVS() const noexcept_release_only
+void SamplerStateArray::BindVS() const noexcept
 {
 	GFX_THROW_INFO_ONLY(
 		DeviceResources::D3DDeviceContext()->VSSetSamplers(0u, static_cast<unsigned int>(m_rawSamplerStatePointers.size()), m_rawSamplerStatePointers.data())
 	);
 }
 
-void SamplerStateArray::BindHS() const noexcept_release_only
+void SamplerStateArray::BindHS() const noexcept
 {
 	GFX_THROW_INFO_ONLY(
 		DeviceResources::D3DDeviceContext()->HSSetSamplers(0u, static_cast<unsigned int>(m_rawSamplerStatePointers.size()), m_rawSamplerStatePointers.data())
 	);
 }
 
-void SamplerStateArray::BindDS() const noexcept_release_only
+void SamplerStateArray::BindDS() const noexcept
 {
 	GFX_THROW_INFO_ONLY(
 		DeviceResources::D3DDeviceContext()->DSSetSamplers(0u, static_cast<unsigned int>(m_rawSamplerStatePointers.size()), m_rawSamplerStatePointers.data())
 	);
 }
 
-void SamplerStateArray::BindGS() const noexcept_release_only
+void SamplerStateArray::BindGS() const noexcept
 {
 	GFX_THROW_INFO_ONLY(
 		DeviceResources::D3DDeviceContext()->GSSetSamplers(0u, static_cast<unsigned int>(m_rawSamplerStatePointers.size()), m_rawSamplerStatePointers.data())
 	);
 }
 
-void SamplerStateArray::BindPS() const noexcept_release_only
+void SamplerStateArray::BindPS() const noexcept
 {
 	GFX_THROW_INFO_ONLY(
 		DeviceResources::D3DDeviceContext()->PSSetSamplers(0u, static_cast<unsigned int>(m_rawSamplerStatePointers.size()), m_rawSamplerStatePointers.data())

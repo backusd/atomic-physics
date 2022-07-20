@@ -69,7 +69,7 @@ void Renderer::SetViewport(D3D11_VIEWPORT viewport) noexcept
 	}	 
 }
 
-void Renderer::Update()
+void Renderer::Update() noexcept
 {
 	PROFILE_FUNCTION();
 
@@ -175,7 +175,7 @@ void Renderer::ProcessKeyboardEvents() noexcept
 
 }
 
-void Renderer::Render()
+void Renderer::Render() noexcept
 {
 	PROFILE_FUNCTION();
 
@@ -198,7 +198,7 @@ void Renderer::Render()
 	m_box->Draw();
 }
 
-void Renderer::Render_Generic() const noexcept_release_only
+void Renderer::Render_Generic() const noexcept
 {
 	PROFILE_FUNCTION();
 
@@ -207,7 +207,7 @@ void Renderer::Render_Generic() const noexcept_release_only
 		drawable->Draw();
 }
 
-void Renderer::Render_AllSpheres() const noexcept_release_only
+void Renderer::Render_AllSpheres() const noexcept
 {
 	PROFILE_FUNCTION();
 
@@ -232,7 +232,7 @@ void Renderer::Render_AllSpheres() const noexcept_release_only
 	);
 }
 
-void Renderer::UpdateAllSphereModelViewProjectionInstanceData() const
+void Renderer::UpdateAllSphereModelViewProjectionInstanceData() const noexcept
 {
 	PROFILE_FUNCTION();
 
@@ -269,7 +269,7 @@ void Renderer::UpdateAllSphereModelViewProjectionInstanceData() const
 	);
 }
 
-void Renderer::UpdateAllSphereMaterialIndexInstanceData() const
+void Renderer::UpdateAllSphereMaterialIndexInstanceData() const noexcept
 {
 	PROFILE_FUNCTION();
 

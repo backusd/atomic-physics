@@ -20,7 +20,7 @@ public:
 	void MultisampleEnable(bool enable) { m_desc.MultisampleEnable = enable; LoadChanges(); }
 	void AntialiasedLineEnable(bool enable) { m_desc.AntialiasedLineEnable = enable; LoadChanges(); }
 
-	void Bind() const noexcept_release_only override;
+	void Bind() const noexcept override;
 
 	void ResetState() noexcept;
 

@@ -18,7 +18,7 @@ PixelShader::PixelShader(std::wstring pixelShaderFile) noexcept :
 
 }
 
-void PixelShader::Bind() const noexcept_release_only
+void PixelShader::Bind() const noexcept
 {
 	PROFILE_FUNCTION();
 

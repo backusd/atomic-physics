@@ -75,49 +75,49 @@ void ConstantBufferArray::ClearBuffers() noexcept
 	m_rawBufferPointers.clear();
 }
 
-void ConstantBufferArray::Bind() const noexcept_release_only
+void ConstantBufferArray::Bind() const noexcept
 {
 	PROFILE_FUNCTION();
 
 	BindFunc();
 }
 
-void ConstantBufferArray::BindCS() const noexcept_release_only
+void ConstantBufferArray::BindCS() const noexcept
 {
 	GFX_THROW_INFO_ONLY(
 		DeviceResources::D3DDeviceContext()->CSSetConstantBuffers(0u, static_cast<unsigned int>(m_rawBufferPointers.size()), m_rawBufferPointers.data())
 	);
 }
 
-void ConstantBufferArray::BindVS() const noexcept_release_only
+void ConstantBufferArray::BindVS() const noexcept
 {
 	GFX_THROW_INFO_ONLY(
 		DeviceResources::D3DDeviceContext()->VSSetConstantBuffers(0u, static_cast<unsigned int>(m_rawBufferPointers.size()), m_rawBufferPointers.data())
 	);
 }
 
-void ConstantBufferArray::BindHS() const noexcept_release_only
+void ConstantBufferArray::BindHS() const noexcept
 {
 	GFX_THROW_INFO_ONLY(
 		DeviceResources::D3DDeviceContext()->HSSetConstantBuffers(0u, static_cast<unsigned int>(m_rawBufferPointers.size()), m_rawBufferPointers.data())
 	);
 }
 
-void ConstantBufferArray::BindDS() const noexcept_release_only
+void ConstantBufferArray::BindDS() const noexcept
 {
 	GFX_THROW_INFO_ONLY(
 		DeviceResources::D3DDeviceContext()->DSSetConstantBuffers(0u, static_cast<unsigned int>(m_rawBufferPointers.size()), m_rawBufferPointers.data())
 	);
 }
 
-void ConstantBufferArray::BindGS() const noexcept_release_only
+void ConstantBufferArray::BindGS() const noexcept
 {
 	GFX_THROW_INFO_ONLY(
 		DeviceResources::D3DDeviceContext()->GSSetConstantBuffers(0u, static_cast<unsigned int>(m_rawBufferPointers.size()), m_rawBufferPointers.data())
 	);
 }
 
-void ConstantBufferArray::BindPS() const noexcept_release_only
+void ConstantBufferArray::BindPS() const noexcept
 {
 	// Default PS Buffers:
 	//		slot 0 - Lighting data
@@ -131,7 +131,7 @@ void ConstantBufferArray::BindPS() const noexcept_release_only
 	);
 }
 
-void ConstantBufferArray::UpdateSubresource(int index, void* data) noexcept_release_only
+void ConstantBufferArray::UpdateSubresource(int index, void* data) noexcept
 {
 	GFX_THROW_INFO_ONLY(
 		DeviceResources::D3DDeviceContext()->UpdateSubresource(m_buffers[index]->GetRawBufferPointer(), 0, nullptr, data, 0, 0)

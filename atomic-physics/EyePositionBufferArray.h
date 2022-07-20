@@ -13,10 +13,10 @@ public:
 	EyePositionBufferArray(const EyePositionBufferArray&) = delete;
 	void operator=(const EyePositionBufferArray&) = delete;
 
-	void Update() const;
+	void Update() const noexcept;
 
 private:
-	void BindEyePositionBuffer() const noexcept_release_only;
+	void BindEyePositionBuffer() const noexcept;
 
 	std::shared_ptr<MoveLookController> m_moveLookController;
 };

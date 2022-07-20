@@ -26,7 +26,7 @@ public:
 	void AddSamplerState(std::shared_ptr<SamplerState> samplerState) noexcept;
 	void ClearSamplerStates() noexcept;
 
-	void Bind() const noexcept_release_only override;
+	void Bind() const noexcept override;
 
 	ID3D11SamplerState* GetRawPointer(int index) const noexcept { return m_samplerStates[index]->GetRawPointer(); }
 
@@ -34,12 +34,12 @@ public:
 private:
 	std::function<void()> BindFunc;
 
-	void BindCS() const noexcept_release_only;
-	void BindVS() const noexcept_release_only;
-	void BindHS() const noexcept_release_only;
-	void BindDS() const noexcept_release_only;
-	void BindGS() const noexcept_release_only;
-	void BindPS() const noexcept_release_only;
+	void BindCS() const noexcept;
+	void BindVS() const noexcept;
+	void BindHS() const noexcept;
+	void BindDS() const noexcept;
+	void BindGS() const noexcept;
+	void BindPS() const noexcept;
 
 	std::vector<ID3D11SamplerState*> m_rawSamplerStatePointers;
 	std::vector<std::shared_ptr<SamplerState>> m_samplerStates;

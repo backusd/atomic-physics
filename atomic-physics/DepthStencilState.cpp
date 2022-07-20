@@ -45,7 +45,7 @@ void DepthStencilState::LoadChanges() noexcept
 	);
 }
 
-void DepthStencilState::Bind() const noexcept_release_only
+void DepthStencilState::Bind() const noexcept
 {
 	PROFILE_FUNCTION();
 

@@ -31,7 +31,7 @@ public:
 	void BackFaceStencilPassOp(D3D11_STENCIL_OP op) { m_desc.BackFace.StencilPassOp = op; LoadChanges(); }
 	void BackFaceStencilFunc(D3D11_COMPARISON_FUNC func) { m_desc.BackFace.StencilFunc = func; LoadChanges(); }
 
-	void Bind() const noexcept_release_only override;
+	void Bind() const noexcept override;
 
 	void ResetState() noexcept;
 

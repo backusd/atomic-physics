@@ -25,7 +25,7 @@ public:
 
 	void CreateLayout() noexcept;
 
-	void Bind() const noexcept_release_only override;
+	void Bind() const noexcept override;
 
 	Microsoft::WRL::ComPtr<ID3DBlob> GetVertexShaderFileBlob() const noexcept { return m_blob; }
 

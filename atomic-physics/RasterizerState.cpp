@@ -33,7 +33,7 @@ void RasterizerState::LoadChanges() noexcept
 	);
 }
 
-void RasterizerState::Bind() const noexcept_release_only
+void RasterizerState::Bind() const noexcept
 {
 	PROFILE_FUNCTION();
 

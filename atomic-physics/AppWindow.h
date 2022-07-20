@@ -24,11 +24,11 @@ public:
 	void Initialize() noexcept;
 
 
-	LRESULT HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) override;
+	LRESULT HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept override;
 
-	void Update();
-	bool Render();
-	void Present() const;
+	void Update() noexcept;
+	bool Render() noexcept;
+	void Present() const noexcept;
 
 	std::optional<int> ProcessMessages() const noexcept;
 

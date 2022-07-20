@@ -9,7 +9,7 @@ public:
 	VertexShader(const VertexShader&) = delete;
 	void operator=(const VertexShader&) = delete;
 
-	void Bind() const noexcept_release_only override;
+	void Bind() const noexcept override;
 
 private:
 

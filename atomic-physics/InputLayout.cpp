@@ -91,7 +91,7 @@ void InputLayout::CreateLayout() noexcept
 	m_semanticNames.clear();
 }
 
-void InputLayout::Bind() const noexcept_release_only
+void InputLayout::Bind() const noexcept
 {
 	PROFILE_FUNCTION();
 

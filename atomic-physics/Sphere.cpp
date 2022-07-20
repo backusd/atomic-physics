@@ -56,7 +56,7 @@ void Sphere::Update() const noexcept
 	// PROFILE_FUNCTION();
 }
 
-void Sphere::Draw() const noexcept_release_only
+void Sphere::Draw() const noexcept
 {
 	PROFILE_FUNCTION();
 

@@ -10,5 +10,5 @@ public:
 	void operator=(const Bindable&) = delete;
 	virtual ~Bindable() = default; // MUST be declared virtual so derived classes are properly destructed
 
-	virtual void Bind() const noexcept_release_only = 0;
+	virtual void Bind() const noexcept = 0;
 };

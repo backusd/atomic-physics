@@ -12,7 +12,7 @@ public:
 
 	static void Initialize(HWND hWnd) noexcept { return Get().InitializeImpl(hWnd); }
 	static void SetViewport(D3D11_VIEWPORT viewport) noexcept { Get().SetViewportImpl(viewport); }
-	static void Present() { Get().PresentImpl(); }
+	static void Present() noexcept { Get().PresentImpl(); }
 
 	static D3D11_VIEWPORT GetViewport() noexcept { return Get().m_viewport; }
 	static ID3D11Device5* D3DDevice() noexcept { return Get().m_d3dDevice.Get(); }
@@ -44,7 +44,7 @@ private:
 	void CreateWindowSizeDependentResources() noexcept;
 	void HandleDeviceLost() noexcept;
 	void SetViewportImpl(D3D11_VIEWPORT viewport) noexcept;
-	void PresentImpl();
+	void PresentImpl() noexcept;
 
 	void OnResizeImpl();
 

@@ -9,7 +9,7 @@ public:
 	Mesh(const Mesh&) = delete;
 	void operator=(const Mesh&) = delete;
 
-	void Bind() const noexcept_release_only override;
+	void Bind() const noexcept override;
 	unsigned int IndexCount() const noexcept { return m_indexCount; }
 	unsigned int VertexCount() const noexcept { return m_vertexCount; }
 

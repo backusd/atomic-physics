@@ -66,11 +66,11 @@ void AppWindow::InitializeImGui() noexcept
 	// Setup Platform/Renderer backends
 	{
 		PROFILE_SCOPE("ImGui_ImplWin32_Init");
-		ImGui_ImplWin32_Init(m_hWnd);
+		TERMINATE_ON_THROW(ImGui_ImplWin32_Init(m_hWnd))
 	}
 	{
 		PROFILE_SCOPE("ImGui_ImplDX11_Init");
-		ImGui_ImplDX11_Init(DeviceResources::D3DDevice(), DeviceResources::D3DDeviceContext());
+		TERMINATE_ON_THROW(ImGui_ImplDX11_Init(DeviceResources::D3DDevice(), DeviceResources::D3DDeviceContext()))
 	}
 
 
@@ -91,7 +91,7 @@ void AppWindow::InitializeImGui() noexcept
 	//IM_ASSERT(font != NULL);
 }
 
-void AppWindow::Update()
+void AppWindow::Update() noexcept
 {
 	PROFILE_FUNCTION();
 
@@ -116,7 +116,7 @@ void AppWindow::Update()
 	// ... ??
 }
 
-bool AppWindow::Render()
+bool AppWindow::Render() noexcept
 { 
 	PROFILE_FUNCTION();
 
@@ -138,15 +138,15 @@ bool AppWindow::Render()
 	// Start the Dear ImGui frame
 	{
 		PROFILE_SCOPE("ImGui_ImplDX11_NewFrame");
-		ImGui_ImplDX11_NewFrame();
+		TERMINATE_ON_THROW(ImGui_ImplDX11_NewFrame())
 	}
 	{
 		PROFILE_SCOPE("ImGui_ImplWin32_NewFrame");
-		ImGui_ImplWin32_NewFrame();
+		TERMINATE_ON_THROW(ImGui_ImplWin32_NewFrame())
 	}
 	{
 		PROFILE_SCOPE("ImGui::NewFrame()");
-		ImGui::NewFrame();
+		TERMINATE_ON_THROW(ImGui::NewFrame())
 	}
 
 	// Render the UI
@@ -161,32 +161,29 @@ bool AppWindow::Render()
 	// Render ImGui
 	{
 		PROFILE_SCOPE("ImGui::Render()");
-		ImGui::Render();
+		TERMINATE_ON_THROW(ImGui::Render())
 	}
 
 
 
 	{
 		PROFILE_SCOPE("ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData())");
-		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+		TERMINATE_ON_THROW(ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData()))
 	}
 
 	// Update and Render additional Platform Windows
 	if (m_io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 	{
-		ImGui::UpdatePlatformWindows();
-		ImGui::RenderPlatformWindowsDefault();
+		TERMINATE_ON_THROW(ImGui::UpdatePlatformWindows())
+		TERMINATE_ON_THROW(ImGui::RenderPlatformWindowsDefault())
 	}
 
-
 	m_viewport = m_ui->GetViewport();
-
-
 
 	return true; 
 }
 
-void AppWindow::Present() const
+void AppWindow::Present() const noexcept
 {
 	DeviceResources::Present();
 }
@@ -201,7 +198,7 @@ void AppWindow::Present() const
 // Forward declare message handler from imgui_impl_win32.cpp
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
-LRESULT AppWindow::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+LRESULT AppWindow::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept
 {
 	//static WindowsMessageMap mm;
 	//OutputDebugString(mm(msg, wParam, lParam).c_str());	

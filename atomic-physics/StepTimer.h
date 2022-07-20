@@ -87,10 +87,9 @@ public:
 
 		if (!QueryPerformanceCounter(&currentTime))
 		{
-			// throw TIMER_EXCEPT("FAILED: StepTimer -> Tick -> QueryPerformanceCounter");
-			// 
-			// DO NOT THROW because Update methods should be noexcept
-			//
+			TERMINATE_ON_THROW(
+				throw TIMER_EXCEPT("FAILED: StepTimer::Tick() -> QueryPerformanceCounter")
+			)
 		}
 
 
