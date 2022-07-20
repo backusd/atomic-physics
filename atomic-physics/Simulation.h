@@ -37,6 +37,10 @@ public:
 	bool IsPlaying() const noexcept { return m_isPlaying; }
 	void SwitchPlayPause() noexcept { m_isPlaying = !m_isPlaying; }
 
+	DirectX::XMFLOAT3 GetBoxSize() const noexcept;
+	void SetBoxSize(float xyz) noexcept;
+	void SetBoxSize(DirectX::XMFLOAT3 size) noexcept;
+
 private:
 	
 	std::unique_ptr<StepTimer> m_timer;

@@ -61,6 +61,8 @@ public:
 	Lighting* GetLighting() const noexcept { return m_lighting.get(); }
 	Box* GetBox() const noexcept { return m_box.get(); }
 
+	void NotifyBoxSizeChanged() noexcept;
+
 	void DrawLights(bool draw) noexcept { m_drawLights = draw; }
 
 private:

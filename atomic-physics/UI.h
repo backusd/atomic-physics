@@ -26,7 +26,7 @@ public:
 private:
 	void CreateDockSpaceAndMenuBar() noexcept;
 	void MenuBar() noexcept;
-	void SimulationDetailsWindow() noexcept;
+	void SimulationDetailsWindow(const std::unique_ptr<Renderer>& renderer) noexcept;
 	void LogWindow() noexcept;
 
 

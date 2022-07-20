@@ -1,5 +1,6 @@
 #include "Renderer.h"
 
+using DirectX::XMFLOAT3;
 using DirectX::XMFLOAT4;
 using DirectX::XMMATRIX;
 
@@ -18,7 +19,6 @@ Renderer::Renderer(D3D11_VIEWPORT vp) noexcept :
 	m_lighting = std::make_unique<Lighting>();
 	m_lighting->GlobalAmbient(XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f));
 	m_lighting->EditLight(0, { -5.0f, 0.0f, 10.0f, 1.0f }, {  5.0f, 0.0f, -10.0f, 1.0f });
-	// m_lighting->EditLight(1, {  5.0f, 0.0f, 10.0f, 1.0f }, { -5.0f, 0.0f, -10.0f, 1.0f });
 
 	// eye position - will always bind second slot in Pixel Shader
 	m_eyePositionBufferArray = std::make_unique<EyePositionBufferArray>(m_moveLookController);
@@ -406,6 +406,15 @@ void Renderer::UpdateAllSphereMaterialIndexInstanceData() const noexcept
 	GFX_THROW_INFO_ONLY(
 		context->Unmap(psBuffer.Get(), 0)
 	);
+}
+
+void Renderer::NotifyBoxSizeChanged() noexcept
+{
+	// GetBoxSize is a misnomer because it actually returns the max x, y, z values whereas
+	// the length of each side of the box goes from -x -> x therefore, you need to multiply
+	// each value by 2 to correctly set the box size
+	XMFLOAT3 size = SimulationManager::GetBoxSize();
+	m_box->SetBoxSize({ size.x * 2, size.y * 2, size.z * 2 });
 }
 
 void Renderer::OnLPress(const Mouse::Event& e) const noexcept

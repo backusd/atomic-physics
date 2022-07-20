@@ -5,6 +5,8 @@
 #include <string>
 #include <vector>
 
+using DirectX::XMFLOAT3;
+
 UI::UI() noexcept :
 	m_io(ImGui::GetIO()),
 	m_viewport(),
@@ -34,7 +36,7 @@ void UI::Render(const std::unique_ptr<Renderer>& renderer) noexcept
 		ImPlot::ShowDemoWindow();
 	}
 
-	SimulationDetailsWindow();
+	SimulationDetailsWindow(renderer);
 	LogWindow();
 	PerformanceWindow();
 	SceneEditWindow(renderer);
@@ -161,7 +163,7 @@ void UI::MenuBar() noexcept
 	}	
 }
 
-void UI::SimulationDetailsWindow() noexcept
+void UI::SimulationDetailsWindow(const std::unique_ptr<Renderer>& renderer) noexcept
 {
 	PROFILE_FUNCTION();
 
@@ -174,6 +176,7 @@ void UI::SimulationDetailsWindow() noexcept
 
 	ImGui::Text(" Application average %.3f ms/frame (%.1f FPS)", 1000.0f / m_io.Framerate, m_io.Framerate);
 	
+	// Play Button
 	if (SimulationManager::SimulationIsPlaying())
 	{
 		if (ImGui::Button("Pause##Simulation_Details"))
@@ -184,7 +187,53 @@ void UI::SimulationDetailsWindow() noexcept
 		if (ImGui::Button("Play##Simulation_Details"))
 			SimulationManager::SwitchPlayPause();
 	}
-	
+
+	// Box size slider
+	static float boxSize = SimulationManager::GetBoxSize().x * 2;
+	static XMFLOAT3 boxSize3 = { SimulationManager::GetBoxSize().x * 2, SimulationManager::GetBoxSize().y * 2, SimulationManager::GetBoxSize().z * 2 };
+	static bool uniformBox = true;
+
+	if (ImGui::Checkbox("Uniform Box##Simulation_Details", &uniformBox))
+	{
+		if (uniformBox)
+			SimulationManager::SetBoxSize(boxSize / 2.0f);
+		else
+			SimulationManager::SetBoxSize({ boxSize3.x / 2, boxSize3.y / 2, boxSize3.z / 2 });
+
+		renderer->NotifyBoxSizeChanged();
+	}		
+
+	if (uniformBox)
+	{
+		if (ImGui::DragFloat("Box Size##uniform_Simulation_Details", (float*)(&boxSize), 0.1f, 0.0f, 100.0f, "%.01f"))
+		{
+			// SetBoxSize is a misnomer because it actually set the max x, y, z values where
+			// the length of each side will go from -x -> x therefore, you need to divide
+			// each value by 2 to correctly set the max sizes
+			SimulationManager::SetBoxSize(boxSize / 2.0f);
+			renderer->NotifyBoxSizeChanged();
+
+			// Sync boxSize3 with the new value
+			boxSize3.x = boxSize;
+			boxSize3.y = boxSize;
+			boxSize3.z = boxSize;
+		}
+	}
+	else
+	{
+		if (ImGui::DragFloat3("Box Size##non-uniform_Simulation_Details", (float*)(&boxSize3), 0.1f, 0.0f, 100.0f, "%.01f"))
+		{
+			// SetBoxSize is a misnomer because it actually set the max x, y, z values where
+			// the length of each side will go from -x -> x therefore, you need to divide
+			// each value by 2 to correctly set the max sizes
+			SimulationManager::SetBoxSize({ boxSize3.x / 2, boxSize3.y / 2, boxSize3.z / 2 });
+			renderer->NotifyBoxSizeChanged();
+
+			// Sync boxSize with the max of boxSize3
+			boxSize = std::max(boxSize3.x, std::max(boxSize3.y, boxSize3.z));
+		}
+	}
+
 	
 	ImGui::End();
 }
