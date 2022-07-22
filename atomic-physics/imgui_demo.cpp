@@ -5472,15 +5472,15 @@ static void ShowDemoWindowTables()
 
                         ImGui::PopID();
                     }
-                }
-                ImGui::PopButtonRepeat();
-
-                // Store some info to display debug details below
-                table_scroll_cur = ImVec2(ImGui::GetScrollX(), ImGui::GetScrollY());
-                table_scroll_max = ImVec2(ImGui::GetScrollMaxX(), ImGui::GetScrollMaxY());
-                table_draw_list = ImGui::GetWindowDrawList();
-                ImGui::EndTable();
             }
+            ImGui::PopButtonRepeat();
+
+            // Store some info to display debug details below
+            table_scroll_cur = ImVec2(ImGui::GetScrollX(), ImGui::GetScrollY());
+            table_scroll_max = ImVec2(ImGui::GetScrollMaxX(), ImGui::GetScrollMaxY());
+            table_draw_list = ImGui::GetWindowDrawList();
+            ImGui::EndTable();
+        }
         static bool show_debug_details = false;
         ImGui::Checkbox("Debug details", &show_debug_details);
         if (show_debug_details && table_draw_list)

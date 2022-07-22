@@ -7,6 +7,8 @@
 
 using DirectX::XMFLOAT3;
 
+const ImGuiTableSortSpecs* ParticleDetails::s_current_sort_specs = NULL;
+
 UI::UI() noexcept :
 	m_io(ImGui::GetIO()),
 	m_viewport(),
@@ -18,6 +20,11 @@ UI::UI() noexcept :
 	m_windowOffsetY(0.0f)
 {
 	PROFILE_FUNCTION();
+
+
+
+	m_particleDetails.push_back({ 0, "Hydrogen", { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } });
+	m_particleDetails.push_back({ 1, "Helium", { 1.0f, 1.0f, 1.0f }, { 1.0f, 1.0f, 1.0f } });
 }
 
 void UI::Render(const std::unique_ptr<Renderer>& renderer) noexcept
@@ -174,8 +181,6 @@ void UI::SimulationDetailsWindow(const std::unique_ptr<Renderer>& renderer) noex
 
 	m_left = ImGui::GetWindowContentRegionMax().x + padding.x;
 
-	ImGui::Text(" Application average %.3f ms/frame (%.1f FPS)", 1000.0f / m_io.Framerate, m_io.Framerate);
-	
 	// Play Button
 	if (SimulationManager::SimulationIsPlaying())
 	{
@@ -193,19 +198,12 @@ void UI::SimulationDetailsWindow(const std::unique_ptr<Renderer>& renderer) noex
 	static XMFLOAT3 boxSize3 = { SimulationManager::GetBoxSize().x * 2, SimulationManager::GetBoxSize().y * 2, SimulationManager::GetBoxSize().z * 2 };
 	static bool uniformBox = true;
 
-	if (ImGui::Checkbox("Uniform Box##Simulation_Details", &uniformBox))
-	{
-		if (uniformBox)
-			SimulationManager::SetBoxSize(boxSize / 2.0f);
-		else
-			SimulationManager::SetBoxSize({ boxSize3.x / 2, boxSize3.y / 2, boxSize3.z / 2 });
-
-		renderer->NotifyBoxSizeChanged();
-	}		
+	ImGui::Text("Box:");
+	ImGui::SameLine();		
 
 	if (uniformBox)
 	{
-		if (ImGui::DragFloat("Box Size##uniform_Simulation_Details", (float*)(&boxSize), 0.1f, 0.0f, 100.0f, "%.01f"))
+		if (ImGui::DragFloat("##uniform_Simulation_Details", (float*)(&boxSize), 0.1f, 0.0f, 100.0f, "%.01f"))
 		{
 			// SetBoxSize is a misnomer because it actually set the max x, y, z values where
 			// the length of each side will go from -x -> x therefore, you need to divide
@@ -221,7 +219,7 @@ void UI::SimulationDetailsWindow(const std::unique_ptr<Renderer>& renderer) noex
 	}
 	else
 	{
-		if (ImGui::DragFloat3("Box Size##non-uniform_Simulation_Details", (float*)(&boxSize3), 0.1f, 0.0f, 100.0f, "%.01f"))
+		if (ImGui::DragFloat3("##non-uniform_Simulation_Details", (float*)(&boxSize3), 0.1f, 0.0f, 100.0f, "%.01f"))
 		{
 			// SetBoxSize is a misnomer because it actually set the max x, y, z values where
 			// the length of each side will go from -x -> x therefore, you need to divide
@@ -234,8 +232,132 @@ void UI::SimulationDetailsWindow(const std::unique_ptr<Renderer>& renderer) noex
 		}
 	}
 
-	
-	ImGui::End();
+	ImGui::SameLine();
+
+	if (ImGui::Checkbox("Uniform##Simulation_Details", &uniformBox))
+	{
+		if (uniformBox)
+			SimulationManager::SetBoxSize(boxSize / 2.0f);
+		else
+			SimulationManager::SetBoxSize({ boxSize3.x / 2, boxSize3.y / 2, boxSize3.z / 2 });
+
+		renderer->NotifyBoxSizeChanged();
+	}
+
+	// Atoms Table ===========================================================
+
+	ImGuiTableFlags flags =
+		ImGuiTableFlags_Resizable | 
+		ImGuiTableFlags_Reorderable | 
+		ImGuiTableFlags_Hideable | 
+		ImGuiTableFlags_Sortable | 
+		ImGuiTableFlags_SortMulti | 
+		ImGuiTableFlags_RowBg | 
+		ImGuiTableFlags_Borders | 
+		ImGuiTableFlags_BordersV |
+		ImGuiTableFlags_BordersH |
+		ImGuiTableFlags_NoBordersInBody | 
+		//ImGuiTableFlags_ScrollX | 
+		ImGuiTableFlags_ScrollY | 
+		ImGuiTableFlags_SizingFixedFit;
+
+	const float min_row_height = 13.0f; // minimum row height
+	const ImVec2 outer_size_value = ImVec2(0.0f, ImGui::GetTextLineHeightWithSpacing() * 12);
+	static bool items_need_sort = false;
+
+	if (ImGui::BeginTable("Particles Table", 4, flags, outer_size_value))
+	{
+		ImGui::TableSetupColumn("ID", ImGuiTableColumnFlags_DefaultSort | ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_NoHide, 0.0f, ParticleDetailsColumnID_ID);
+		ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthFixed, 0.0f, ParticleDetailsColumnID_Name);
+		ImGui::TableSetupColumn("Position", ImGuiTableColumnFlags_NoSort | ImGuiTableColumnFlags_WidthFixed, 0.0f, ParticleDetailsColumnID_Position);
+		ImGui::TableSetupColumn("Velocity", ImGuiTableColumnFlags_NoSort | ImGuiTableColumnFlags_WidthFixed, 0.0f, ParticleDetailsColumnID_Velocity);
+		ImGui::TableSetupScrollFreeze(0, 1); // freeze only the header row
+
+		// Sort our data if sort specs have been changed!
+		ImGuiTableSortSpecs* sorts_specs = ImGui::TableGetSortSpecs();
+		if (sorts_specs && sorts_specs->SpecsDirty)
+			items_need_sort = true;
+		if (sorts_specs && items_need_sort && m_particleDetails.Size > 1)
+		{
+			ParticleDetails::s_current_sort_specs = sorts_specs; // Store in variable accessible by the sort function.
+			qsort(&m_particleDetails[0], (size_t)m_particleDetails.Size, sizeof(m_particleDetails[0]), ParticleDetails::CompareWithSortSpecs);
+			ParticleDetails::s_current_sort_specs = NULL;
+			sorts_specs->SpecsDirty = false;
+		}
+		items_need_sort = false;
+
+		// Show Headers
+		ImGui::TableHeadersRow();
+
+		// ???
+		ImGui::PushButtonRepeat(true);
+
+		// Use a clipper to loop over visible items
+
+		ImGuiListClipper clipper;
+		clipper.Begin(m_particleDetails.Size);
+		while (clipper.Step())
+		{
+			for (int row_n = clipper.DisplayStart; row_n < clipper.DisplayEnd; row_n++)
+			{
+				ParticleDetails* particle = &m_particleDetails[row_n];
+
+				const bool item_is_selected = m_selectedParticles.contains(particle->ID);
+				ImGui::PushID(particle->ID);
+				ImGui::TableNextRow(ImGuiTableRowFlags_None, min_row_height);
+
+				// Column 0 - ID
+				ImGui::TableSetColumnIndex(0);
+				//char label[32];
+				//sprintf(label, "%04d", particle->ID);
+
+				ImGuiSelectableFlags selectable_flags = ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowItemOverlap; // Allow selection of entire row
+				if (ImGui::Selectable(std::format("{}", particle->ID).c_str(), item_is_selected, selectable_flags, ImVec2(0, min_row_height)))
+				{
+					if (ImGui::GetIO().KeyCtrl)
+					{
+						if (item_is_selected)
+							m_selectedParticles.find_erase_unsorted(particle->ID);
+						else
+							m_selectedParticles.push_back(particle->ID);
+					}
+					else
+					{
+						m_selectedParticles.clear();
+						m_selectedParticles.push_back(particle->ID);
+					}
+				}
+
+				// Column 1 - Name
+				if (ImGui::TableSetColumnIndex(1))
+					ImGui::TextUnformatted(particle->Name);
+
+				// Column 2 - Position
+				if (ImGui::TableSetColumnIndex(2))
+					ImGui::Text(std::format("<{:.1f}, {:.1f}, {:.1f}>", particle->Position[0], particle->Position[1], particle->Position[2]).c_str());
+
+				// Column 3 - Velocity
+				if (ImGui::TableSetColumnIndex(3))
+					ImGui::Text(std::format("<{:.1f}, {:.1f}, {:.1f}>", particle->Velocity[0], particle->Velocity[1], particle->Velocity[2]).c_str());
+				
+				
+				
+				
+				ImGui::PopID();
+			}
+		}
+
+		ImGui::PopButtonRepeat();
+
+
+
+
+		ImGui::EndTable();
+	}
+
+
+	// ============================================================
+	ImGui::End(); // End 'Simulation' Window
 }
 
 void UI::LogWindow() noexcept
