@@ -21,10 +21,25 @@ UI::UI() noexcept :
 {
 	PROFILE_FUNCTION();
 
+	SimulationManager::SetParticleAddedEventHandler(
+		[this]() {
+			this->OnParticleAdded();
+		}
+	);
+}
 
+void UI::OnParticleAdded() noexcept
+{
+	PROFILE_FUNCTION();
 
-	m_particleDetails.push_back({ 0, "Hydrogen", { 0.0f, 0.0f, 0.0f }, { 0.0f, 0.0f, 0.0f } });
-	m_particleDetails.push_back({ 1, "Helium", { 1.0f, 1.0f, 1.0f }, { 1.0f, 1.0f, 1.0f } });
+	const std::vector<Particle>& particles = SimulationManager::GetParticles();
+	const Particle& p = particles.back();
+	
+	m_particleDetails.push_back(
+		{
+			static_cast<int>(particles.size() - 1),
+			SimulationManager::GetParticleName(p.type).c_str()
+		});
 }
 
 void UI::Render(const std::unique_ptr<Renderer>& renderer) noexcept
@@ -293,6 +308,7 @@ void UI::SimulationDetailsWindow(const std::unique_ptr<Renderer>& renderer) noex
 		ImGui::PushButtonRepeat(true);
 
 		// Use a clipper to loop over visible items
+		const std::vector<Particle> particles = SimulationManager::GetParticles();
 
 		ImGuiListClipper clipper;
 		clipper.Begin(m_particleDetails.Size);
@@ -300,45 +316,44 @@ void UI::SimulationDetailsWindow(const std::unique_ptr<Renderer>& renderer) noex
 		{
 			for (int row_n = clipper.DisplayStart; row_n < clipper.DisplayEnd; row_n++)
 			{
-				ParticleDetails* particle = &m_particleDetails[row_n];
+				ParticleDetails* particleDetails = &m_particleDetails[row_n];
+				const Particle& particle = particles[particleDetails->ID];
 
-				const bool item_is_selected = m_selectedParticles.contains(particle->ID);
-				ImGui::PushID(particle->ID);
+				const bool item_is_selected = m_selectedParticles.contains(particleDetails->ID);
+				ImGui::PushID(particleDetails->ID);
 				ImGui::TableNextRow(ImGuiTableRowFlags_None, min_row_height);
 
 				// Column 0 - ID
 				ImGui::TableSetColumnIndex(0);
-				//char label[32];
-				//sprintf(label, "%04d", particle->ID);
-
 				ImGuiSelectableFlags selectable_flags = ImGuiSelectableFlags_SpanAllColumns | ImGuiSelectableFlags_AllowItemOverlap; // Allow selection of entire row
-				if (ImGui::Selectable(std::format("{}", particle->ID).c_str(), item_is_selected, selectable_flags, ImVec2(0, min_row_height)))
+				if (ImGui::Selectable(std::format("{}", particleDetails->ID).c_str(), item_is_selected, selectable_flags, ImVec2(0, min_row_height)))
 				{
 					if (ImGui::GetIO().KeyCtrl)
 					{
 						if (item_is_selected)
-							m_selectedParticles.find_erase_unsorted(particle->ID);
+							m_selectedParticles.find_erase_unsorted(particleDetails->ID);
 						else
-							m_selectedParticles.push_back(particle->ID);
+							m_selectedParticles.push_back(particleDetails->ID);
 					}
 					else
 					{
 						m_selectedParticles.clear();
-						m_selectedParticles.push_back(particle->ID);
+						m_selectedParticles.push_back(particleDetails->ID);
 					}
 				}
 
 				// Column 1 - Name
 				if (ImGui::TableSetColumnIndex(1))
-					ImGui::TextUnformatted(particle->Name);
+					ImGui::TextUnformatted(particleDetails->Name);
 
 				// Column 2 - Position
+				
 				if (ImGui::TableSetColumnIndex(2))
-					ImGui::Text(std::format("<{:.1f}, {:.1f}, {:.1f}>", particle->Position[0], particle->Position[1], particle->Position[2]).c_str());
+					ImGui::Text(std::format("[{:.1f}, {:.1f}, {:.1f}]", particle.p_x, particle.p_y, particle.p_z).c_str());
 
 				// Column 3 - Velocity
 				if (ImGui::TableSetColumnIndex(3))
-					ImGui::Text(std::format("<{:.1f}, {:.1f}, {:.1f}>", particle->Velocity[0], particle->Velocity[1], particle->Velocity[2]).c_str());
+					ImGui::Text(std::format("[{:.1f}, {:.1f}, {:.1f}]", particle.v_x, particle.v_y, particle.v_z).c_str());
 				
 				
 				

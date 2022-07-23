@@ -7,12 +7,12 @@
 
 struct Particle
 {
-	int   type;	// 0 --> electron, N > 0 --> element number (number of protons)
-	int	  mass; // [only for non-electron] #Proton + #Neutron
-	float p_x;  // Position
+	unsigned int type; // 0 --> electron, N > 0 --> element number (number of protons)
+	unsigned int mass; // [only for non-electron] #Proton + #Neutron
+	float p_x;		   // Position
 	float p_y;
 	float p_z;
-	float v_x;	// Velocity
+	float v_x;	       // Velocity
 	float v_y;
 	float v_z;
 };

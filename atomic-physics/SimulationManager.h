@@ -2,8 +2,9 @@
 #include "pch.h"
 #include "Simulation.h"
 
-
+#include <functional>
 #include <memory>
+#include <string>
 #include <vector>
 
 class SimulationManager
@@ -30,10 +31,18 @@ public:
 	static void SetBoxSize(float xyz) noexcept { m_simulations[m_activeSimulationIndex]->SetBoxSize(xyz); }
 	static void SetBoxSize(DirectX::XMFLOAT3 size) noexcept { m_simulations[m_activeSimulationIndex]->SetBoxSize(size); }
 
+	static const std::string& GetParticleName(unsigned int type) noexcept { return m_particleNames[type]; }
+
+	static void SetParticleAddedEventHandler(std::function<void()> handler) noexcept { ParticleAddedEventHandler = handler; }
+
 private:
 	SimulationManager(); // Don't allow construction
 
+	static std::function<void()> ParticleAddedEventHandler;
+
 	static unsigned int m_activeSimulationIndex;
 	static std::vector<std::unique_ptr<Simulation>> m_simulations;
+
+	static const std::vector<std::string> m_particleNames;
 };
 

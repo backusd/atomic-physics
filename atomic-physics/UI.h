@@ -23,8 +23,8 @@ struct ParticleDetails
 {
     int         ID;
     const char* Name;
-    float       Position[3];
-    float       Velocity[3];
+    //float       Position[3];
+    //float       Velocity[3];
 
     // We have a problem which is affecting _only this demo_ and should not affect your code:
     // As we don't rely on std:: or other third-party library to compile dear imgui, we only have reliable access to qsort(),
@@ -51,8 +51,6 @@ struct ParticleDetails
             {
             case ParticleDetailsColumnID_ID:             delta = (a->ID - b->ID);                break;
             case ParticleDetailsColumnID_Name:           delta = (strcmp(a->Name, b->Name));     break;
-            //case MyItemColumnID_Quantity:       delta = (a->Quantity - b->Quantity);    break;
-            //case MyItemColumnID_Description:    delta = (strcmp(a->Name, b->Name));     break;
             default: IM_ASSERT(0); break;
             }
             if (delta > 0)
@@ -79,6 +77,8 @@ public:
 	D3D11_VIEWPORT GetViewport() const noexcept { return m_viewport; }
 
 private:
+    void OnParticleAdded() noexcept;
+
 	void CreateDockSpaceAndMenuBar() noexcept;
 	void MenuBar() noexcept;
 	void SimulationDetailsWindow(const std::unique_ptr<Renderer>& renderer) noexcept;
