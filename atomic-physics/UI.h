@@ -1,5 +1,6 @@
 #pragma once
 #include "pch.h"
+#include "Event.h"
 #include "Renderer.h"
 
 #include <memory>
@@ -15,6 +16,7 @@ enum ParticleDetailsColumnID
 {
     ParticleDetailsColumnID_ID,
     ParticleDetailsColumnID_Name,
+    ParticleDetailsColumnID_Mass,
     ParticleDetailsColumnID_Position,
     ParticleDetailsColumnID_Velocity
 };
@@ -23,8 +25,7 @@ struct ParticleDetails
 {
     int         ID;
     const char* Name;
-    //float       Position[3];
-    //float       Velocity[3];
+    unsigned int Mass;
 
     // We have a problem which is affecting _only this demo_ and should not affect your code:
     // As we don't rely on std:: or other third-party library to compile dear imgui, we only have reliable access to qsort(),
@@ -51,6 +52,7 @@ struct ParticleDetails
             {
             case ParticleDetailsColumnID_ID:             delta = (a->ID - b->ID);                break;
             case ParticleDetailsColumnID_Name:           delta = (strcmp(a->Name, b->Name));     break;
+            case ParticleDetailsColumnID_Mass:           delta = (a->Mass - b->Mass);            break;
             default: IM_ASSERT(0); break;
             }
             if (delta > 0)
@@ -71,13 +73,14 @@ public:
 	UI() noexcept;
 	UI(const UI&) = delete;
 	void operator=(const UI&) = delete;
+    ~UI() noexcept;
 
 	void Render(const std::unique_ptr<Renderer>& renderer) noexcept;
 
 	D3D11_VIEWPORT GetViewport() const noexcept { return m_viewport; }
 
 private:
-    void OnParticleAdded(const Particle& particle) noexcept;
+    void OnParticleAdded(const Particle& particle, unsigned int particleCount) noexcept;
 
 	void CreateDockSpaceAndMenuBar() noexcept;
 	void MenuBar() noexcept;
@@ -101,4 +104,7 @@ private:
 
     ImVector<ParticleDetails>   m_particleDetails;
     ImVector<int>               m_selectedParticles;
+
+    // Event Tokens
+    EventToken t_particleAdded;
 };

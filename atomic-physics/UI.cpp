@@ -17,30 +17,34 @@ UI::UI() noexcept :
 	m_height(0.0f),
 	m_width(0.0f),
 	m_windowOffsetX(0.0f),
-	m_windowOffsetY(0.0f)
+	m_windowOffsetY(0.0f),
+	t_particleAdded(0)
 {
 	PROFILE_FUNCTION();
 
-	SimulationManager::SetParticleAddedEventHandler(
-		[this](const Particle& particle) noexcept {
-			this->OnParticleAdded(particle);
+	t_particleAdded = SimulationManager::SetParticleAddedEventHandler(
+		[this](const Particle& particle, unsigned int particleCount) noexcept {
+			this->OnParticleAdded(particle, particleCount);
 		}
 	);
 }
 
-void UI::OnParticleAdded(const Particle& particle) noexcept
+UI::~UI() noexcept
+{
+	// Remove Event Handlers
+	SimulationManager::RemoveParticleAddedEventHandler(t_particleAdded);
+}
+
+void UI::OnParticleAdded(const Particle& particle, unsigned int particleCount) noexcept
 {
 	PROFILE_FUNCTION();
 
-	const std::vector<Particle>& particles = SimulationManager::GetParticles();
-	const Particle& p = particles.back();
-	
-	// USE EMPLACE BACK
-
+	// Can't use emplace_back because m_particleDetails is ImVector, not std::vector
 	m_particleDetails.push_back(
 		{
-			static_cast<int>(particles.size() - 1),
-			SimulationManager::GetParticleName(p.type).c_str()
+			static_cast<int>(particleCount) - 1,
+			SimulationManager::GetParticleName(particle.type).c_str(),
+			particle.mass
 		});
 }
 
@@ -261,6 +265,58 @@ void UI::SimulationDetailsWindow(const std::unique_ptr<Renderer>& renderer) noex
 		renderer->NotifyBoxSizeChanged();
 	}
 
+	// Add Particle ===========================================================
+
+	static int			newParticleIndex = -1;	// New particle we are trying to add
+	static unsigned int particleTypeIndex = 1;	// The type of the new particle to be added
+
+	if (ImGui::TreeNode("Add Particle##Simulation_Details"))
+	{
+		const std::vector<std::string>& particleTypeNames = SimulationManager::GetParticleNames();
+
+		// Create a new particle if we have not already done so
+		if (newParticleIndex == -1)
+		{
+			SimulationManager::AddParticle(particleTypeIndex, 1, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f);
+			newParticleIndex = SimulationManager::ParticleCount() - 1;
+		}
+
+		Particle& particle = SimulationManager::GetParticle(newParticleIndex);
+
+		if (ImGui::BeginCombo("Particle Type##Simulation_Details", particleTypeNames[particleTypeIndex].c_str()))
+		{
+			for (unsigned int iii = 0; iii < particleTypeNames.size(); ++iii)
+			{
+				const bool is_selected = (particleTypeIndex == iii);
+				if (ImGui::Selectable(particleTypeNames[iii].c_str(), is_selected))
+				{
+					particleTypeIndex = iii;
+				}
+
+				// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+				if (is_selected)
+					ImGui::SetItemDefaultFocus();
+			}
+
+			ImGui::EndCombo();
+		}
+
+		// Position
+		float positionMax = renderer->GetBox()->GetBoxSize().x / 2.0f; // allow the light to go 50% outside the box
+		float positionDragSpeed = 0.1f;
+
+		ImGui::DragFloat3("Position##Simulation_Details", (float*)(&particle.p_x), positionDragSpeed, -positionMax, positionMax);
+
+
+
+
+		ImGui::TreePop();
+	}
+//	else
+//	{
+//		tryingToAddAtom = false;
+//	}
+
 	// Atoms Table ===========================================================
 
 	ImGuiTableFlags flags =
@@ -282,10 +338,11 @@ void UI::SimulationDetailsWindow(const std::unique_ptr<Renderer>& renderer) noex
 	const ImVec2 outer_size_value = ImVec2(0.0f, ImGui::GetTextLineHeightWithSpacing() * 12);
 	static bool items_need_sort = false;
 
-	if (ImGui::BeginTable("Particles Table", 4, flags, outer_size_value))
+	if (ImGui::BeginTable("Particles Table", 5, flags, outer_size_value))
 	{
 		ImGui::TableSetupColumn("ID", ImGuiTableColumnFlags_DefaultSort | ImGuiTableColumnFlags_WidthFixed | ImGuiTableColumnFlags_NoHide, 0.0f, ParticleDetailsColumnID_ID);
 		ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthFixed, 0.0f, ParticleDetailsColumnID_Name);
+		ImGui::TableSetupColumn("Mass", ImGuiTableColumnFlags_DefaultSort | ImGuiTableColumnFlags_WidthFixed, 0.0f, ParticleDetailsColumnID_Mass);
 		ImGui::TableSetupColumn("Position", ImGuiTableColumnFlags_NoSort | ImGuiTableColumnFlags_WidthFixed, 0.0f, ParticleDetailsColumnID_Position);
 		ImGui::TableSetupColumn("Velocity", ImGuiTableColumnFlags_NoSort | ImGuiTableColumnFlags_WidthFixed, 0.0f, ParticleDetailsColumnID_Velocity);
 		ImGui::TableSetupScrollFreeze(0, 1); // freeze only the header row
@@ -348,13 +405,16 @@ void UI::SimulationDetailsWindow(const std::unique_ptr<Renderer>& renderer) noex
 				if (ImGui::TableSetColumnIndex(1))
 					ImGui::TextUnformatted(particleDetails->Name);
 
-				// Column 2 - Position
-				
+				// Column 2 - Mass				
 				if (ImGui::TableSetColumnIndex(2))
+					ImGui::Text(std::format("{}", particleDetails->Mass).c_str());
+
+				// Column 3 - Position				
+				if (ImGui::TableSetColumnIndex(3))
 					ImGui::Text(std::format("[{:.1f}, {:.1f}, {:.1f}]", particle.p_x, particle.p_y, particle.p_z).c_str());
 
-				// Column 3 - Velocity
-				if (ImGui::TableSetColumnIndex(3))
+				// Column 4 - Velocity
+				if (ImGui::TableSetColumnIndex(4))
 					ImGui::Text(std::format("[{:.1f}, {:.1f}, {:.1f}]", particle.v_x, particle.v_y, particle.v_z).c_str());
 				
 				
@@ -365,9 +425,6 @@ void UI::SimulationDetailsWindow(const std::unique_ptr<Renderer>& renderer) noex
 		}
 
 		ImGui::PopButtonRepeat();
-
-
-
 
 		ImGui::EndTable();
 	}

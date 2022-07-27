@@ -4,7 +4,7 @@
 #include <functional>
 #include <unordered_map>
 
-using EventToken = std::intptr_t;
+using EventToken = std::intptr_t; // use intptr_t because we do a reinterpret_cast of a memory address which is supposed to be a long long
 
 template<class... T>
 class Event
@@ -13,7 +13,7 @@ public:
 	Event() noexcept {}
 
 	template<class... T>
-	EventToken AddHandler(std::function<void(T...)> fn) noexcept
+	EventToken AddHandler(std::function<void(T...)>& fn) noexcept
 	{
 		// Just take the address of the function in memory as the token, which
 		// therefore guarantees its uniqueness
@@ -22,12 +22,7 @@ public:
 		return token;
 	}
 
-	bool RemoveHandler(EventToken token) noexcept 
-	{ 
-		bool v = m_handlers.erase(token);
-		return v;
-		//return m_handlers.erase(token); 
-	}
+	bool RemoveHandler(EventToken token) noexcept { return m_handlers.erase(token); }
 
 	// overload operator() to trigger the event
 	template<class... T>

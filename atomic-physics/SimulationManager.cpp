@@ -27,7 +27,6 @@ void SimulationManager::AddParticle(int type, int mass, float p_x, float p_y, fl
 	PROFILE_FUNCTION();
 
 	// Add the particle to the simulation and then trigger the ParticleAdded event
-	e_ParticleAdded(
-		m_simulations[m_activeSimulationIndex]->AddParticle(type, mass, p_x, p_y, p_z, v_x, v_y, v_z)
-	);
+	Particle p = m_simulations[m_activeSimulationIndex]->AddParticle(type, mass, p_x, p_y, p_z, v_x, v_y, v_z);
+	e_ParticleAdded(p, m_simulations[m_activeSimulationIndex]->ParticleCount());
 }
