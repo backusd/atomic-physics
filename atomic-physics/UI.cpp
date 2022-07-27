@@ -22,19 +22,21 @@ UI::UI() noexcept :
 	PROFILE_FUNCTION();
 
 	SimulationManager::SetParticleAddedEventHandler(
-		[this]() {
-			this->OnParticleAdded();
+		[this](const Particle& particle) noexcept {
+			this->OnParticleAdded(particle);
 		}
 	);
 }
 
-void UI::OnParticleAdded() noexcept
+void UI::OnParticleAdded(const Particle& particle) noexcept
 {
 	PROFILE_FUNCTION();
 
 	const std::vector<Particle>& particles = SimulationManager::GetParticles();
 	const Particle& p = particles.back();
 	
+	// USE EMPLACE BACK
+
 	m_particleDetails.push_back(
 		{
 			static_cast<int>(particles.size() - 1),

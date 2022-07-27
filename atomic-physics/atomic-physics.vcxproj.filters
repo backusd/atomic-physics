@@ -50,6 +50,9 @@
     <Filter Include="Source Files\Utils">
       <UniqueIdentifier>{76bb9058-1f09-4d78-9b42-ca1626a72217}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Event">
+      <UniqueIdentifier>{fc13edd5-4ed4-4dc0-b81a-bb93afa3a8ec}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="WinMain.cpp">
@@ -198,6 +201,9 @@
     </ClCompile>
     <ClCompile Include="Profile.cpp">
       <Filter>Source Files\Testing</Filter>
+    </ClCompile>
+    <ClCompile Include="Event.cpp">
+      <Filter>Source Files\Event</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -374,6 +380,9 @@
     </ClInclude>
     <ClInclude Include="MacroHelper.h">
       <Filter>Source Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Event.h">
+      <Filter>Source Files\Event</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

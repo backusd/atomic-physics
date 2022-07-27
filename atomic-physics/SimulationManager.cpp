@@ -7,7 +7,7 @@ const std::vector<std::string> SimulationManager::m_particleNames =
 	{ "Electron", "Hydrogen", "Helium", "Lithium", "Beryllium", "Boron", "Carbon",
 	"Nitrogen", "Oxygen", "Flourine", "Neon" };
 
-std::function<void()> SimulationManager::ParticleAddedEventHandler = []() {};
+ParticleAddedEvent SimulationManager::e_ParticleAdded;
 
 void SimulationManager::Initialize() noexcept
 {
@@ -26,7 +26,8 @@ void SimulationManager::AddParticle(int type, int mass, float p_x, float p_y, fl
 {
 	PROFILE_FUNCTION();
 
-	m_simulations[m_activeSimulationIndex]->AddParticle(type, mass, p_x, p_y, p_z, v_x, v_y, v_z);
-
-	ParticleAddedEventHandler();
+	// Add the particle to the simulation and then trigger the ParticleAdded event
+	e_ParticleAdded(
+		m_simulations[m_activeSimulationIndex]->AddParticle(type, mass, p_x, p_y, p_z, v_x, v_y, v_z)
+	);
 }

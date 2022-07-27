@@ -1,11 +1,18 @@
 #pragma once
 #include "pch.h"
+#include "Event.h"
 #include "Simulation.h"
 
 #include <functional>
 #include <memory>
 #include <string>
 #include <vector>
+
+using ParticleAddedEvent = Event<const Particle&>;
+using ParticleAddedEventHandler = std::function<void(const Particle&)>;
+
+
+
 
 class SimulationManager
 {
@@ -33,12 +40,12 @@ public:
 
 	static const std::string& GetParticleName(unsigned int type) noexcept { return m_particleNames[type]; }
 
-	static void SetParticleAddedEventHandler(std::function<void()> handler) noexcept { ParticleAddedEventHandler = handler; }
+	static void SetParticleAddedEventHandler(ParticleAddedEventHandler handler) noexcept { e_ParticleAdded.AddHandler(handler); }
 
 private:
 	SimulationManager(); // Don't allow construction
 
-	static std::function<void()> ParticleAddedEventHandler;
+	static ParticleAddedEvent e_ParticleAdded;
 
 	static unsigned int m_activeSimulationIndex;
 	static std::vector<std::unique_ptr<Simulation>> m_simulations;

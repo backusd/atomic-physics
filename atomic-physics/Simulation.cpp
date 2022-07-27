@@ -51,11 +51,11 @@ void Simulation::Update() noexcept
 	);
 }
 
-void Simulation::AddParticle(int type, int mass, float p_x, float p_y, float p_z, float v_x, float v_y, float v_z) noexcept
+const Particle& Simulation::AddParticle(int type, int mass, float p_x, float p_y, float p_z, float v_x, float v_y, float v_z) noexcept
 {
 	PROFILE_FUNCTION();
 
-	m_particles.emplace_back(type, mass, p_x, p_y, p_z, v_x, v_y, v_z);
+	return m_particles.emplace_back(type, mass, p_x, p_y, p_z, v_x, v_y, v_z);
 }
 
 XMFLOAT3 Simulation::GetBoxSize() const noexcept

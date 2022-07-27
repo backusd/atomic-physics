@@ -77,7 +77,7 @@ public:
 	D3D11_VIEWPORT GetViewport() const noexcept { return m_viewport; }
 
 private:
-    void OnParticleAdded() noexcept;
+    void OnParticleAdded(const Particle& particle) noexcept;
 
 	void CreateDockSpaceAndMenuBar() noexcept;
 	void MenuBar() noexcept;

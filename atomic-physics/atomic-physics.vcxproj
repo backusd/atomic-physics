@@ -160,6 +160,7 @@
     <ClCompile Include="DeviceResourcesException.cpp" />
     <ClCompile Include="Drawable.cpp" />
     <ClCompile Include="DxgiInfoManager.cpp" />
+    <ClCompile Include="Event.cpp" />
     <ClCompile Include="EyePositionBufferArray.cpp" />
     <ClCompile Include="imgui.cpp" />
     <ClCompile Include="imgui_demo.cpp" />
@@ -205,6 +206,7 @@
     <ClInclude Include="AppWindowTemplate.h" />
     <ClInclude Include="BaseException.h" />
     <ClInclude Include="BasicGeometry.h" />
+    <ClInclude Include="Event.h" />
     <ClInclude Include="MacroHelper.h" />
     <ClInclude Include="Profile.h" />
     <ClInclude Include="Bindable.h" />
