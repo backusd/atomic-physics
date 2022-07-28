@@ -11,7 +11,8 @@
 using ParticleAddedEvent = Event<const Particle&, unsigned int>;
 using ParticleAddedEventHandler = std::function<void(const Particle&, unsigned int)>;
 
-
+using ParticleRemovedEvent = Event<unsigned int>;
+using ParticleRemovedEventHandler = std::function<void(unsigned int)>;
 
 
 class SimulationManager
@@ -24,6 +25,7 @@ public:
 	static void Update() noexcept;
 
 	static void AddParticle(int type, int mass, float p_x, float p_y, float p_z, float v_x, float v_y, float v_z) noexcept;
+	static void RemoveParticle(unsigned int index) noexcept;
 
 	static const std::vector<Particle>& GetParticles() noexcept { return m_simulations[m_activeSimulationIndex]->GetParticles(); }
 	static Particle& GetParticle(int index) noexcept { return m_simulations[m_activeSimulationIndex]->GetParticle(index); }
@@ -47,6 +49,8 @@ public:
 	static EventToken SetParticleAddedEventHandler(ParticleAddedEventHandler handler) noexcept { return e_ParticleAdded.AddHandler(handler); }
 	static void RemoveParticleAddedEventHandler(EventToken token) noexcept { e_ParticleAdded.RemoveHandler(token); }
 
+	static EventToken SetParticleRemovedEventHandler(ParticleRemovedEventHandler handler) noexcept { return e_ParticleRemoved.AddHandler(handler); }
+	static void RemoveParticleRemovedEventHandler(EventToken token) noexcept { e_ParticleRemoved.RemoveHandler(token); }
 
 private:
 	SimulationManager(); // Don't allow construction
@@ -57,6 +61,7 @@ private:
 	static const std::vector<std::string> m_particleNames;
 
 	// Events
-	static ParticleAddedEvent e_ParticleAdded;
+	static ParticleAddedEvent	e_ParticleAdded;
+	static ParticleRemovedEvent e_ParticleRemoved;
 };
 

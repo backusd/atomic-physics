@@ -31,7 +31,8 @@ public:
 	const std::vector<Particle>& GetParticles() const noexcept { return m_particles; }
 	Particle& GetParticle(int index) noexcept { return m_particles[index]; }
 	unsigned int ParticleCount() const noexcept { return static_cast<unsigned int>(m_particles.size()); }
-
+	void RemoveParticle(unsigned int index) noexcept;
+	
 	DirectX::XMFLOAT3 GetSimulationDimensions() const noexcept { return { 2 * m_boxMaxX, 2 * m_boxMaxY, 2 * m_boxMaxZ }; }
 
 	double TotalSeconds() const noexcept { return m_timer->GetTotalSeconds(); }

@@ -27,12 +27,19 @@ UI::UI() noexcept :
 			this->OnParticleAdded(particle, particleCount);
 		}
 	);
+
+	t_particleRemoved = SimulationManager::SetParticleRemovedEventHandler(
+		[this](unsigned int particleIndex) noexcept {
+			this->OnParticleRemoved(particleIndex);
+		}
+	);
 }
 
 UI::~UI() noexcept
 {
 	// Remove Event Handlers
 	SimulationManager::RemoveParticleAddedEventHandler(t_particleAdded);
+	SimulationManager::RemoveParticleRemovedEventHandler(t_particleRemoved);
 }
 
 void UI::OnParticleAdded(const Particle& particle, unsigned int particleCount) noexcept
@@ -46,6 +53,15 @@ void UI::OnParticleAdded(const Particle& particle, unsigned int particleCount) n
 			SimulationManager::GetParticleName(particle.type).c_str(),
 			particle.mass
 		});
+}
+
+void UI::OnParticleRemoved(unsigned int particleIndex) noexcept
+{
+	m_particleDetails.erase(m_particleDetails.begin() + particleIndex);
+
+	// Decrement the ID of each particle that came after the one that was removed
+	for (unsigned int iii = particleIndex; iii < m_particleDetails.size(); ++iii)
+		m_particleDetails[iii].ID -= 1;
 }
 
 void UI::Render(const std::unique_ptr<Renderer>& renderer) noexcept
@@ -219,50 +235,52 @@ void UI::SimulationDetailsWindow(const std::unique_ptr<Renderer>& renderer) noex
 	static XMFLOAT3 boxSize3 = { SimulationManager::GetBoxSize().x * 2, SimulationManager::GetBoxSize().y * 2, SimulationManager::GetBoxSize().z * 2 };
 	static bool uniformBox = true;
 
-	ImGui::Text("Box:");
-	ImGui::SameLine();		
-
-	if (uniformBox)
-	{
-		if (ImGui::DragFloat("##uniform_Simulation_Details", (float*)(&boxSize), 0.1f, 0.0f, 100.0f, "%.01f"))
-		{
-			// SetBoxSize is a misnomer because it actually set the max x, y, z values where
-			// the length of each side will go from -x -> x therefore, you need to divide
-			// each value by 2 to correctly set the max sizes
-			SimulationManager::SetBoxSize(boxSize / 2.0f);
-			renderer->NotifyBoxSizeChanged();
-
-			// Sync boxSize3 with the new value
-			boxSize3.x = boxSize;
-			boxSize3.y = boxSize;
-			boxSize3.z = boxSize;
-		}
-	}
-	else
-	{
-		if (ImGui::DragFloat3("##non-uniform_Simulation_Details", (float*)(&boxSize3), 0.1f, 0.0f, 100.0f, "%.01f"))
-		{
-			// SetBoxSize is a misnomer because it actually set the max x, y, z values where
-			// the length of each side will go from -x -> x therefore, you need to divide
-			// each value by 2 to correctly set the max sizes
-			SimulationManager::SetBoxSize({ boxSize3.x / 2, boxSize3.y / 2, boxSize3.z / 2 });
-			renderer->NotifyBoxSizeChanged();
-
-			// Sync boxSize with the max of boxSize3
-			boxSize = std::max(boxSize3.x, std::max(boxSize3.y, boxSize3.z));
-		}
-	}
-
-	ImGui::SameLine();
-
-	if (ImGui::Checkbox("Uniform##Simulation_Details", &uniformBox))
+	if (ImGui::TreeNode("Box##Simulation_Details"))
 	{
 		if (uniformBox)
-			SimulationManager::SetBoxSize(boxSize / 2.0f);
-		else
-			SimulationManager::SetBoxSize({ boxSize3.x / 2, boxSize3.y / 2, boxSize3.z / 2 });
+		{
+			if (ImGui::DragFloat("##uniform_Simulation_Details", (float*)(&boxSize), 0.1f, 0.0f, 100.0f, "%.01f"))
+			{
+				// SetBoxSize is a misnomer because it actually set the max x, y, z values where
+				// the length of each side will go from -x -> x therefore, you need to divide
+				// each value by 2 to correctly set the max sizes
+				SimulationManager::SetBoxSize(boxSize / 2.0f);
+				renderer->NotifyBoxSizeChanged();
 
-		renderer->NotifyBoxSizeChanged();
+				// Sync boxSize3 with the new value
+				boxSize3.x = boxSize;
+				boxSize3.y = boxSize;
+				boxSize3.z = boxSize;
+			}
+		}
+		else
+		{
+			if (ImGui::DragFloat3("##non-uniform_Simulation_Details", (float*)(&boxSize3), 0.1f, 0.0f, 100.0f, "%.01f"))
+			{
+				// SetBoxSize is a misnomer because it actually set the max x, y, z values where
+				// the length of each side will go from -x -> x therefore, you need to divide
+				// each value by 2 to correctly set the max sizes
+				SimulationManager::SetBoxSize({ boxSize3.x / 2, boxSize3.y / 2, boxSize3.z / 2 });
+				renderer->NotifyBoxSizeChanged();
+
+				// Sync boxSize with the max of boxSize3
+				boxSize = std::max(boxSize3.x, std::max(boxSize3.y, boxSize3.z));
+			}
+		}
+
+		ImGui::SameLine();
+
+		if (ImGui::Checkbox("Uniform##Simulation_Details", &uniformBox))
+		{
+			if (uniformBox)
+				SimulationManager::SetBoxSize(boxSize / 2.0f);
+			else
+				SimulationManager::SetBoxSize({ boxSize3.x / 2, boxSize3.y / 2, boxSize3.z / 2 });
+
+			renderer->NotifyBoxSizeChanged();
+		}
+
+		ImGui::TreePop();
 	}
 
 	// Add Particle ===========================================================
@@ -283,6 +301,7 @@ void UI::SimulationDetailsWindow(const std::unique_ptr<Renderer>& renderer) noex
 
 		Particle& particle = SimulationManager::GetParticle(newParticleIndex);
 
+		// Particle Type Combo box
 		if (ImGui::BeginCombo("Particle Type##Simulation_Details", particleTypeNames[particleTypeIndex].c_str()))
 		{
 			for (unsigned int iii = 0; iii < particleTypeNames.size(); ++iii)
@@ -302,20 +321,26 @@ void UI::SimulationDetailsWindow(const std::unique_ptr<Renderer>& renderer) noex
 		}
 
 		// Position
-		float positionMax = renderer->GetBox()->GetBoxSize().x / 2.0f; // allow the light to go 50% outside the box
+		float positionMax = renderer->GetBox()->GetBoxSize().x / 2.0f;
 		float positionDragSpeed = 0.1f;
-
 		ImGui::DragFloat3("Position##Simulation_Details", (float*)(&particle.p_x), positionDragSpeed, -positionMax, positionMax);
 
-
+		// Velocity
+		float velocityMax = 25.0f;
+		float velocityDragSpeed = 0.1f;
+		ImGui::DragFloat3("Velocity##Simulation_Details", (float*)(&particle.v_x), velocityDragSpeed, -velocityMax, velocityMax);
 
 
 		ImGui::TreePop();
 	}
-//	else
-//	{
-//		tryingToAddAtom = false;
-//	}
+	else
+	{
+		if (newParticleIndex != -1)
+		{
+			SimulationManager::RemoveParticle(newParticleIndex);
+			newParticleIndex = -1;
+		}
+	}
 
 	// Atoms Table ===========================================================
 

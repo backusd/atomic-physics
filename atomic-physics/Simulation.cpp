@@ -58,6 +58,11 @@ const Particle& Simulation::AddParticle(int type, int mass, float p_x, float p_y
 	return m_particles.emplace_back(type, mass, p_x, p_y, p_z, v_x, v_y, v_z);
 }
 
+void Simulation::RemoveParticle(unsigned int index) noexcept
+{
+	m_particles.erase(m_particles.begin() + index);
+}
+
 XMFLOAT3 Simulation::GetBoxSize() const noexcept
 {
 	return { m_boxMaxX, m_boxMaxY, m_boxMaxZ };

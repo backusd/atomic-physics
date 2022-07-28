@@ -81,6 +81,7 @@ public:
 
 private:
     void OnParticleAdded(const Particle& particle, unsigned int particleCount) noexcept;
+    void OnParticleRemoved(unsigned int particleIndex) noexcept;
 
 	void CreateDockSpaceAndMenuBar() noexcept;
 	void MenuBar() noexcept;
@@ -107,4 +108,5 @@ private:
 
     // Event Tokens
     EventToken t_particleAdded;
+    EventToken t_particleRemoved;
 };
