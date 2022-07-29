@@ -4,6 +4,21 @@ const std::vector<std::string> SimulationManager::m_particleNames =
 	{ "Electron", "Hydrogen", "Helium", "Lithium", "Beryllium", "Boron", "Carbon",
 	"Nitrogen", "Oxygen", "Flourine", "Neon" };
 
+const std::array<std::vector<IsotopeMassAbundance>, 11> SimulationManager::m_isotopeMassAbundanceList =
+{ {
+	{ { 0, 0.00000f } },									// electron
+	{ { 1, 99.9700f }, { 2, 0.03000f },  { 3, 0.0f } },		// Hydrogen
+	{ { 3, 0.00020f }, { 4, 99.9998f } },					// Helium
+	{ { 6, 7.80000f }, { 7, 92.2000f } },					// Lithium
+	{ { 9, 100.000f } },									// Beryllium
+	{ { 10, 20.400f }, { 11, 79.600f } },					// Boron
+	{ { 12, 98.840f }, { 13, 1.1600f } },					// Carbon
+	{ { 14, 99.578f }, { 15, 0.4220f } },					// Nitrogen
+	{ { 16, 99.738f }, { 17, 0.0400f }, { 18, 0.222f } },	// Oxygen
+	{ { 19, 100.00f } },									// Flourine
+	{ { 20, 90.480f }, { 21, 0.2700f }, { 22, 9.250f } }	// Neon
+} };
+
 std::vector<std::unique_ptr<Simulation>> SimulationManager::m_simulations;
 unsigned int SimulationManager::m_activeSimulationIndex = 0;
 std::optional<unsigned int> SimulationManager::m_temporaryParticleIndex = std::nullopt;
@@ -12,6 +27,7 @@ PlayPauseEvent				SimulationManager::e_PlayPause;
 ParticleAddedEvent			SimulationManager::e_ParticleAdded;
 ParticleRemovedEvent		SimulationManager::e_ParticleRemoved;
 ParticleTypeChangedEvent	SimulationManager::e_ParticleTypeChanged;
+ParticleTypeChangedEvent	SimulationManager::e_ParticleMassChanged;
 
 void SimulationManager::Initialize() noexcept
 {
@@ -55,15 +71,21 @@ void SimulationManager::RemoveParticle(unsigned int index) noexcept
 
 void SimulationManager::ChangeParticleType(unsigned int particleIndex, unsigned int type) noexcept
 {
-	Particle& p = m_simulations[m_activeSimulationIndex]->GetParticle(particleIndex);
-	if (p.type != type)
+	// If the particle type was updated, trigger the event
+	if (m_simulations[m_activeSimulationIndex]->ChangeParticleType(particleIndex, type))
 	{
-		p.type = type;
-
-		// Trigger particle type changed event
-		// Params: particle index, new particle type
 		e_ParticleTypeChanged(particleIndex, type);
+
+		// Must now change the mass to be valid for the new type
+		ChangeParticleMass(particleIndex, GetDefaultMass(type));
 	}
+}
+
+void SimulationManager::ChangeParticleMass(unsigned int particleIndex, unsigned int mass) noexcept
+{
+	// If the particle mass was updated, trigger the event
+	if (m_simulations[m_activeSimulationIndex]->ChangeParticleMass(particleIndex, mass))
+		e_ParticleMassChanged(particleIndex, mass);
 }
 
 

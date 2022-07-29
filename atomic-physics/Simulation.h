@@ -32,6 +32,9 @@ public:
 	Particle& GetParticle(int index) noexcept { return m_particles[index]; }
 	unsigned int ParticleCount() const noexcept { return static_cast<unsigned int>(m_particles.size()); }
 	void RemoveParticle(unsigned int index) noexcept;
+
+	bool ChangeParticleType(unsigned int particleIndex, unsigned int type) noexcept;
+	bool ChangeParticleMass(unsigned int particleIndex, unsigned int mass) noexcept;
 	
 	DirectX::XMFLOAT3 GetSimulationDimensions() const noexcept { return { 2 * m_boxMaxX, 2 * m_boxMaxY, 2 * m_boxMaxZ }; }
 

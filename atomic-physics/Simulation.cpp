@@ -14,6 +14,25 @@ Simulation::Simulation() noexcept :
 	m_timer = std::make_unique<StepTimer>();
 }
 
+bool Simulation::ChangeParticleType(unsigned int particleIndex, unsigned int type) noexcept
+{
+	if (m_particles[particleIndex].type != type)
+	{
+		m_particles[particleIndex].type = type;
+		return true;
+	}
+	return false;
+}
+bool Simulation::ChangeParticleMass(unsigned int particleIndex, unsigned int mass) noexcept
+{
+	if (m_particles[particleIndex].mass != mass)
+	{
+		m_particles[particleIndex].mass = mass;
+		return true;
+	}
+	return false;
+}
+
 void Simulation::Update() noexcept
 {
 	PROFILE_FUNCTION();

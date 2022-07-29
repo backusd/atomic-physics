@@ -480,7 +480,7 @@ void UI::SimulationDetailsWindow(const std::unique_ptr<Renderer>& renderer) noex
 
 	ImGuiWindowFlags window_flags = ImGuiWindowFlags_None;
 	ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5.0f);
-	ImGui::BeginChild("SelectedParticleChildControl", ImVec2(0, 100), true, window_flags);
+	ImGui::BeginChild("SelectedParticleChildControl", ImVec2(0, 150), true, window_flags);
 
 	if (m_selectedParticles.Size == 1)
 	{
@@ -500,13 +500,39 @@ void UI::SimulationDetailsWindow(const std::unique_ptr<Renderer>& renderer) noex
 				const bool is_selected = (selectedParticle.type == iii);
 				if (ImGui::Selectable(particleTypeNames[iii].c_str(), is_selected))
 				{
-					int jjj = selectedParticle.type;
 					SimulationManager::ChangeParticleType(particleIndex, iii);
-					jjj = selectedParticle.type;
 
 					// Update the particles table
 					m_particleDetails[particleIndex].Name = SimulationManager::GetParticleName(selectedParticle.type).c_str();
 					m_particleDetails[particleIndex].Mass = SimulationManager::GetDefaultMass(selectedParticle.type);
+				}
+
+				// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+				if (is_selected) ImGui::SetItemDefaultFocus();
+			}
+			ImGui::EndCombo();
+		}
+
+		// Mass combo box
+		const std::vector<IsotopeMassAbundance>& massAbundanceList = SimulationManager::GetIsotopeMassAbundances(selectedParticle.type);
+		
+		//		Find the index into the massAbundance list for what the current mass is set to
+		unsigned int currentMassAbundanceIndex = 0;
+		for (; currentMassAbundanceIndex < massAbundanceList.size(); ++currentMassAbundanceIndex)
+			if (massAbundanceList[currentMassAbundanceIndex].mass == selectedParticle.mass)
+				break;
+
+		if (ImGui::BeginCombo("Mass##Selected_Particle-Simulation_Details", std::format("{} - Abundance: {}%", massAbundanceList[currentMassAbundanceIndex].mass, massAbundanceList[currentMassAbundanceIndex].abundance).c_str()))
+		{
+			for (unsigned int iii = 0; iii < massAbundanceList.size(); ++iii)
+			{
+				const bool is_selected = (currentMassAbundanceIndex == iii);
+				if (ImGui::Selectable(std::format("{} - Abundance: {}%", massAbundanceList[iii].mass, massAbundanceList[iii].abundance).c_str(), is_selected))
+				{
+					SimulationManager::ChangeParticleMass(particleIndex, massAbundanceList[iii].mass);
+
+					// Update the particles table
+					m_particleDetails[particleIndex].Mass = massAbundanceList[iii].mass;
 				}
 
 				// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
@@ -525,7 +551,35 @@ void UI::SimulationDetailsWindow(const std::unique_ptr<Renderer>& renderer) noex
 		float velocityDragSpeed = 0.1f;
 		ImGui::DragFloat3("Velocity##Selected_Particle-Simulation_Details", (float*)(&selectedParticle.v_x), velocityDragSpeed, -velocityMax, velocityMax);
 	
+		// Delete Particle Modal Popup
+		if (ImGui::Button("Delete Particle##Selected_Particle-Simulation_Details"))
+			ImGui::OpenPopup("Delete Particle?##Selected_Particle-Simulation_Detail");
 
+		// Always center this window when appearing
+		ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+		ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+
+		if (ImGui::BeginPopupModal("Delete Particle?##Selected_Particle-Simulation_Detail", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+		{
+			ImGui::Text("Are you sure you want to delete this particle?\nThis operation cannot be undone!\n\n");
+			ImGui::Separator();
+
+
+			if (ImGui::Button("Delete##Selected_Particle-Simulation_Detail", ImVec2(120, 0)))
+			{
+				SimulationManager::RemoveParticle(particleIndex);
+				m_selectedParticles.clear();
+
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::SetItemDefaultFocus();
+			ImGui::SameLine();
+			if (ImGui::Button("Cancel##Selected_Particle-Simulation_Detail", ImVec2(120, 0)))
+			{
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::EndPopup();
+		}
 	}
 	else if (m_selectedParticles.Size > 1)
 	{
@@ -538,7 +592,6 @@ void UI::SimulationDetailsWindow(const std::unique_ptr<Renderer>& renderer) noex
 
 	ImGui::EndChild();
 	ImGui::PopStyleVar();
-
 
 	// ============================================================
 	ImGui::End(); // End 'Simulation' Window

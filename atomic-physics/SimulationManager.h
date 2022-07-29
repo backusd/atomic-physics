@@ -3,11 +3,18 @@
 #include "Event.h"
 #include "Simulation.h"
 
+#include <array>
 #include <functional>
 #include <memory>
 #include <optional>
 #include <string>
 #include <vector>
+
+struct IsotopeMassAbundance
+{
+	unsigned int mass;
+	float abundance;
+};
 
 // Play/Pause
 using PlayPauseEvent = Event<bool>;
@@ -21,6 +28,9 @@ using ParticleRemovedEventHandler = std::function<void(unsigned int)>;
 // ParticleTypeChanged
 using ParticleTypeChangedEvent = Event<unsigned int, unsigned int>; // particle index, new type
 using ParticleTypeChangedEventHandler = std::function<void(unsigned int, unsigned int)>;
+// ParticleMassChanged
+using ParticleMassChangedEvent = Event<unsigned int, unsigned int>; // particle index, new mass
+using ParticleMassChangedEventHandler = std::function<void(unsigned int, unsigned int)>;
 
 class SimulationManager
 {
@@ -51,8 +61,11 @@ public:
 
 	static const std::string& GetParticleName(unsigned int type) noexcept { return m_particleNames[type]; }
 	static const std::vector<std::string>& GetParticleNames() noexcept { return m_particleNames; }
+	static const std::vector<IsotopeMassAbundance>& GetIsotopeMassAbundances(unsigned int type) noexcept { return m_isotopeMassAbundanceList[type]; }
 	static constexpr unsigned int GetDefaultMass(unsigned int type) noexcept;
+
 	static void ChangeParticleType(unsigned int particleIndex, unsigned int type) noexcept;
+	static void ChangeParticleMass(unsigned int particleIndex, unsigned int mass) noexcept;
 
 	// Temporary Particle Functions
 	static Particle& GetOrCreateTemporaryParticle(unsigned int type) noexcept;
@@ -75,6 +88,9 @@ public:
 	static EventToken SetParticleTypeChangedEventHandler(ParticleTypeChangedEventHandler handler) noexcept { return e_ParticleTypeChanged.AddHandler(handler); }
 	static bool RemoveParticleTypeChangedEventHandler(EventToken token) noexcept { return e_ParticleTypeChanged.RemoveHandler(token); }
 
+	static EventToken SetParticleMassChangedEventHandler(ParticleMassChangedEventHandler handler) noexcept { return e_ParticleMassChanged.AddHandler(handler); }
+	static bool RemoveParticleMassChangedEventHandler(EventToken token) noexcept { return e_ParticleMassChanged.RemoveHandler(token); }
+
 private:
 	SimulationManager(); // Don't allow construction
 
@@ -82,6 +98,7 @@ private:
 	static std::vector<std::unique_ptr<Simulation>> m_simulations;
 
 	static const std::vector<std::string> m_particleNames;
+	static const std::array<std::vector<IsotopeMassAbundance>, 11> m_isotopeMassAbundanceList;
 
 	// Index for temporary particle that is being added
 	static std::optional<unsigned int> m_temporaryParticleIndex;
@@ -91,7 +108,11 @@ private:
 	static ParticleAddedEvent		e_ParticleAdded;
 	static ParticleRemovedEvent		e_ParticleRemoved;
 	static ParticleTypeChangedEvent	e_ParticleTypeChanged;
+	static ParticleTypeChangedEvent	e_ParticleMassChanged;
 };
+
+
+
 
 // Must be defined in the header file to avoid a compiler warning about
 // "no definition for inline function"
