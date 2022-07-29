@@ -27,7 +27,7 @@ public:
 
 	void Update() noexcept;
 
-	const Particle& AddParticle(int type, int mass, float p_x, float p_y, float p_z, float v_x, float v_y, float v_z) noexcept;
+	Particle& AddParticle(int type, int mass, float p_x, float p_y, float p_z, float v_x, float v_y, float v_z) noexcept;
 	const std::vector<Particle>& GetParticles() const noexcept { return m_particles; }
 	Particle& GetParticle(int index) noexcept { return m_particles[index]; }
 	unsigned int ParticleCount() const noexcept { return static_cast<unsigned int>(m_particles.size()); }
@@ -38,7 +38,7 @@ public:
 	double TotalSeconds() const noexcept { return m_timer->GetTotalSeconds(); }
 
 	bool IsPlaying() const noexcept { return m_isPlaying; }
-	void SwitchPlayPause() noexcept { m_isPlaying = !m_isPlaying; }
+	bool SwitchPlayPause() noexcept { m_isPlaying = !m_isPlaying; return m_isPlaying; }
 
 	DirectX::XMFLOAT3 GetBoxSize() const noexcept;
 	void SetBoxSize(float xyz) noexcept;

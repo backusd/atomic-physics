@@ -18,13 +18,19 @@ UI::UI() noexcept :
 	m_width(0.0f),
 	m_windowOffsetX(0.0f),
 	m_windowOffsetY(0.0f),
-	t_particleAdded(0)
+	m_simulationIsPlaying(false)
 {
 	PROFILE_FUNCTION();
 
+	t_playPause = SimulationManager::SetPlayPauseEventHandler(
+		[this](bool isPlaying) noexcept {
+			this->OnPlayPauseChanged(isPlaying);
+		}
+	);
+
 	t_particleAdded = SimulationManager::SetParticleAddedEventHandler(
-		[this](const Particle& particle, unsigned int particleCount) noexcept {
-			this->OnParticleAdded(particle, particleCount);
+		[this](const Particle& particle, unsigned int particleIndex) noexcept {
+			this->OnParticleAdded(particle, particleIndex);
 		}
 	);
 
@@ -38,18 +44,24 @@ UI::UI() noexcept :
 UI::~UI() noexcept
 {
 	// Remove Event Handlers
+	SimulationManager::RemovePlayPauseEventHandler(t_playPause);
 	SimulationManager::RemoveParticleAddedEventHandler(t_particleAdded);
 	SimulationManager::RemoveParticleRemovedEventHandler(t_particleRemoved);
 }
 
-void UI::OnParticleAdded(const Particle& particle, unsigned int particleCount) noexcept
+void UI::OnPlayPauseChanged(bool isPlaying) noexcept
+{
+	m_simulationIsPlaying = isPlaying;
+}
+
+void UI::OnParticleAdded(const Particle& particle, unsigned int particleIndex) noexcept
 {
 	PROFILE_FUNCTION();
 
 	// Can't use emplace_back because m_particleDetails is ImVector, not std::vector
 	m_particleDetails.push_back(
 		{
-			static_cast<int>(particleCount) - 1,
+			static_cast<int>(particleIndex),
 			SimulationManager::GetParticleName(particle.type).c_str(),
 			particle.mass
 		});
@@ -60,7 +72,7 @@ void UI::OnParticleRemoved(unsigned int particleIndex) noexcept
 	m_particleDetails.erase(m_particleDetails.begin() + particleIndex);
 
 	// Decrement the ID of each particle that came after the one that was removed
-	for (unsigned int iii = particleIndex; iii < m_particleDetails.size(); ++iii)
+	for (int iii = particleIndex; iii < m_particleDetails.size(); ++iii)
 		m_particleDetails[iii].ID -= 1;
 }
 
@@ -285,61 +297,60 @@ void UI::SimulationDetailsWindow(const std::unique_ptr<Renderer>& renderer) noex
 
 	// Add Particle ===========================================================
 
-	static int			newParticleIndex = -1;	// New particle we are trying to add
+//	static int			newParticleIndex = -1;	// New particle we are trying to add
 	static unsigned int particleTypeIndex = 1;	// The type of the new particle to be added
 
 	if (ImGui::TreeNode("Add Particle##Simulation_Details"))
 	{
-		const std::vector<std::string>& particleTypeNames = SimulationManager::GetParticleNames();
-
-		// Create a new particle if we have not already done so
-		if (newParticleIndex == -1)
+		if (m_simulationIsPlaying)
 		{
-			SimulationManager::AddParticle(particleTypeIndex, 1, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f);
-			newParticleIndex = SimulationManager::ParticleCount() - 1;
+			ImGui::TextWrapped("Cannot add a new particle while the simulation is playing.");
 		}
-
-		Particle& particle = SimulationManager::GetParticle(newParticleIndex);
-
-		// Particle Type Combo box
-		if (ImGui::BeginCombo("Particle Type##Simulation_Details", particleTypeNames[particleTypeIndex].c_str()))
+		else
 		{
-			for (unsigned int iii = 0; iii < particleTypeNames.size(); ++iii)
-			{
-				const bool is_selected = (particleTypeIndex == iii);
-				if (ImGui::Selectable(particleTypeNames[iii].c_str(), is_selected))
-				{
-					particleTypeIndex = iii;
-				}
+			Particle& particle = SimulationManager::GetOrCreateTemporaryParticle(particleTypeIndex);
+			unsigned int particleIndex = SimulationManager::GetIndexOfTemporaryParticle();
 
-				// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
-				if (is_selected)
-					ImGui::SetItemDefaultFocus();
+			const std::vector<std::string>& particleTypeNames = SimulationManager::GetParticleNames();
+
+			// Particle Type Combo box
+			if (ImGui::BeginCombo("Particle Type##Simulation_Details", particleTypeNames[particleTypeIndex].c_str()))
+			{
+				for (unsigned int iii = 0; iii < particleTypeNames.size(); ++iii)
+				{
+					const bool is_selected = (particleTypeIndex == iii);
+					if (ImGui::Selectable(particleTypeNames[iii].c_str(), is_selected))
+					{
+						particleTypeIndex = iii;
+						
+						// Update the particles table
+						m_particleDetails[particleIndex].Name = SimulationManager::GetParticleName(particleTypeIndex).c_str();
+						m_particleDetails[particleIndex].Mass = SimulationManager::GetDefaultMass(particleTypeIndex);
+					}
+
+					// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+					if (is_selected) ImGui::SetItemDefaultFocus();
+				}
+				ImGui::EndCombo();
 			}
 
-			ImGui::EndCombo();
+			// Position
+			float positionMax = renderer->GetBox()->GetBoxSize().x / 2.0f;
+			float positionDragSpeed = 0.01f;
+			ImGui::DragFloat3("Position##Simulation_Details", (float*)(&particle.p_x), positionDragSpeed, -positionMax, positionMax);
+
+			// Velocity
+			float velocityMax = 25.0f;
+			float velocityDragSpeed = 0.1f;
+			ImGui::DragFloat3("Velocity##Simulation_Details", (float*)(&particle.v_x), velocityDragSpeed, -velocityMax, velocityMax);
+
 		}
-
-		// Position
-		float positionMax = renderer->GetBox()->GetBoxSize().x / 2.0f;
-		float positionDragSpeed = 0.1f;
-		ImGui::DragFloat3("Position##Simulation_Details", (float*)(&particle.p_x), positionDragSpeed, -positionMax, positionMax);
-
-		// Velocity
-		float velocityMax = 25.0f;
-		float velocityDragSpeed = 0.1f;
-		ImGui::DragFloat3("Velocity##Simulation_Details", (float*)(&particle.v_x), velocityDragSpeed, -velocityMax, velocityMax);
-
 
 		ImGui::TreePop();
 	}
 	else
 	{
-		if (newParticleIndex != -1)
-		{
-			SimulationManager::RemoveParticle(newParticleIndex);
-			newParticleIndex = -1;
-		}
+		SimulationManager::DeleteTemporaryParticle();
 	}
 
 	// Atoms Table ===========================================================

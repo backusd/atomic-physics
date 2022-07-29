@@ -3,6 +3,7 @@
 #include "Box.h"
 #include "DeviceResources.h"
 #include "Drawable.h"
+#include "Event.h"
 #include "EyePositionBufferArray.h"
 #include "Keyboard.h"
 #include "Lighting.h"
@@ -21,6 +22,7 @@ public:
 	Renderer(D3D11_VIEWPORT vp) noexcept;
 	Renderer(const Renderer&) = delete;
 	void operator=(const Renderer&) = delete;
+	~Renderer() noexcept;
 
 	void Update() noexcept;
 	void Render() noexcept;
@@ -75,6 +77,8 @@ private:
 	void UpdateAllSphereModelViewProjectionInstanceData() const noexcept;
 	void UpdateAllSphereMaterialIndexInstanceData() const noexcept;
 
+	void OnParticleTypeChanged(unsigned int particleIndex, unsigned int particleType) noexcept;
+
 	D3D11_VIEWPORT m_viewport;
 	std::shared_ptr<MoveLookController> m_moveLookController;
 	std::vector<std::unique_ptr<Drawable>> m_drawables;
@@ -106,4 +110,6 @@ private:
 	std::unique_ptr<ConstantBufferArray> m_lighting_ModelViewProjectionBuffer;
 	std::unique_ptr<ConstantBufferArray> m_lighting_MaterialIndexBuffer;
 
+	// Event Tokens
+	EventToken t_particleTypeChanged;
 };

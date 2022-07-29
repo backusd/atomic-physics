@@ -31,6 +31,19 @@ Renderer::Renderer(D3D11_VIEWPORT vp) noexcept :
 
 	// Initialize data that will be used when render lights in the scene
 	InitializeLightingData();
+
+	// Assign event handlers
+	t_particleTypeChanged = SimulationManager::SetParticleTypeChangedEventHandler(
+		[this](unsigned int particleIndex, unsigned int particleType) noexcept {
+			this->OnParticleTypeChanged(particleIndex, particleType);
+		}
+	);
+}
+
+Renderer::~Renderer() noexcept
+{
+	// Remove Event Handlers
+	SimulationManager::RemoveParticleTypeChangedEventHandler(t_particleTypeChanged);
 }
 
 void Renderer::InitializeAllSphereData() noexcept
@@ -95,6 +108,12 @@ void Renderer::SetViewport(D3D11_VIEWPORT viewport) noexcept
 
 		m_moveLookController->CreateProjectionMatrix(m_viewport);
 	}	 
+}
+
+void Renderer::OnParticleTypeChanged(unsigned int particleIndex, unsigned int particleType) noexcept
+{
+	Sphere* s = dynamic_cast<Sphere*>(m_drawables[particleIndex].get());
+	s->SetAtomType(particleType);
 }
 
 void Renderer::Update() noexcept

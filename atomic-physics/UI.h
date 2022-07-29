@@ -80,6 +80,7 @@ public:
 	D3D11_VIEWPORT GetViewport() const noexcept { return m_viewport; }
 
 private:
+    void OnPlayPauseChanged(bool isPlaying) noexcept;
     void OnParticleAdded(const Particle& particle, unsigned int particleCount) noexcept;
     void OnParticleRemoved(unsigned int particleIndex) noexcept;
 
@@ -106,7 +107,10 @@ private:
     ImVector<ParticleDetails>   m_particleDetails;
     ImVector<int>               m_selectedParticles;
 
+    bool m_simulationIsPlaying;
+
     // Event Tokens
+    EventToken t_playPause;
     EventToken t_particleAdded;
     EventToken t_particleRemoved;
 };

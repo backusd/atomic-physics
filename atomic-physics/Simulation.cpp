@@ -51,7 +51,7 @@ void Simulation::Update() noexcept
 	);
 }
 
-const Particle& Simulation::AddParticle(int type, int mass, float p_x, float p_y, float p_z, float v_x, float v_y, float v_z) noexcept
+Particle& Simulation::AddParticle(int type, int mass, float p_x, float p_y, float p_z, float v_x, float v_y, float v_z) noexcept
 {
 	PROFILE_FUNCTION();
 
