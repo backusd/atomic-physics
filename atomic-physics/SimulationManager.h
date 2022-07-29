@@ -52,11 +52,13 @@ public:
 	static const std::string& GetParticleName(unsigned int type) noexcept { return m_particleNames[type]; }
 	static const std::vector<std::string>& GetParticleNames() noexcept { return m_particleNames; }
 	static constexpr unsigned int GetDefaultMass(unsigned int type) noexcept;
+	static void ChangeParticleType(unsigned int particleIndex, unsigned int type) noexcept;
 
 	// Temporary Particle Functions
-	static Particle& GetOrCreateTemporaryParticle(int type) noexcept;
+	static Particle& GetOrCreateTemporaryParticle(unsigned int type) noexcept;
 	static unsigned int GetIndexOfTemporaryParticle() noexcept { return m_temporaryParticleIndex.value(); }
 	static void DeleteTemporaryParticle() noexcept;
+	static void PublishTemporaryParticle() noexcept;
 
 
 

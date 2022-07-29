@@ -53,24 +53,27 @@ void SimulationManager::RemoveParticle(unsigned int index) noexcept
 	e_ParticleRemoved(index);
 }
 
+void SimulationManager::ChangeParticleType(unsigned int particleIndex, unsigned int type) noexcept
+{
+	Particle& p = m_simulations[m_activeSimulationIndex]->GetParticle(particleIndex);
+	if (p.type != type)
+	{
+		p.type = type;
+
+		// Trigger particle type changed event
+		// Params: particle index, new particle type
+		e_ParticleTypeChanged(particleIndex, type);
+	}
+}
 
 
 
-Particle& SimulationManager::GetOrCreateTemporaryParticle(int type) noexcept
+Particle& SimulationManager::GetOrCreateTemporaryParticle(unsigned int type) noexcept
 {
 	if (m_temporaryParticleIndex.has_value())
 	{
-		Particle& p = m_simulations[m_activeSimulationIndex]->GetParticle(m_temporaryParticleIndex.value());
-
-		if (p.type != type)
-		{
-			p.type = type;
-
-			// Trigger particle type changed event
-			// Params: particle index, new particle type
-			e_ParticleTypeChanged(m_temporaryParticleIndex.value(), type);
-		}
-		return p;
+		ChangeParticleType(m_temporaryParticleIndex.value(), type);
+		return m_simulations[m_activeSimulationIndex]->GetParticle(m_temporaryParticleIndex.value());
 	}
 	
 	AddParticle(type, GetDefaultMass(type), 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
@@ -87,3 +90,8 @@ void SimulationManager::DeleteTemporaryParticle() noexcept
 	}
 }
 
+void SimulationManager::PublishTemporaryParticle() noexcept
+{
+	// The particle already exists in the simulation - simply make the temporaryindex nullopt
+	m_temporaryParticleIndex = std::nullopt;
+}

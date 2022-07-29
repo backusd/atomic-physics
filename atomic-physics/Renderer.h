@@ -77,6 +77,8 @@ private:
 	void UpdateAllSphereModelViewProjectionInstanceData() const noexcept;
 	void UpdateAllSphereMaterialIndexInstanceData() const noexcept;
 
+	void OnParticleAdded(const Particle& particle, unsigned int particleCount) noexcept;
+	void OnParticleRemoved(unsigned int particleIndex) noexcept;
 	void OnParticleTypeChanged(unsigned int particleIndex, unsigned int particleType) noexcept;
 
 	D3D11_VIEWPORT m_viewport;
@@ -111,5 +113,7 @@ private:
 	std::unique_ptr<ConstantBufferArray> m_lighting_MaterialIndexBuffer;
 
 	// Event Tokens
+	EventToken t_particleAdded;
+	EventToken t_particleRemoved;
 	EventToken t_particleTypeChanged;
 };

@@ -35,23 +35,25 @@ App::App() noexcept
 	// Initialize the Simulation Manager
 	SimulationManager::Initialize();
 
-	SimulationManager::AddParticle(1, 1, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f);
-	SimulationManager::AddParticle(2, 4, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
-	SimulationManager::AddParticle(3, 6, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f);
-	SimulationManager::AddParticle(4, 8, 0.0f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f);
-	SimulationManager::AddParticle(5, 10, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f);
-	SimulationManager::AddParticle(6, 12, 0.0f, 0.0f, 0.0f, -1.0f, -1.0f, 0.0f);
-	SimulationManager::AddParticle(7, 14, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f);
-	SimulationManager::AddParticle(8, 16, 0.0f, 0.0f, 0.0f, 1.0f, -1.0f, 0.0f);
-	SimulationManager::AddParticle(9, 18, 0.0f, 0.0f, 0.0f, 1.0f, 2.0f, 0.0f);
-	SimulationManager::AddParticle(10, 20, 0.0f, 0.0f, 0.0f, -1.0f, 2.0f, 10.0f);
-
 	// The content within AppWindow does NOT get created in the AppWindow constructor. This is to
 	// allow the AppWindowTemplate the ability to create itself and give us a window, however,
 	// the window contents need access to DeviceResources, so you MUST initialize DeviceResources 
 	// in between constructing AppWindow and calling AppWindow->Initialize(). The same holds true
 	// for initializing ImGui as well
 	m_window->Initialize();
+
+	// Even though adding atoms here is temporary, it MUST be done AFTER window initialization because
+	// Initialize() will create the Renderer which will create a ParticleAdded event handler
+	SimulationManager::AddParticle(1, SimulationManager::GetDefaultMass(1), 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f);
+	SimulationManager::AddParticle(2, SimulationManager::GetDefaultMass(2), 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+	SimulationManager::AddParticle(3, SimulationManager::GetDefaultMass(3), 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f);
+	SimulationManager::AddParticle(4, SimulationManager::GetDefaultMass(4), 0.0f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f);
+	SimulationManager::AddParticle(5, SimulationManager::GetDefaultMass(5), 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f);
+	SimulationManager::AddParticle(6, SimulationManager::GetDefaultMass(6), 0.0f, 0.0f, 0.0f, -1.0f, -1.0f, 0.0f);
+	SimulationManager::AddParticle(7, SimulationManager::GetDefaultMass(7), 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f);
+	SimulationManager::AddParticle(8, SimulationManager::GetDefaultMass(8), 0.0f, 0.0f, 0.0f, 1.0f, -1.0f, 0.0f);
+	SimulationManager::AddParticle(9, SimulationManager::GetDefaultMass(9), 0.0f, 0.0f, 0.0f, 1.0f, 2.0f, 0.0f);
+	SimulationManager::AddParticle(10, SimulationManager::GetDefaultMass(10), 0.0f, 0.0f, 0.0f, -1.0f, 2.0f, 10.0f);
 
 	PROFILE_END_SESSION();
 }

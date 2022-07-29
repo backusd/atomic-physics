@@ -242,7 +242,10 @@ void UI::SimulationDetailsWindow(const std::unique_ptr<Renderer>& renderer) noex
 			SimulationManager::SwitchPlayPause();
 	}
 
-	// Box size slider
+	ImGui::Separator();
+
+	// Box size slider ================================================================
+
 	static float boxSize = SimulationManager::GetBoxSize().x * 2;
 	static XMFLOAT3 boxSize3 = { SimulationManager::GetBoxSize().x * 2, SimulationManager::GetBoxSize().y * 2, SimulationManager::GetBoxSize().z * 2 };
 	static bool uniformBox = true;
@@ -295,9 +298,10 @@ void UI::SimulationDetailsWindow(const std::unique_ptr<Renderer>& renderer) noex
 		ImGui::TreePop();
 	}
 
+	ImGui::Separator();
+
 	// Add Particle ===========================================================
 
-//	static int			newParticleIndex = -1;	// New particle we are trying to add
 	static unsigned int particleTypeIndex = 1;	// The type of the new particle to be added
 
 	if (ImGui::TreeNode("Add Particle##Simulation_Details"))
@@ -314,7 +318,7 @@ void UI::SimulationDetailsWindow(const std::unique_ptr<Renderer>& renderer) noex
 			const std::vector<std::string>& particleTypeNames = SimulationManager::GetParticleNames();
 
 			// Particle Type Combo box
-			if (ImGui::BeginCombo("Particle Type##Simulation_Details", particleTypeNames[particleTypeIndex].c_str()))
+			if (ImGui::BeginCombo("Particle Type##Add_Particle-Simulation_Details", particleTypeNames[particleTypeIndex].c_str()))
 			{
 				for (unsigned int iii = 0; iii < particleTypeNames.size(); ++iii)
 				{
@@ -337,13 +341,18 @@ void UI::SimulationDetailsWindow(const std::unique_ptr<Renderer>& renderer) noex
 			// Position
 			float positionMax = renderer->GetBox()->GetBoxSize().x / 2.0f;
 			float positionDragSpeed = 0.01f;
-			ImGui::DragFloat3("Position##Simulation_Details", (float*)(&particle.p_x), positionDragSpeed, -positionMax, positionMax);
+			ImGui::DragFloat3("Position##Temporary_Particle-Simulation_Details", (float*)(&particle.p_x), positionDragSpeed, -positionMax, positionMax);
 
 			// Velocity
 			float velocityMax = 25.0f;
 			float velocityDragSpeed = 0.1f;
-			ImGui::DragFloat3("Velocity##Simulation_Details", (float*)(&particle.v_x), velocityDragSpeed, -velocityMax, velocityMax);
+			ImGui::DragFloat3("Velocity##Temporary_Particle-Simulation_Details", (float*)(&particle.v_x), velocityDragSpeed, -velocityMax, velocityMax);
 
+			// Save Button
+			if (ImGui::Button("Save New Particle"))
+			{
+				SimulationManager::PublishTemporaryParticle();
+			}
 		}
 
 		ImGui::TreePop();
@@ -353,7 +362,9 @@ void UI::SimulationDetailsWindow(const std::unique_ptr<Renderer>& renderer) noex
 		SimulationManager::DeleteTemporaryParticle();
 	}
 
-	// Atoms Table ===========================================================
+	ImGui::Separator();
+
+	// Particles Table ===========================================================
 
 	ImGuiTableFlags flags =
 		ImGuiTableFlags_Resizable | 
@@ -464,6 +475,69 @@ void UI::SimulationDetailsWindow(const std::unique_ptr<Renderer>& renderer) noex
 
 		ImGui::EndTable();
 	}
+
+	// Selected Particles Edit Controls ======================================
+
+	ImGuiWindowFlags window_flags = ImGuiWindowFlags_None;
+	ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5.0f);
+	ImGui::BeginChild("SelectedParticleChildControl", ImVec2(0, 100), true, window_flags);
+
+	if (m_selectedParticles.Size == 1)
+	{
+		int particleIndex = m_selectedParticles[0];
+
+		Particle& selectedParticle = SimulationManager::GetParticle(particleIndex);
+		const std::vector<std::string>& particleTypeNames = SimulationManager::GetParticleNames();
+
+		// Title
+		ImGui::Text(std::format("Selected: {}    ID: {}", particleTypeNames[selectedParticle.type], particleIndex).c_str());
+
+		// Particle Type Combo box
+		if (ImGui::BeginCombo("Particle Type##Selected_Particle-Simulation_Details", particleTypeNames[selectedParticle.type].c_str()))
+		{
+			for (unsigned int iii = 0; iii < particleTypeNames.size(); ++iii)
+			{
+				const bool is_selected = (selectedParticle.type == iii);
+				if (ImGui::Selectable(particleTypeNames[iii].c_str(), is_selected))
+				{
+					int jjj = selectedParticle.type;
+					SimulationManager::ChangeParticleType(particleIndex, iii);
+					jjj = selectedParticle.type;
+
+					// Update the particles table
+					m_particleDetails[particleIndex].Name = SimulationManager::GetParticleName(selectedParticle.type).c_str();
+					m_particleDetails[particleIndex].Mass = SimulationManager::GetDefaultMass(selectedParticle.type);
+				}
+
+				// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+				if (is_selected) ImGui::SetItemDefaultFocus();
+			}
+			ImGui::EndCombo();
+		}
+
+		// Position
+		float positionMax = renderer->GetBox()->GetBoxSize().x / 2.0f;
+		float positionDragSpeed = 0.01f;
+		ImGui::DragFloat3("Position##Selected_Particle-Simulation_Details", (float*)(&selectedParticle.p_x), positionDragSpeed, -positionMax, positionMax);
+
+		// Velocity
+		float velocityMax = 25.0f;
+		float velocityDragSpeed = 0.1f;
+		ImGui::DragFloat3("Velocity##Selected_Particle-Simulation_Details", (float*)(&selectedParticle.v_x), velocityDragSpeed, -velocityMax, velocityMax);
+	
+
+	}
+	else if (m_selectedParticles.Size > 1)
+	{
+		ImGui::Text("Not currently handling multiple selections");
+	}
+	else
+	{
+		ImGui::Text("No Particles Selected");
+	}
+
+	ImGui::EndChild();
+	ImGui::PopStyleVar();
 
 
 	// ============================================================

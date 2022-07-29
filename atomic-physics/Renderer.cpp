@@ -33,6 +33,18 @@ Renderer::Renderer(D3D11_VIEWPORT vp) noexcept :
 	InitializeLightingData();
 
 	// Assign event handlers
+	t_particleAdded = SimulationManager::SetParticleAddedEventHandler(
+		[this](const Particle& particle, unsigned int particleIndex) noexcept {
+			this->OnParticleAdded(particle, particleIndex);
+		}
+	);
+
+	t_particleRemoved = SimulationManager::SetParticleRemovedEventHandler(
+		[this](unsigned int particleIndex) noexcept {
+			this->OnParticleRemoved(particleIndex);
+		}
+	);
+
 	t_particleTypeChanged = SimulationManager::SetParticleTypeChangedEventHandler(
 		[this](unsigned int particleIndex, unsigned int particleType) noexcept {
 			this->OnParticleTypeChanged(particleIndex, particleType);
@@ -43,6 +55,8 @@ Renderer::Renderer(D3D11_VIEWPORT vp) noexcept :
 Renderer::~Renderer() noexcept
 {
 	// Remove Event Handlers
+	SimulationManager::RemoveParticleAddedEventHandler(t_particleAdded);
+	SimulationManager::RemoveParticleRemovedEventHandler(t_particleRemoved);
 	SimulationManager::RemoveParticleTypeChangedEventHandler(t_particleTypeChanged);
 }
 
@@ -110,6 +124,21 @@ void Renderer::SetViewport(D3D11_VIEWPORT viewport) noexcept
 	}	 
 }
 
+void Renderer::OnParticleAdded(const Particle& particle, unsigned int /* particleIndex */) noexcept
+{
+	std::unique_ptr<Sphere> sphere = std::make_unique<Sphere>(m_moveLookController);
+	sphere->Position(particle.p_x, particle.p_y, particle.p_z);
+	sphere->Velocity(particle.v_x, particle.v_y, particle.v_z);
+	sphere->SetAtomType(particle.type);
+
+	m_drawables.push_back(std::move(sphere));
+}
+
+void Renderer::OnParticleRemoved(unsigned int particleIndex) noexcept
+{
+	m_drawables.erase(m_drawables.begin() + particleIndex);
+}
+
 void Renderer::OnParticleTypeChanged(unsigned int particleIndex, unsigned int particleType) noexcept
 {
 	Sphere* s = dynamic_cast<Sphere*>(m_drawables[particleIndex].get());
@@ -120,37 +149,13 @@ void Renderer::Update() noexcept
 {
 	PROFILE_FUNCTION();
 
+	// Update all particle's positions/velocities
 	const std::vector<Particle>& particles = SimulationManager::GetParticles();
-	std::unique_ptr<Sphere> sphere;
-
-	if (particles.size() != m_drawables.size())
+	size_t size = particles.size();
+	for (unsigned int iii = 0; iii < size; ++iii)
 	{
-		PROFILE_SCOPE("Renderer Update - Resize");
-
-		m_drawables.clear();
-		m_drawables.reserve(particles.size());
-
-		size_t size = particles.size();
-		for (unsigned int iii = 0; iii < size; ++iii)
-		{
-			sphere = std::make_unique<Sphere>(m_moveLookController);
-			sphere->Position(particles[iii].p_x, particles[iii].p_y, particles[iii].p_z);
-			sphere->Velocity(particles[iii].v_x, particles[iii].v_y, particles[iii].v_z);
-			sphere->SetAtomType(particles[iii].type);
-
-			m_drawables.push_back(std::move(sphere));
-		}
-	}
-	else
-	{
-		PROFILE_SCOPE("Renderer Update - NO Resize");
-
-		size_t size = particles.size();
-		for (unsigned int iii = 0; iii < size; ++iii)
-		{
-			m_drawables[iii]->Position(particles[iii].p_x, particles[iii].p_y, particles[iii].p_z);
-			m_drawables[iii]->Velocity(particles[iii].v_x, particles[iii].v_y, particles[iii].v_z);
-		}
+		m_drawables[iii]->Position(particles[iii].p_x, particles[iii].p_y, particles[iii].p_z);
+		m_drawables[iii]->Velocity(particles[iii].v_x, particles[iii].v_y, particles[iii].v_z);
 	}
 
 	// I don't think this does anything right now...
