@@ -22,6 +22,9 @@ UI::UI() noexcept :
 {
 	PROFILE_FUNCTION();
 
+	// For generating random particles, set all types as unselected to start
+	ClearRandomTypeSelection();
+
 	t_playPause = SimulationManager::SetPlayPauseEventHandler(
 		[this](bool isPlaying) noexcept {
 			this->OnPlayPauseChanged(isPlaying);
@@ -47,6 +50,19 @@ UI::~UI() noexcept
 	SimulationManager::RemovePlayPauseEventHandler(t_playPause);
 	SimulationManager::RemoveParticleAddedEventHandler(t_particleAdded);
 	SimulationManager::RemoveParticleRemovedEventHandler(t_particleRemoved);
+}
+
+void UI::ClearRandomTypeSelection() noexcept
+{
+	m_selectedTypes.clear();
+	m_unselectedTypes.clear();
+
+	size_t size = SimulationManager::GetParticleNames().size();
+	m_selectedTypes.resize(size);
+	m_unselectedTypes.resize(size);
+	
+	std::fill(m_selectedTypes.begin(), m_selectedTypes.end(), false);
+	std::fill(m_unselectedTypes.begin(), m_unselectedTypes.end(), true);
 }
 
 void UI::OnPlayPauseChanged(bool isPlaying) noexcept
@@ -315,43 +331,121 @@ void UI::SimulationDetailsWindow(const std::unique_ptr<Renderer>& renderer) noex
 			Particle& particle = SimulationManager::GetOrCreateTemporaryParticle(particleTypeIndex);
 			unsigned int particleIndex = SimulationManager::GetIndexOfTemporaryParticle();
 
-			const std::vector<std::string>& particleTypeNames = SimulationManager::GetParticleNames();
-
-			// Particle Type Combo box
-			if (ImGui::BeginCombo("Particle Type##Add_Particle-Simulation_Details", particleTypeNames[particleTypeIndex].c_str()))
+			// Use Random? checkbox
+			static bool randomize = false;
+			if (ImGui::Checkbox("Randomize##Add_Particle-Simulation_Details", &randomize))
 			{
-				for (unsigned int iii = 0; iii < particleTypeNames.size(); ++iii)
-				{
-					const bool is_selected = (particleTypeIndex == iii);
-					if (ImGui::Selectable(particleTypeNames[iii].c_str(), is_selected))
-					{
-						particleTypeIndex = iii;
-						
-						// Update the particles table
-						m_particleDetails[particleIndex].Name = SimulationManager::GetParticleName(particleTypeIndex).c_str();
-						m_particleDetails[particleIndex].Mass = SimulationManager::GetDefaultMass(particleTypeIndex);
-					}
-
-					// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
-					if (is_selected) ImGui::SetItemDefaultFocus();
-				}
-				ImGui::EndCombo();
+				// If we are randomizing new atoms, we don't want the temporary particle around
+				if (randomize)
+					SimulationManager::DeleteTemporaryParticle();
 			}
 
-			// Position
-			float positionMax = renderer->GetBox()->GetBoxSize().x / 2.0f;
-			float positionDragSpeed = 0.01f;
-			ImGui::DragFloat3("Position##Temporary_Particle-Simulation_Details", (float*)(&particle.p_x), positionDragSpeed, -positionMax, positionMax);
+			const std::vector<std::string>& particleTypeNames = SimulationManager::GetParticleNames();
 
-			// Velocity
-			float velocityMax = 25.0f;
-			float velocityDragSpeed = 0.1f;
-			ImGui::DragFloat3("Velocity##Temporary_Particle-Simulation_Details", (float*)(&particle.v_x), velocityDragSpeed, -velocityMax, velocityMax);
-
-			// Save Button
-			if (ImGui::Button("Save New Particle"))
+			if (randomize)
 			{
-				SimulationManager::PublishTemporaryParticle();
+				static int unselectedListClickedIndex = 0;
+				static int selectedListClickedIndex = 0;
+
+				ImGui::Text("Unselected:            Selected:");
+
+				ImGui::PushItemWidth(120);
+
+				if (ImGui::BeginListBox("##Unselected_Types-Add_Particle-Simulation_Details"))
+				{
+					for (unsigned int iii = 0; iii < m_unselectedTypes.size(); ++iii)
+					{
+						// Only add the entry if the vector of bools has the value 'true' for this index
+						if (m_unselectedTypes[iii])
+						{
+							const bool is_selected = (unselectedListClickedIndex == iii);
+							if (ImGui::Selectable(particleTypeNames[iii].c_str(), is_selected))
+								unselectedListClickedIndex = iii;
+
+							// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+							if (is_selected)
+								ImGui::SetItemDefaultFocus();
+						}
+					}
+					ImGui::EndListBox();
+				}
+
+				ImGui::SameLine();
+
+				ImGui::BeginGroup();
+				if (ImGui::Button("->##Simulation_Details"))
+				{
+					m_unselectedTypes[unselectedListClickedIndex] = false;
+					m_selectedTypes[unselectedListClickedIndex] = true;
+				}
+				if (ImGui::Button("<-##Simulation_Details"))
+				{
+					m_unselectedTypes[selectedListClickedIndex] = true;
+					m_selectedTypes[selectedListClickedIndex] = false;
+				}
+				ImGui::EndGroup();
+
+				ImGui::SameLine();
+
+				if (ImGui::BeginListBox("##Selected_Types-Add_Particle-Simulation_Details"))
+				{
+					for (unsigned int iii = 0; iii < m_selectedTypes.size(); ++iii)
+					{
+						// Only add the entry if the vector of bools has the value 'true' for this index
+						if (m_selectedTypes[iii])
+						{
+							const bool is_selected = (selectedListClickedIndex == iii);
+							if (ImGui::Selectable(particleTypeNames[iii].c_str(), is_selected))
+								selectedListClickedIndex = iii;
+
+							// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+							if (is_selected)
+								ImGui::SetItemDefaultFocus();
+						}
+					}
+					ImGui::EndListBox();
+				}
+
+				ImGui::PopItemWidth();
+			}
+			else
+			{
+				// Particle Type Combo box
+				if (ImGui::BeginCombo("Particle Type##Add_Particle-Simulation_Details", particleTypeNames[particleTypeIndex].c_str()))
+				{
+					for (unsigned int iii = 0; iii < particleTypeNames.size(); ++iii)
+					{
+						const bool is_selected = (particleTypeIndex == iii);
+						if (ImGui::Selectable(particleTypeNames[iii].c_str(), is_selected))
+						{
+							particleTypeIndex = iii;
+
+							// Update the particles table
+							m_particleDetails[particleIndex].Name = SimulationManager::GetParticleName(particleTypeIndex).c_str();
+							m_particleDetails[particleIndex].Mass = SimulationManager::GetDefaultMass(particleTypeIndex);
+						}
+
+						// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+						if (is_selected) ImGui::SetItemDefaultFocus();
+					}
+					ImGui::EndCombo();
+				}
+
+				// Position
+				float positionMax = renderer->GetBox()->GetBoxSize().x / 2.0f;
+				float positionDragSpeed = 0.01f;
+				ImGui::DragFloat3("Position##Temporary_Particle-Simulation_Details", (float*)(&particle.p_x), positionDragSpeed, -positionMax, positionMax);
+
+				// Velocity
+				float velocityMax = 25.0f;
+				float velocityDragSpeed = 0.1f;
+				ImGui::DragFloat3("Velocity##Temporary_Particle-Simulation_Details", (float*)(&particle.v_x), velocityDragSpeed, -velocityMax, velocityMax);
+
+				// Save Button
+				if (ImGui::Button("Save New Particle"))
+				{
+					SimulationManager::PublishTemporaryParticle();
+				}
 			}
 		}
 

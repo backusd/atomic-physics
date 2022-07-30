@@ -97,6 +97,8 @@ private:
 	void SceneEditWindow(const std::unique_ptr<Renderer>& renderer) noexcept;
 	void SceneLighting(const std::unique_ptr<Renderer>& renderer) noexcept;
 
+    void ClearRandomTypeSelection() noexcept;
+
 	ImGuiIO& m_io;
 	D3D11_VIEWPORT m_viewport;
 
@@ -106,6 +108,10 @@ private:
 
     ImVector<ParticleDetails>   m_particleDetails;
     ImVector<int>               m_selectedParticles;
+
+    // For generating random particles
+    std::vector<bool>   m_unselectedTypes;
+    std::vector<bool>   m_selectedTypes;
 
     bool m_simulationIsPlaying;
 
