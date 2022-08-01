@@ -335,16 +335,13 @@ void UI::SimulationDetailsWindow(const std::unique_ptr<Renderer>& renderer) noex
 				// Before deleting temporary particles, it is possible that the user has clicked on a 
 				// temporary particle in the table and is therefore referenced in m_selectedParticles.
 				// Therefore, first determine if this is the case and if so, just clear out all selected particles
-				if (SimulationManager::TemporaryParticlesExist())
+				for (int iii = 0; iii < m_selectedParticles.Size; ++iii)
 				{
-					unsigned int firstTempIndex = SimulationManager::GetIndexOfFirstTemporaryParticle();
-					for (unsigned int iii = 0; iii < m_selectedParticles.Size; ++iii)
+					if (SimulationManager::IsParticleTemporary(m_selectedParticles[iii]))
 					{
-						if (m_selectedParticles[iii] >= firstTempIndex)
-						{
-							m_selectedParticles.clear();
-							break;
-						}
+						// easiest to just clear out all selections if one is a temporary
+						m_selectedParticles.clear();
+						break;
 					}
 				}
 
@@ -780,7 +777,59 @@ void UI::SimulationDetailsWindow(const std::unique_ptr<Renderer>& renderer) noex
 	}
 	else if (m_selectedParticles.Size > 1)
 	{
-		ImGui::Text("Not currently handling multiple selections");
+		bool temporaryIsSelected = false;
+		for (int iii = 0; iii < m_selectedParticles.Size; ++iii)
+		{
+			if (SimulationManager::IsParticleTemporary(m_selectedParticles[iii]))
+			{
+				temporaryIsSelected = true;
+				break;
+			}
+		}
+
+
+		if (temporaryIsSelected)
+		{
+			ImGui::TextWrapped("One of the particles you've selected is a temporary, which cannot be edited here.");
+		}
+		else
+		{
+			// Delete Particle Modal Popup
+			if (ImGui::Button("Delete Particles##Selected_Particle-Simulation_Details"))
+				ImGui::OpenPopup("Delete Multiple Particles?##Selected_Particle-Simulation_Detail");
+
+			// Always center this window when appearing
+			ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+			ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+
+			if (ImGui::BeginPopupModal("Delete Multiple Particles?##Selected_Particle-Simulation_Detail", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+			{
+				ImGui::Text("Are you sure you want to delete multiple particles?\nThis operation cannot be undone!\n\n");
+				ImGui::Separator();
+
+
+				if (ImGui::Button("Delete##Selected_Particle-Simulation_Detail", ImVec2(120, 0)))
+				{
+					std::vector<unsigned int> selectedParticles;
+					selectedParticles.reserve(m_selectedParticles.Size);
+					for (unsigned int iii = 0; iii < m_selectedParticles.Size; ++iii)
+						selectedParticles.push_back(m_selectedParticles[iii]);
+
+					SimulationManager::RemoveParticles(selectedParticles);
+
+					m_selectedParticles.clear();
+
+					ImGui::CloseCurrentPopup();
+				}
+				ImGui::SetItemDefaultFocus();
+				ImGui::SameLine();
+				if (ImGui::Button("Cancel##Selected_Particle-Simulation_Detail", ImVec2(120, 0)))
+				{
+					ImGui::CloseCurrentPopup();
+				}
+				ImGui::EndPopup();
+			}
+		}
 	}
 	else
 	{

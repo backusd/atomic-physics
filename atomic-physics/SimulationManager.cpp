@@ -1,5 +1,6 @@
 #include "SimulationManager.h"
 
+#include <algorithm>
 #include <random>
 
 const std::vector<std::string> SimulationManager::m_particleNames =
@@ -74,6 +75,14 @@ void SimulationManager::RemoveParticle(unsigned int index) noexcept
 	e_ParticleRemoved(index);
 }
 
+void SimulationManager::RemoveParticles(std::vector<unsigned int>& indices) noexcept
+{
+	// Sort the indices and then remove back to front
+	std::sort(indices.begin(), indices.end());
+	for (int iii = indices.size() - 1; iii >= 0; --iii)
+		RemoveParticle(indices[iii]);
+}
+
 void SimulationManager::ChangeParticleType(unsigned int particleIndex, unsigned int type) noexcept
 {
 	// If the particle type was updated, trigger the event
@@ -112,8 +121,8 @@ void SimulationManager::DeleteTemporaryParticles() noexcept
 {
 	if (m_firstTemporaryParticleIndex.has_value())
 	{
-		unsigned int value = m_firstTemporaryParticleIndex.value();
-		for (unsigned int iii = m_simulations[m_activeSimulationIndex]->ParticleCount() - 1; iii >= value; --iii)
+		int value = m_firstTemporaryParticleIndex.value();
+		for (int iii = m_simulations[m_activeSimulationIndex]->ParticleCount() - 1; iii >= value; --iii)
 			RemoveParticle(iii);
 
 		m_firstTemporaryParticleIndex = std::nullopt;

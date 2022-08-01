@@ -43,6 +43,7 @@ public:
 
 	static Particle& AddParticle(int type, int mass, float p_x, float p_y, float p_z, float v_x, float v_y, float v_z) noexcept;
 	static void RemoveParticle(unsigned int index) noexcept;
+	static void RemoveParticles(std::vector<unsigned int>& indices) noexcept;
 
 	static const std::vector<Particle>& GetParticles() noexcept { return m_simulations[m_activeSimulationIndex]->GetParticles(); }
 	static Particle& GetParticle(int index) noexcept { return m_simulations[m_activeSimulationIndex]->GetParticle(index); }
