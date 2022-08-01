@@ -628,6 +628,40 @@ void UI::SimulationDetailsWindow(const std::unique_ptr<Renderer>& renderer) noex
 						else
 							m_selectedParticles.push_back(particleDetails->ID);
 					}
+					else if (ImGui::GetIO().KeyShift)
+					{
+						// If any other rows have been selected, then select everything between the most recently selected row and this one
+						if (m_selectedParticles.Size >= 1)
+						{
+							bool addingToSelected = false;
+							int mostRecentID = m_selectedParticles.back();
+
+							for (unsigned int iii = 0; iii < m_particleDetails.Size; ++iii)
+							{
+								if (addingToSelected && !m_selectedParticles.contains(m_particleDetails[iii].ID))
+									m_selectedParticles.push_back(m_particleDetails[iii].ID);
+								
+								if (m_particleDetails[iii].ID == mostRecentID || m_particleDetails[iii].ID == particleDetails->ID)
+								{
+									if (!addingToSelected)
+									{
+										if (!m_selectedParticles.contains(m_particleDetails[iii].ID))
+											m_selectedParticles.push_back(particleDetails->ID);
+										addingToSelected = true;
+									}
+									else
+										break;
+								}
+							}
+						}
+						else
+						{
+							if (item_is_selected)
+								m_selectedParticles.find_erase_unsorted(particleDetails->ID);
+							else
+								m_selectedParticles.push_back(particleDetails->ID);
+						}
+					}
 					else
 					{
 						m_selectedParticles.clear();
