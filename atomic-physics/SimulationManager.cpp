@@ -21,7 +21,7 @@ const std::array<std::vector<IsotopeMassAbundance>, 11> SimulationManager::m_iso
 
 std::vector<std::unique_ptr<Simulation>> SimulationManager::m_simulations;
 unsigned int SimulationManager::m_activeSimulationIndex = 0;
-std::optional<unsigned int> SimulationManager::m_temporaryParticleIndex = std::nullopt;
+std::optional<unsigned int> SimulationManager::m_firstTemporaryParticleIndex = std::nullopt;
 
 PlayPauseEvent				SimulationManager::e_PlayPause;
 ParticleAddedEvent			SimulationManager::e_ParticleAdded;
@@ -44,8 +44,8 @@ void SimulationManager::Update() noexcept
 
 void SimulationManager::SwitchPlayPause() noexcept
 { 
-	// Delete the temporary particle (if there is one)
-	DeleteTemporaryParticle();
+	// Delete any temporary particles (if they exist)
+	DeleteTemporaryParticles();
 
 	// Switch the play/pause state and then trigger the play pause event
 	e_PlayPause(
@@ -65,6 +65,9 @@ Particle& SimulationManager::AddParticle(int type, int mass, float p_x, float p_
 
 void SimulationManager::RemoveParticle(unsigned int index) noexcept
 { 
+	// If you are removing a NON-temporary particle but there are temporary particles, you must decrement the first temp particle index
+	if (!IsParticleTemporary(index) && m_firstTemporaryParticleIndex.has_value()) m_firstTemporaryParticleIndex = m_firstTemporaryParticleIndex.value() - 1;
+
 	m_simulations[m_activeSimulationIndex]->RemoveParticle(index);
 	e_ParticleRemoved(index);
 }
@@ -90,30 +93,41 @@ void SimulationManager::ChangeParticleMass(unsigned int particleIndex, unsigned 
 
 
 
-Particle& SimulationManager::GetOrCreateTemporaryParticle(unsigned int type) noexcept
+Particle& SimulationManager::GetFirstOrCreateTemporaryParticle(unsigned int type) noexcept
 {
-	if (m_temporaryParticleIndex.has_value())
+	if (m_firstTemporaryParticleIndex.has_value())
 	{
-		ChangeParticleType(m_temporaryParticleIndex.value(), type);
-		return m_simulations[m_activeSimulationIndex]->GetParticle(m_temporaryParticleIndex.value());
+		ChangeParticleType(m_firstTemporaryParticleIndex.value(), type);
+		return m_simulations[m_activeSimulationIndex]->GetParticle(m_firstTemporaryParticleIndex.value());
 	}
 	
 	AddParticle(type, GetDefaultMass(type), 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-	m_temporaryParticleIndex = m_simulations[m_activeSimulationIndex]->ParticleCount() - 1;
-	return m_simulations[m_activeSimulationIndex]->GetParticle(m_temporaryParticleIndex.value());
+	m_firstTemporaryParticleIndex = m_simulations[m_activeSimulationIndex]->ParticleCount() - 1;
+	return m_simulations[m_activeSimulationIndex]->GetParticle(m_firstTemporaryParticleIndex.value());
 }
 
-void SimulationManager::DeleteTemporaryParticle() noexcept
+void SimulationManager::DeleteTemporaryParticles() noexcept
 {
-	if (m_temporaryParticleIndex.has_value())
+	if (m_firstTemporaryParticleIndex.has_value())
 	{
-		RemoveParticle(m_temporaryParticleIndex.value());
-		m_temporaryParticleIndex = std::nullopt;
+		for (unsigned int iii = m_firstTemporaryParticleIndex.value(); iii < m_simulations[m_activeSimulationIndex]->ParticleCount(); ++iii)
+			RemoveParticle(iii);
+		m_firstTemporaryParticleIndex = std::nullopt;
 	}
 }
 
-void SimulationManager::PublishTemporaryParticle() noexcept
+void SimulationManager::PublishTemporaryParticles() noexcept
 {
-	// The particle already exists in the simulation - simply make the temporaryindex nullopt
-	m_temporaryParticleIndex = std::nullopt;
+	// The particles already exists in the simulation - simply make the temporaryindex nullopt
+	m_firstTemporaryParticleIndex = std::nullopt;
+}
+
+bool SimulationManager::IsParticleTemporary(unsigned int particleIndex) noexcept
+{
+	return m_firstTemporaryParticleIndex.has_value() && particleIndex >= m_firstTemporaryParticleIndex.value();
+}
+
+void SimulationManager::PlaceRandomParticles(const std::vector<unsigned int>& allowedTypes, unsigned int numberOfParticlesToCreate, float maxVelocity) noexcept
+{
+
 }

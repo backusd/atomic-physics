@@ -68,11 +68,12 @@ public:
 	static void ChangeParticleMass(unsigned int particleIndex, unsigned int mass) noexcept;
 
 	// Temporary Particle Functions
-	static Particle& GetOrCreateTemporaryParticle(unsigned int type) noexcept;
-	static unsigned int GetIndexOfTemporaryParticle() noexcept { return m_temporaryParticleIndex.value(); }
-	static void DeleteTemporaryParticle() noexcept;
-	static void PublishTemporaryParticle() noexcept;
-
+	static Particle& GetFirstOrCreateTemporaryParticle(unsigned int type) noexcept;
+	static unsigned int GetIndexOfFirstTemporaryParticle() noexcept { return m_firstTemporaryParticleIndex.value(); }
+	static void DeleteTemporaryParticles() noexcept;
+	static void PublishTemporaryParticles() noexcept;
+	static bool IsParticleTemporary(unsigned int particleIndex) noexcept;
+	static void PlaceRandomParticles(const std::vector<unsigned int>& allowedTypes, unsigned int numberOfParticlesToCreate, float maxVelocity) noexcept;
 
 
 	// Events
@@ -100,8 +101,11 @@ private:
 	static const std::vector<std::string> m_particleNames;
 	static const std::array<std::vector<IsotopeMassAbundance>, 11> m_isotopeMassAbundanceList;
 
-	// Index for temporary particle that is being added
-	static std::optional<unsigned int> m_temporaryParticleIndex;
+	// Index for temporary particles that are being added
+	// NOTE: All temporary particles reside at the END of the vector or particles,
+	//		 so all we need to do is denote the index of the first temporary and that
+	//       gives us every temporary
+	static std::optional<unsigned int> m_firstTemporaryParticleIndex;
 
 	// Events
 	static PlayPauseEvent			e_PlayPause;
