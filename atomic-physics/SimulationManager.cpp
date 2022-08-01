@@ -1,5 +1,7 @@
 #include "SimulationManager.h"
 
+#include <random>
+
 const std::vector<std::string> SimulationManager::m_particleNames =
 	{ "Electron", "Hydrogen", "Helium", "Lithium", "Beryllium", "Boron", "Carbon",
 	"Nitrogen", "Oxygen", "Flourine", "Neon" };
@@ -129,5 +131,27 @@ bool SimulationManager::IsParticleTemporary(unsigned int particleIndex) noexcept
 
 void SimulationManager::PlaceRandomParticles(const std::vector<unsigned int>& allowedTypes, unsigned int numberOfParticlesToCreate, float maxVelocity) noexcept
 {
+	DirectX::XMFLOAT3 boxMaxXYZ = GetBoxSize();
 
+	// Create distributions on the heap because they take up a lot of stack space and you will get a warning
+	std::default_random_engine engine;
+	auto typeIndexGenerator = std::make_unique<std::uniform_int_distribution<int>>(0, allowedTypes.size() - 1);
+	auto positionGenerator = std::make_unique<std::uniform_real_distribution<float>>(-1.0f, 1.0f);
+	auto velocityGenerator = std::make_unique<std::uniform_real_distribution<float>>(-maxVelocity, maxVelocity);
+
+	for (unsigned int iii = 0; iii < numberOfParticlesToCreate; ++iii)
+	{
+		int typeIndex = (*typeIndexGenerator)(engine);
+		unsigned int mass = GetDefaultMass(allowedTypes[typeIndex]);
+		
+		float p_x = (*positionGenerator)(engine) * boxMaxXYZ.x;
+		float p_y = (*positionGenerator)(engine) * boxMaxXYZ.y;
+		float p_z = (*positionGenerator)(engine) * boxMaxXYZ.z;
+
+		float v_x = (*velocityGenerator)(engine);
+		float v_y = (*velocityGenerator)(engine);
+		float v_z = (*velocityGenerator)(engine);
+
+		AddParticle(allowedTypes[typeIndex], mass, p_x, p_y, p_z, v_x, v_y, v_z);
+	}
 }

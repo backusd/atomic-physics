@@ -1,5 +1,5 @@
 
-#define MAX_INSTANCES 100
+#define MAX_INSTANCES 300
 
 struct ModelViewProjection
 {
