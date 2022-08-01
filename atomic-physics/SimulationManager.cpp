@@ -112,8 +112,10 @@ void SimulationManager::DeleteTemporaryParticles() noexcept
 {
 	if (m_firstTemporaryParticleIndex.has_value())
 	{
-		for (unsigned int iii = m_firstTemporaryParticleIndex.value(); iii < m_simulations[m_activeSimulationIndex]->ParticleCount(); ++iii)
+		unsigned int value = m_firstTemporaryParticleIndex.value();
+		for (unsigned int iii = m_simulations[m_activeSimulationIndex]->ParticleCount() - 1; iii >= value; --iii)
 			RemoveParticle(iii);
+
 		m_firstTemporaryParticleIndex = std::nullopt;
 	}
 }
@@ -131,11 +133,17 @@ bool SimulationManager::IsParticleTemporary(unsigned int particleIndex) noexcept
 
 void SimulationManager::PlaceRandomParticles(const std::vector<unsigned int>& allowedTypes, unsigned int numberOfParticlesToCreate, float maxVelocity) noexcept
 {
+	// If the first temporary particle index already has a value, it will be assumed that it is from creating 
+	// 1+ random particles. Therefore, in this call to add more random particles, we don't want to update it
+	// because that would make the previous random particles permanent
+	if (!m_firstTemporaryParticleIndex.has_value() && numberOfParticlesToCreate > 0)
+		m_firstTemporaryParticleIndex = ParticleCount();
+
 	DirectX::XMFLOAT3 boxMaxXYZ = GetBoxSize();
 
 	// Create distributions on the heap because they take up a lot of stack space and you will get a warning
 	std::default_random_engine engine;
-	auto typeIndexGenerator = std::make_unique<std::uniform_int_distribution<int>>(0, allowedTypes.size() - 1);
+	auto typeIndexGenerator = std::make_unique<std::uniform_int_distribution<unsigned int>>(0, static_cast<unsigned int>(allowedTypes.size() - 1));
 	auto positionGenerator = std::make_unique<std::uniform_real_distribution<float>>(-1.0f, 1.0f);
 	auto velocityGenerator = std::make_unique<std::uniform_real_distribution<float>>(-maxVelocity, maxVelocity);
 

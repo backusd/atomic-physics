@@ -45,6 +45,7 @@ App::App() noexcept
 	// Even though adding atoms here is temporary, it MUST be done AFTER window initialization because
 	// Initialize() will create the Renderer which will create a ParticleAdded event handler
 	SimulationManager::AddParticle(1, SimulationManager::GetDefaultMass(1), 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f);
+	/*
 	SimulationManager::AddParticle(2, SimulationManager::GetDefaultMass(2), 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 	SimulationManager::AddParticle(3, SimulationManager::GetDefaultMass(3), 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f);
 	SimulationManager::AddParticle(4, SimulationManager::GetDefaultMass(4), 0.0f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f);
@@ -54,6 +55,7 @@ App::App() noexcept
 	SimulationManager::AddParticle(8, SimulationManager::GetDefaultMass(8), 0.0f, 0.0f, 0.0f, 1.0f, -1.0f, 0.0f);
 	SimulationManager::AddParticle(9, SimulationManager::GetDefaultMass(9), 0.0f, 0.0f, 0.0f, 1.0f, 2.0f, 0.0f);
 	SimulationManager::AddParticle(10, SimulationManager::GetDefaultMass(10), 0.0f, 0.0f, 0.0f, -1.0f, 2.0f, 10.0f);
+	*/
 
 	PROFILE_END_SESSION();
 }

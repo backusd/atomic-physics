@@ -332,17 +332,33 @@ void UI::SimulationDetailsWindow(const std::unique_ptr<Renderer>& renderer) noex
 			static bool randomize = false;
 			if (ImGui::Checkbox("Randomize##Add_Particle-Simulation_Details", &randomize))
 			{
-				// If we are randomizing new atoms, we don't want the temporary particle around
-				if (randomize)
-					SimulationManager::DeleteTemporaryParticles();
+				// Before deleting temporary particles, it is possible that the user has clicked on a 
+				// temporary particle in the table and is therefore referenced in m_selectedParticles.
+				// Therefore, first determine if this is the case and if so, just clear out all selected particles
+				if (SimulationManager::TemporaryParticlesExist())
+				{
+					unsigned int firstTempIndex = SimulationManager::GetIndexOfFirstTemporaryParticle();
+					for (unsigned int iii = 0; iii < m_selectedParticles.Size; ++iii)
+					{
+						if (m_selectedParticles[iii] >= firstTempIndex)
+						{
+							m_selectedParticles.clear();
+							break;
+						}
+					}
+				}
+
+				// Any time we switch between creating specific particles or creating them randomly
+				// we want to delete any temporary particles that have not been saved
+				SimulationManager::DeleteTemporaryParticles();
 			}
 
 			const std::vector<std::string>& particleTypeNames = SimulationManager::GetParticleNames();
 
 			if (randomize)
 			{
-				static int unselectedListClickedIndex = 0;
-				static int selectedListClickedIndex = 0;
+				static unsigned int unselectedListClickedIndex = 0;
+				static unsigned int selectedListClickedIndex = 0;
 
 				ImGui::Text("Unselected:            Selected:");
 
@@ -461,17 +477,17 @@ void UI::SimulationDetailsWindow(const std::unique_ptr<Renderer>& renderer) noex
 							allowedTypes.push_back(iii);
 
 					SimulationManager::PlaceRandomParticles(allowedTypes, numberOfParticles, maxVelocity);
-
-					// Then need to query Sim Manager to get the data for the particles that were randomly created
-					// so that we can add them to the particles table
-
-
-
-
-
 				}
 
 				if (selectedCount == 0) ImGui::EndDisabled();
+
+				if (SimulationManager::TemporaryParticlesExist())
+				{
+					if (ImGui::Button("Save Random Particles##Simulation_Details"))
+					{
+						SimulationManager::PublishTemporaryParticles();
+					}
+				}
 			}
 			else
 			{

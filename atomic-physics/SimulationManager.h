@@ -70,6 +70,7 @@ public:
 	// Temporary Particle Functions
 	static Particle& GetFirstOrCreateTemporaryParticle(unsigned int type) noexcept;
 	static unsigned int GetIndexOfFirstTemporaryParticle() noexcept { return m_firstTemporaryParticleIndex.value(); }
+	static bool TemporaryParticlesExist() noexcept { return m_firstTemporaryParticleIndex.has_value(); }
 	static void DeleteTemporaryParticles() noexcept;
 	static void PublishTemporaryParticles() noexcept;
 	static bool IsParticleTemporary(unsigned int particleIndex) noexcept;
