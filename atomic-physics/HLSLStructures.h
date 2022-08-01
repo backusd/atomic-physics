@@ -31,7 +31,7 @@ struct ModelViewProjection
     DirectX::XMFLOAT4X4 projection;
 };
 
-constexpr int MAX_INSTANCES = 300;
+constexpr int MAX_INSTANCES = 341;
 
 struct ModelViewProjectionPreMultipliedArray
 {

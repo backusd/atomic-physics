@@ -280,14 +280,23 @@ void Renderer::Render_AllSpheres() const noexcept
 	m_allSphere_ModelViewProjectionInstanceBufferArray->Bind();
 	m_allSphere_MaterialIndexInstanceBufferArray->Bind();
 
-	// Must update the buffers AFTER they are bound to the pipeline
-	UpdateAllSphereModelViewProjectionInstanceData();
-	UpdateAllSphereMaterialIndexInstanceData();
+	// Can only draw a maximum of MAX_INSTANCES instances at a time
+	for (unsigned int iii = 0; iii < m_drawables.size(); iii += MAX_INSTANCES)
+	{
+		// Must update the buffers AFTER they are bound to the pipeline
+		UpdateAllSphereModelViewProjectionInstanceData(iii);
+		UpdateAllSphereMaterialIndexInstanceData(iii);
 
-	// Issue the DrawIndexedInstanced call
-	GFX_THROW_INFO_ONLY(
-		DeviceResources::D3DDeviceContext()->DrawIndexedInstanced(m_allSphere_Mesh->IndexCount(), static_cast<UINT>(m_drawables.size()), 0u, 0u, 0u)
-	);
+		// Issue the DrawIndexedInstanced call
+		GFX_THROW_INFO_ONLY(
+			DeviceResources::D3DDeviceContext()->DrawIndexedInstanced(
+				m_allSphere_Mesh->IndexCount(),			// indices in the mesh
+				static_cast<UINT>(m_drawables.size()),	// number of instances
+				0u,										// starting index in the mesh - always 0
+				0u,										// starting vertex in the mesh - always 0
+				0u)										// starting instance in the bound instance data - always 0
+		);
+	}
 }
 
 void Renderer::Render_Lights() const noexcept
@@ -362,7 +371,7 @@ void Renderer::Render_Lights() const noexcept
 	
 }
 
-void Renderer::UpdateAllSphereModelViewProjectionInstanceData() const noexcept
+void Renderer::UpdateAllSphereModelViewProjectionInstanceData(unsigned int startIndex) const noexcept
 {
 	PROFILE_FUNCTION();
 
@@ -385,14 +394,17 @@ void Renderer::UpdateAllSphereModelViewProjectionInstanceData() const noexcept
 	XMMATRIX viewProjection = m_moveLookController->ViewMatrix() * m_moveLookController->ProjectionMatrix();
 	XMMATRIX model;
 
-	size_t size = m_drawables.size();
-	for (unsigned int iii = 0; iii < size; ++iii)
+
+	unsigned int end = std::min(startIndex + MAX_INSTANCES, static_cast<unsigned int>(m_drawables.size()));
+	for (unsigned int iii = startIndex; iii < end; ++iii)
 	{
 		model = m_drawables[iii]->GetModelMatrix();
 
-		DirectX::XMStoreFloat4x4(&(mappedBuffer->instanceData[iii].model), model);
-		DirectX::XMStoreFloat4x4(&(mappedBuffer->instanceData[iii].modelViewProjection), model * viewProjection);
-		DirectX::XMStoreFloat4x4(&(mappedBuffer->instanceData[iii].inverseTransposeModel), DirectX::XMMatrixTranspose(DirectX::XMMatrixInverse(nullptr, model)));
+		unsigned int index = iii % MAX_INSTANCES;
+
+		DirectX::XMStoreFloat4x4(&(mappedBuffer->instanceData[index].model), model);
+		DirectX::XMStoreFloat4x4(&(mappedBuffer->instanceData[index].modelViewProjection), model * viewProjection);
+		DirectX::XMStoreFloat4x4(&(mappedBuffer->instanceData[index].inverseTransposeModel), DirectX::XMMatrixTranspose(DirectX::XMMatrixInverse(nullptr, model)));
 	}
 
 	GFX_THROW_INFO_ONLY(
@@ -400,7 +412,7 @@ void Renderer::UpdateAllSphereModelViewProjectionInstanceData() const noexcept
 	);
 }
 
-void Renderer::UpdateAllSphereMaterialIndexInstanceData() const noexcept
+void Renderer::UpdateAllSphereMaterialIndexInstanceData(unsigned int startIndex) const noexcept
 {
 	PROFILE_FUNCTION();
 
@@ -420,11 +432,12 @@ void Renderer::UpdateAllSphereMaterialIndexInstanceData() const noexcept
 
 	PhongMaterialIndexArray* mappedBuffer = (PhongMaterialIndexArray*)ms.pData;
 
-	size_t size = m_drawables.size();
-	for (unsigned int iii = 0; iii < size; ++iii)
+	unsigned int end = std::min(startIndex + MAX_INSTANCES, static_cast<unsigned int>(m_drawables.size()));
+	for (unsigned int iii = startIndex; iii < end; ++iii)
 	{
 		Sphere* sphere = dynamic_cast<Sphere*>(m_drawables[iii].get());
-		mappedBuffer->materialIndex[iii].materialIndex = sphere->GetElementNumber() - 1;
+		unsigned int index = iii % MAX_INSTANCES;
+		mappedBuffer->materialIndex[index].materialIndex = sphere->GetElementNumber() - 1;
 	}
 
 	GFX_THROW_INFO_ONLY(

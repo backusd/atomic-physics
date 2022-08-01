@@ -74,8 +74,8 @@ private:
 
 	void InitializeAllSphereData() noexcept;
 	void InitializeLightingData() noexcept;
-	void UpdateAllSphereModelViewProjectionInstanceData() const noexcept;
-	void UpdateAllSphereMaterialIndexInstanceData() const noexcept;
+	void UpdateAllSphereModelViewProjectionInstanceData(unsigned int startIndex) const noexcept;
+	void UpdateAllSphereMaterialIndexInstanceData(unsigned int startIndex) const noexcept;
 
 	void OnParticleAdded(const Particle& particle, unsigned int particleCount) noexcept;
 	void OnParticleRemoved(unsigned int particleIndex) noexcept;

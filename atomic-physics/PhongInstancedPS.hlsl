@@ -7,7 +7,7 @@
 #define SPOT_LIGHT 2
 
 // Max number of instances when doing instanced rendering
-#define MAX_INSTANCES 300
+#define MAX_INSTANCES 341
 
 struct MyLight
 {
